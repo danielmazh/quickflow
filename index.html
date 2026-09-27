@@ -3,412 +3,787 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#121212">
-<title>QuickFlow | אימון ספונטניות</title>
+<meta name="theme-color" content="#4E8A45">
+<title>QuickFlow | משחק ספונטניות</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect x=%225%22 y=%224%22 width=%2215%22 height=%2221%22 rx=%224%22 fill=%22%23F3A33A%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #121212;
-    --panel: #1E1E1E;
-    --panel-2: #262626;
-    --line: #313131;
-    --text: #F2F2F2;
-    --muted: #9C9C9C;
-    --amber: #FDB833;
-    --green: #3DDC6B;
-    --red: #F0544F;
-    --yellow: #FFD21F;
-    --lime: #72E27E;
-    --ink: #111111;
-    --r-lg: 22px;
-    --r-md: 14px;
+    --bg: #4E8A45;
+    --bg-2: #447C3C;
+    --brown: #5A2A12;
+    --brown-2: #7A3E1C;
+    --orange: #F3A33A;
+    --orange-d: #D27F22;
+    --orange-l: #FFC766;
+    --cream: #FDEBC8;
+    --cream-2: #F8DCA6;
+    --cream-3: #F1C98A;
+    --green: #3E7B35;
+    --green-d: #25501F;
+    --green-l: #7BC06B;
+    --green-bg: #E3F4D6;
+    --red: #C73A34;
+    --red-d: #8C221E;
+    --ink: #4A230D;
+    --ink-2: #74431F;
+    --gold: #FFC83D;
     --level: 0;
-    --font: "Segoe UI", "Noto Sans Hebrew", "Arial Hebrew", Arial, sans-serif;
+    --font: "Rubik", "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+    --font-display: "Fredoka", "Rubik", "Arial Hebrew", sans-serif;
+    --bounce: cubic-bezier(.34, 1.56, .64, 1);
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   html, body { margin: 0; }
   body {
     min-height: 100vh;
-    background:
-      radial-gradient(ellipse 70% 45% at 50% 105%, rgba(253,184,51,.22), rgba(253,184,51,0) 70%),
-      #0C0C0C;
-    color: var(--text);
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,.07) 0 2px, transparent 3px),
+      radial-gradient(circle at 70% 60%, rgba(255,255,255,.05) 0 2px, transparent 3px),
+      repeating-linear-gradient(45deg, rgba(0,0,0,.035) 0 16px, transparent 16px 32px);
+    background-size: 46px 46px, 46px 46px, auto;
+    color: var(--ink);
     font-family: var(--font);
     font-size: 16px;
     line-height: 1.45;
     -webkit-font-smoothing: antialiased;
   }
   button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
-  button:focus-visible, summary:focus-visible, .row:focus-visible {
-    outline: 3px solid var(--amber);
+  button:focus-visible, summary:focus-visible, a:focus-visible, input:focus-visible {
+    outline: 3px solid #fff;
     outline-offset: 3px;
+    box-shadow: 0 0 0 6px var(--brown);
   }
   svg { display: block; }
   .num { font-variant-numeric: tabular-nums; }
+  .display { font-family: var(--font-display); font-weight: 700; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   .app {
     width: 100%;
-    max-width: 440px;
+    max-width: 460px;
     min-height: 100vh;
     margin: 0 auto;
-    padding: 20px 18px 32px;
-    background: var(--bg);
+    padding: 16px 16px 40px;
     display: flex;
     flex-direction: column;
-  }
-  @media (min-width: 520px) {
-    .app {
-      min-height: calc(100vh - 48px);
-      margin: 24px auto;
-      border-radius: 36px;
-      box-shadow: 0 30px 80px rgba(0,0,0,.55);
-    }
   }
   .view { display: flex; flex-direction: column; flex: 1; }
+  .view:not([hidden]) { animation: viewIn .4s var(--bounce) both; }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
 
-  /* ---------- shared pieces ---------- */
-  .topbar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-height: 40px;
-    margin-bottom: 18px;
+  /* ---------- text on the green background ---------- */
+  .on-bg {
+    color: #fff;
+    text-shadow: 0 2px 0 var(--brown), 2px 0 0 var(--brown), -2px 0 0 var(--brown), 0 -2px 0 var(--brown), 0 4px 0 rgba(0,0,0,.25);
   }
-  .back {
-    display: inline-flex; align-items: center; gap: 4px;
-    color: var(--amber); font-size: .95rem; padding: 4px 0;
-  }
-  .back svg { width: 20px; height: 20px; }
-  .topbar-title { font-size: 1.1rem; font-weight: 600; }
-  .section-label { font-size: .88rem; color: var(--muted); margin: 22px 0 10px; }
 
-  .btn-start {
+  /* ---------- framed panel ---------- */
+  .panel {
+    position: relative;
+    background: var(--cream);
+    color: var(--ink);
+    border: 6px solid var(--orange);
+    border-radius: 28px;
+    box-shadow: 0 0 0 3px var(--brown), 0 8px 0 3px var(--brown), inset 0 4px 0 rgba(255,255,255,.55), inset 0 -5px 0 rgba(210,127,34,.18);
+    padding: 18px 16px 16px;
+    margin: 0 3px 26px;
+  }
+  .panel.has-ribbon { margin-top: 26px; padding-top: 30px; }
+  .ribbon {
+    position: absolute; top: -24px; left: 50%; transform: translateX(-50%);
+    z-index: 2;
+    display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    background: var(--green); color: #fff;
+    font-family: var(--font-display); font-weight: 700; font-size: 1.2rem;
+    padding: 6px 24px; border: 3px solid var(--brown); border-radius: 12px;
+    text-shadow: 0 2px 0 var(--green-d);
+    box-shadow: 0 4px 0 var(--brown), inset 0 3px 0 rgba(255,255,255,.25);
+  }
+  .ribbon::before, .ribbon::after {
+    content: ""; position: absolute; top: 9px; z-index: -1;
+    width: 26px; height: 100%; background: var(--green-d);
+    border: 3px solid var(--brown);
+  }
+  .ribbon::before { right: -20px; border-radius: 0 4px 4px 0; clip-path: polygon(0 0, 100% 0, 70% 50%, 100% 100%, 0 100%); }
+  .ribbon::after { left: -20px; border-radius: 4px 0 0 4px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 30% 50%); }
+  .ribbon.orange { background: var(--orange); color: var(--ink); text-shadow: 0 1px 0 rgba(255,255,255,.5); }
+  .ribbon.orange::before, .ribbon.orange::after { background: var(--orange-d); }
+  .ribbon.red { background: var(--red); text-shadow: 0 2px 0 var(--red-d); }
+  .ribbon.red::before, .ribbon.red::after { background: var(--red-d); }
+  .ribbon svg { width: 20px; height: 20px; }
+  .sub-panel { background: var(--cream-2); border-radius: 16px; padding: 12px 14px; box-shadow: inset 0 2px 0 rgba(90,42,18,.12); }
+  .muted { color: var(--ink-2); }
+  .h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+  .h2 svg { width: 22px; height: 22px; color: var(--orange-d); }
+
+  /* ---------- chunky buttons ---------- */
+  .btn {
+    position: relative;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    background: var(--amber); color: var(--ink);
-    font-weight: 700; font-size: 1.05rem;
-    border-radius: 12px; padding: 12px 22px;
+    font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.1;
+    padding: 12px 22px; border-radius: 999px;
+    border: 3px solid var(--brown);
+    box-shadow: 0 5px 0 var(--brown), inset 0 3px 0 rgba(255,255,255,.3), inset 0 -4px 0 rgba(0,0,0,.14);
+    transition: transform .18s var(--bounce), box-shadow .12s, filter .15s;
+    text-decoration: none;
   }
-  .btn-start svg { width: 18px; height: 18px; }
-  .btn-start:hover { filter: brightness(1.06); }
-  .btn-wide {
-    width: 100%; padding: 16px; border-radius: 14px;
-    background: var(--panel-2); font-weight: 600; font-size: 1rem;
-  }
-  .btn-wide:hover { background: #2E2E2E; }
-  .btn-ghost {
-    display: inline-flex; align-items: center; gap: 6px;
-    border: 1px solid var(--line); background: var(--panel);
-    border-radius: 10px; padding: 9px 14px; font-size: .88rem; color: var(--muted);
-  }
-  .btn-ghost:hover { color: var(--text); }
-  .play {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: var(--panel-2); color: #D6D6D6;
-    display: grid; place-items: center; flex: none;
-  }
-  .play svg { width: 18px; height: 18px; }
-  .play:hover { background: #333; color: var(--amber); }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.05); }
+  .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--brown), inset 0 3px 0 rgba(255,255,255,.2); }
+  .btn-green { background: var(--green); color: #fff; text-shadow: 0 2px 0 var(--green-d); }
+  .btn-cream { background: var(--cream); color: var(--ink); }
+  .btn-orange { background: var(--orange); color: var(--ink); }
+  .btn-red { background: var(--red); color: #fff; text-shadow: 0 2px 0 var(--red-d); }
+  .btn-block { width: 100%; }
+  .btn-big { font-size: 1.5rem; padding: 16px 26px; }
+  .btn-sm { font-size: .95rem; padding: 7px 14px; box-shadow: 0 3px 0 var(--brown), inset 0 2px 0 rgba(255,255,255,.3); }
+  .btn-sm:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--brown); }
+  .btn-stack { display: flex; flex-direction: column; gap: 14px; }
 
-  .alert {
-    border: 1.5px solid var(--red); background: rgba(240,84,79,.1);
-    border-radius: var(--r-md); padding: 12px 14px; font-size: .92rem; margin-bottom: 14px;
+  /* round icon buttons (coin style) */
+  .ibtn {
+    width: 48px; height: 48px; border-radius: 50%; flex: none;
+    display: grid; place-items: center;
+    background: radial-gradient(circle, var(--cream) 0 54%, var(--orange) 56%);
+    color: var(--ink);
+    border: 3px solid var(--brown);
+    box-shadow: 0 4px 0 var(--brown), inset 0 2px 0 rgba(255,255,255,.4);
+    transition: transform .2s var(--bounce), box-shadow .12s;
+  }
+  .ibtn svg { width: 22px; height: 22px; }
+  .ibtn:hover { transform: translateY(-2px) scale(1.06); }
+  .ibtn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--brown); }
+  .ibtn.red { background: radial-gradient(circle, #E4574F 0 54%, var(--red) 56%); color: #fff; }
+  .ibtn[aria-pressed="false"] { background: radial-gradient(circle, #E9DCC4 0 54%, #BFA27A 56%); color: var(--ink-2); }
+  .ibtn.held { opacity: .6; }
+  .corner {
+    position: fixed; z-index: 50; top: 12px;
+    left: max(10px, calc(50% - 230px + 10px));
+    display: flex; gap: 8px;
   }
 
-  /* ---------- home ---------- */
-  .brand { display: flex; align-items: center; gap: 10px; }
-  .brand-mark { width: 30px; height: 30px; }
-  .brand-name { font-size: 1.35rem; font-weight: 700; font-style: italic; letter-spacing: -.01em; }
-  .brand-name span { color: var(--amber); }
-  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 20px; }
+  /* ON / OFF toggle pill */
+  .tgl {
+    min-width: 104px; height: 42px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 0 6px 0 14px;
+    border: 3px solid var(--brown);
+    box-shadow: 0 4px 0 var(--brown), inset 0 2px 0 rgba(255,255,255,.3);
+    font-family: var(--font-display); font-weight: 700; color: #fff;
+    background: var(--green); text-shadow: 0 2px 0 var(--green-d);
+    transition: background-color .2s;
+  }
+  .tgl i { width: 28px; height: 28px; border-radius: 50%; background: var(--cream); border: 2.5px solid var(--brown); order: -1; transition: transform .25s var(--bounce); }
+  .tgl[aria-checked="false"] { background: var(--red); text-shadow: 0 2px 0 var(--red-d); flex-direction: row-reverse; padding: 0 14px 0 6px; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 4px; }
+  .set-row b { font-family: var(--font-display); font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+  .set-row b svg { width: 22px; height: 22px; color: var(--orange-d); }
+
+  /* stars */
+  .star path { stroke-linejoin: round; }
+  .star.on path { fill: var(--gold); stroke: var(--brown); stroke-width: 1.6; }
+  .star.off path { fill: #EAD5AA; stroke: #A9825A; stroke-width: 1.4; }
+  .stars-mini { display: flex; gap: 1px; justify-content: center; }
+  .stars-mini svg { width: 18px; height: 18px; }
   .pill {
     display: inline-flex; align-items: center; gap: 6px;
-    background: var(--panel-2); border-radius: 999px;
-    padding: 7px 12px; font-size: .85rem;
+    background: var(--cream); color: var(--ink); border: 3px solid var(--brown); border-radius: 999px;
+    padding: 4px 12px 4px 10px; font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+    box-shadow: 0 3px 0 var(--brown);
   }
-  .pill svg { width: 15px; height: 15px; color: var(--amber); }
-  .week-title { font-size: .95rem; margin: 0 0 6px; }
-  .week-title b { color: var(--amber); }
-  .chart { width: 100%; height: auto; }
-  .chart .ln { stroke: #4A4A4A; stroke-width: 1.5; fill: none; }
-  .chart .node { fill: var(--bg); stroke: #5A5A5A; stroke-width: 1.5; }
-  .chart .node.today { stroke: var(--amber); }
-  .chart .v { fill: #D0D0D0; font-size: 11px; }
-  .chart .v.today { fill: var(--amber); font-weight: 700; }
-  .chart .d { fill: var(--muted); font-size: 11px; }
+  .pill svg { width: 20px; height: 20px; color: var(--orange-d); }
+  .pill .star { width: 22px; height: 22px; }
 
-  .rows { display: flex; flex-direction: column; gap: 12px; }
+  /* framed track (progress, meter) */
+  .track {
+    position: relative; height: 22px; border-radius: 999px;
+    background: var(--brown-2); border: 4px solid var(--orange);
+    box-shadow: 0 0 0 3px var(--brown), inset 0 3px 0 rgba(0,0,0,.25);
+    overflow: hidden;
+  }
+  .track-fill {
+    position: absolute; inset: 0 0 0 auto; width: 0; border-radius: 999px;
+    background: linear-gradient(180deg, #A9E29B, var(--green-l) 45%, #4E9A43);
+    transition: width .3s;
+  }
+  .track-fill.dim { background: linear-gradient(180deg, #E6D2AE, #C9AE82); transition: none; }
+
+  /* ---------- top bars ---------- */
+  .topbar { display: flex; align-items: center; gap: 12px; min-height: 52px; margin-bottom: 14px; padding-left: 112px; }
+  .topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }
+
+  /* ---------- welcome ---------- */
+  .welcome { text-align: center; padding-top: 50px; }
+  .w-logo { width: 96px; height: 96px; margin: 0 auto 6px; animation: floaty 3.2s ease-in-out infinite; filter: drop-shadow(0 4px 0 var(--brown)); }
+  @keyframes floaty { 50% { transform: translateY(-8px) rotate(-5deg); } }
+  .w-title { font-family: var(--font-display); font-weight: 700; font-size: 3.2rem; line-height: 1; margin: 0; direction: ltr; }
+  .w-title span { color: var(--gold); }
+  .w-tag { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; margin: 10px 0 34px; }
+  .w-body { text-align: right; }
+  .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .w-item { background: var(--cream-2); border-radius: 14px; padding: 10px; box-shadow: inset 0 -3px 0 rgba(210,127,34,.25); }
+  .w-item svg { width: 26px; height: 26px; color: var(--orange-d); margin-bottom: 4px; }
+  .w-item b { display: block; font-family: var(--font-display); font-size: 1.05rem; }
+  .w-item span { font-size: .82rem; color: var(--ink-2); }
+  .w-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .w-list li {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-bg); color: var(--green-d); font-weight: 600;
+    border: 2px solid var(--green-l); border-radius: 999px; padding: 5px 12px; font-size: .9rem;
+  }
+  .w-list svg { width: 16px; height: 16px; }
+  .w-p { margin: 0; }
+  .w-sec + .w-sec { margin-top: 16px; }
+  .privacy { background: var(--green-bg); border: 2.5px solid var(--green-l); border-radius: 16px; padding: 12px 14px; color: var(--green-d); font-size: .92rem; }
+  .privacy .h2 { color: var(--green-d); }
+  .privacy .h2 svg { color: var(--green); }
+  .privacy p { margin: 0; }
+  .w-go::after {
+    content: ""; position: absolute; inset: -9px; border-radius: 999px; pointer-events: none;
+    border: 4px solid rgba(255,255,255,.8); animation: ring 1.8s ease-out infinite;
+  }
+  @keyframes ring { from { opacity: .9; transform: scale(.96); } to { opacity: 0; transform: scale(1.1); } }
+  .w-note { font-size: .95rem; margin: 14px 0 0; font-weight: 600; }
+
+  /* ---------- home: header + tabs ---------- */
+  .home-head { display: flex; align-items: center; gap: 10px; min-height: 52px; padding-left: 112px; margin-bottom: 10px; }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand svg { width: 36px; height: 36px; filter: drop-shadow(0 3px 0 var(--brown)); }
+  .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; direction: ltr; }
+  .brand-name span { color: var(--gold); }
+  .head-pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 18px; }
+  .tabs {
+    display: flex; gap: 6px; padding: 5px; margin: 0 3px 18px;
+    background: var(--brown-2); border: 3px solid var(--brown); border-radius: 999px;
+    box-shadow: 0 4px 0 var(--brown);
+  }
+  .tab {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 10px; border-radius: 999px; color: var(--cream);
+    font-family: var(--font-display); font-weight: 700; font-size: 1.05rem;
+    transition: background-color .2s, transform .2s var(--bounce);
+  }
+  .tab svg { width: 20px; height: 20px; }
+  .tab[aria-selected="true"] { background: var(--orange); color: var(--ink); box-shadow: inset 0 -3px 0 var(--orange-d), inset 0 2px 0 rgba(255,255,255,.4); }
+  .tab:active { transform: scale(.96); }
+  .alert {
+    background: #FFE1DC; border: 3px solid var(--red); color: #6E1512;
+    border-radius: 16px; padding: 12px 14px; font-size: .95rem; margin: 0 3px 16px; font-weight: 500;
+  }
+
+  /* today's plan */
+  .plan { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .plan li { display: flex; gap: 12px; align-items: flex-start; background: var(--cream-2); border-radius: 16px; padding: 10px 12px; }
+  .plan li.now { background: #fff6e2; border: 2.5px solid var(--orange); }
+  .plan-n {
+    width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    background: var(--orange); border: 3px solid var(--brown); font-family: var(--font-display); font-weight: 700;
+  }
+  .plan-main { flex: 1; min-width: 0; }
+  .plan-main b { font-family: var(--font-display); font-size: 1.05rem; display: block; }
+  .plan-tag { font-size: .8rem; color: var(--ink-2); }
+  .plan-tip { font-size: .88rem; margin-top: 3px; display: flex; gap: 6px; }
+  .plan-tip svg { width: 16px; height: 16px; flex: none; color: var(--orange-d); margin-top: 2px; }
+  .plan li .btn { align-self: center; }
+
+  /* level map */
+  .map-wrap { position: relative; margin: 6px 0 20px; }
+  .map-svg { position: absolute; inset: 0; width: 100%; overflow: visible; }
+  .map-svg line { stroke: var(--cream); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 2 14; opacity: .7; }
+  .map-svg line.done { stroke: var(--gold); opacity: 1; }
+  .node {
+    position: absolute; width: 112px; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    text-align: center;
+  }
+  .coin {
+    width: 70px; height: 70px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: radial-gradient(circle, var(--cream) 0 55%, var(--orange) 57%);
+    border: 4px solid var(--brown);
+    box-shadow: 0 6px 0 var(--brown), inset 0 3px 0 rgba(255,255,255,.5);
+    font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; color: var(--ink);
+    transition: transform .2s var(--bounce);
+  }
+  .node:hover .coin { transform: translateY(-3px) scale(1.06); }
+  .node:active .coin { transform: translateY(3px); }
+  .node.locked .coin { background: radial-gradient(circle, #D9CDB6 0 55%, #A89274 57%); color: #6C5A45; }
+  .node.locked .coin svg { width: 26px; height: 26px; }
+  .node.current .coin { background: radial-gradient(circle, #fff 0 55%, var(--green-l) 57%); animation: bob 1.4s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  .node .mode-dot { position: absolute; top: -4px; right: 14px; width: 28px; height: 28px; border: 2.5px solid var(--brown); }
+  .node .mode-dot svg { width: 15px; height: 15px; }
+  .node-name {
+    background: var(--cream); border: 2.5px solid var(--brown); border-radius: 10px;
+    padding: 1px 8px; font-size: .78rem; font-weight: 600; color: var(--ink); max-width: 112px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .node.locked .node-name { background: #E6DCC8; color: #5E4E3C; }
+  .here {
+    position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+    background: var(--green); color: #fff; border: 2.5px solid var(--brown); border-radius: 999px;
+    padding: 1px 10px; font-family: var(--font-display); font-weight: 700; font-size: .85rem; white-space: nowrap;
+    text-shadow: 0 1px 0 var(--green-d);
+  }
+
+  /* ---------- free play list ---------- */
+  .rows { display: flex; flex-direction: column; gap: 10px; }
   .row {
     display: flex; align-items: center; gap: 12px;
-    background: var(--panel); border-radius: var(--r-md);
-    padding: 14px 14px; text-align: right; width: 100%;
+    background: var(--cream-2); border-radius: 16px; padding: 10px 12px; text-align: right; width: 100%;
+    box-shadow: inset 0 -3px 0 rgba(210,127,34,.3);
+    cursor: pointer; transition: transform .2s var(--bounce);
   }
-  .row:hover { background: #242424; }
+  .row:hover { transform: translateX(-3px); }
+  .row:focus-visible { outline: 3px solid var(--brown); outline-offset: 2px; }
   .row-icon {
-    width: 32px; height: 32px; border-radius: 50%;
-    display: grid; place-items: center; flex: none;
+    width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--brown);
+    display: grid; place-items: center; flex: none; color: #fff;
   }
-  .row-icon svg { width: 18px; height: 18px; }
-  .row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .row-title { font-size: 1.05rem; }
-  .row-sub { font-size: .8rem; color: var(--muted); }
-  .ring text { font-size: 10px; font-weight: 700; fill: var(--green); }
-  .ring .trk { stroke: #2C2C2C; }
-
-  .foot { margin-top: auto; padding-top: 26px; }
-  .foot-tools { display: flex; gap: 8px; flex-wrap: wrap; }
-  .foot-status { font-size: .75rem; color: var(--muted); margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
-  .foot-status .bad { color: var(--red); }
-  .how { margin-top: 14px; font-size: .85rem; color: var(--muted); }
-  .how summary { cursor: pointer; color: var(--text); }
+  .row-icon svg { width: 20px; height: 20px; }
+  .row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .row-title { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
+  .row-sub { font-size: .82rem; color: var(--ink-2); }
+  .row .ibtn { width: 42px; height: 42px; }
+  .ring text { font-size: 10px; font-weight: 700; fill: var(--green-d); }
+  .ring .trk { stroke: #E4C897; }
+  .week-title { font-size: .98rem; margin: 0 0 4px; }
+  .week-title b { color: var(--green-d); }
+  .chart { width: 100%; height: auto; }
+  .chart .ln { stroke: var(--orange-d); stroke-width: 2.5; fill: none; stroke-linejoin: round; }
+  .chart .cnode { fill: var(--cream); stroke: var(--brown); stroke-width: 2; }
+  .chart .cnode.today { fill: var(--orange); }
+  .chart .v { fill: var(--ink); font-size: 11px; font-weight: 700; }
+  .chart .d { fill: var(--ink-2); font-size: 11px; font-weight: 600; }
+  .how { margin-top: 4px; font-size: .9rem; }
+  .how summary { cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
   .how p { margin: 8px 0; }
 
-  /* ---------- mode ---------- */
-  .mode-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
-  .mode-head .row-icon { width: 38px; height: 38px; }
-  .mode-name { font-size: 2rem; font-weight: 600; margin: 0; }
-  .mode-desc { color: var(--muted); margin: 4px 0 18px; font-size: .95rem; }
-  .mode-cta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .mode-cta .big { font-size: 1.25rem; }
-  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .tile { background: var(--panel); border-radius: var(--r-md); padding: 12px 14px; }
-  .tile-l { font-size: .78rem; color: var(--muted); }
-  .tile-v { font-size: 1.35rem; font-weight: 700; }
-  .tile-v.amber { color: var(--amber); }
+  /* ---------- mode + intro ---------- */
+  .mode-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .mode-name { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; margin: 0; line-height: 1.1; }
+  .mode-desc { margin: 4px 0 14px; font-size: .98rem; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tile { background: var(--cream-2); border-radius: 14px; padding: 10px 12px; box-shadow: inset 0 -3px 0 rgba(210,127,34,.25); }
+  .tile-l { font-size: .8rem; color: var(--ink-2); }
+  .tile-v { font-family: var(--font-display); font-size: 1.45rem; font-weight: 700; }
+  .tile-v.hi { color: var(--green-d); }
   .hist-row {
-    display: flex; justify-content: space-between; align-items: center;
-    background: var(--panel); border-radius: 12px; padding: 12px 14px; font-size: .9rem;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    background: var(--cream-2); border-radius: 12px; padding: 9px 12px; font-size: .9rem;
   }
-  .hist-row .m { color: var(--muted); font-size: .8rem; }
-  .empty {
-    background: var(--panel); border-radius: var(--r-md); padding: 18px;
-    color: var(--muted); text-align: center; font-size: .92rem;
+  .hist-row .m { color: var(--ink-2); font-size: .8rem; }
+  .empty { background: var(--cream-2); border-radius: 14px; padding: 14px; text-align: center; font-size: .92rem; }
+  .section-label { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin: 18px 0 8px; }
+  .steps { list-style: none; margin: 4px 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .step { display: flex; align-items: center; gap: 12px; background: var(--cream-2); border-radius: 14px; padding: 10px 12px; }
+  .step-n {
+    width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 700; background: var(--orange); border: 3px solid var(--brown);
   }
+  .step.go { background: var(--green-bg); border: 2.5px solid var(--green-l); }
+  .step.go .step-n { background: var(--green); color: #fff; }
+  .step b { display: block; font-family: var(--font-display); font-size: 1.05rem; }
+  .step span { font-size: .88rem; color: var(--ink-2); }
+  .goals { display: flex; flex-direction: column; gap: 6px; margin: 0 0 12px; }
+  .goal { display: flex; align-items: center; gap: 10px; font-size: .92rem; }
+  .goal .stars-mini { flex: none; width: 60px; justify-content: flex-start; }
+  .goal.ok { color: var(--green-d); font-weight: 600; }
+  .goal.no { color: var(--ink-2); }
+  .goal-mark { width: 22px; height: 22px; border-radius: 50%; flex: none; display: grid; place-items: center; border: 2px solid currentColor; }
+  .goal-mark svg { width: 13px; height: 13px; }
+  .tip { display: flex; gap: 10px; align-items: flex-start; background: #FFF6E2; border: 2.5px dashed var(--orange); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
+  .tip svg { width: 22px; height: 22px; flex: none; color: var(--orange-d); }
+  .tip b { font-family: var(--font-display); }
+  .privacy-line { display: flex; gap: 8px; align-items: flex-start; font-size: .85rem; color: var(--green-d); background: var(--green-bg); border-radius: 12px; padding: 9px 12px; margin-bottom: 16px; }
+  .privacy-line svg { width: 18px; height: 18px; flex: none; color: var(--green); }
 
   /* ---------- session ---------- */
-  .progress { display: flex; gap: 4px; height: 8px; margin-bottom: 10px; }
-  .seg { flex: 1; border-radius: 4px; background: #2C2C2C; }
-  .seg.hit { background: var(--amber); }
-  .seg.miss { background: var(--red); }
-  .seg.cur { background: #6A6A6A; }
-  .legend { display: flex; gap: 14px; font-size: .85rem; color: var(--muted); margin-bottom: 18px; flex-wrap: wrap; }
-  .legend i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-inline-end: 6px; vertical-align: middle; }
-  .legend b { color: var(--text); font-weight: 600; }
+  .goal-strip { font-size: .85rem; background: var(--cream); border: 2.5px solid var(--brown); border-radius: 12px; padding: 5px 10px; margin: 0 3px 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+  .goal-strip span { display: inline-flex; align-items: center; gap: 4px; }
+  .goal-strip svg { width: 15px; height: 15px; }
+  .progress { display: flex; gap: 4px; padding: 4px; margin: 0 3px 8px; background: var(--brown-2); border: 4px solid var(--orange); border-radius: 999px; box-shadow: 0 0 0 3px var(--brown); }
+  .seg { flex: 1; height: 12px; border-radius: 999px; background: #9B6A45; }
+  .seg.hit { background: var(--green-l); }
+  .seg.miss { background: #F07068; }
+  .seg.cur { background: var(--gold); animation: blink 1s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: .55; } }
+  .legend { display: flex; gap: 8px; margin: 6px 0 14px; flex-wrap: wrap; justify-content: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; background: var(--cream); border: 2px solid var(--brown); border-radius: 999px; padding: 2px 10px; font-size: .85rem; font-weight: 600; }
+  .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1.5px solid var(--brown); }
 
-  .card {
-    position: relative;
-    flex: 1;
-    min-height: 360px;
-    border-radius: 26px;
-    padding: 22px 22px 20px;
-    display: flex;
-    flex-direction: column;
-    background: var(--panel);
-    color: var(--text);
-    transition: background-color .18s ease, box-shadow .08s linear;
+  .card { flex: 1; min-height: 360px; display: flex; flex-direction: column; margin-bottom: 18px; transition: background-color .2s, border-color .2s; }
+  .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .card-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+    background: var(--cream-2); border: 2.5px solid var(--brown); border-radius: 999px; padding: 2px 12px;
   }
-  .card-top { display: flex; justify-content: space-between; align-items: center; font-size: .9rem; font-weight: 600; }
-  .card-label { display: inline-flex; align-items: center; gap: 8px; }
-  .card-label i { width: 9px; height: 9px; border-radius: 50%; background: currentColor; display: inline-block; }
-  .card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-  .prompt {
-    margin: 0;
-    font-weight: 800;
-    letter-spacing: -.01em;
-    line-height: 1.12;
-    font-size: clamp(1.8rem, 7vw, 2.3rem);
-  }
-  .prompt.word { font-size: clamp(3rem, 15vw, 4.4rem); }
-  .result-val { font-size: 3.4rem; font-weight: 800; line-height: 1; }
-  .result-sub { margin-top: 8px; color: var(--muted); font-size: 1rem; }
-  .card-timer { height: 6px; border-radius: 3px; background: rgba(255,255,255,.08); overflow: hidden; }
-  .card-timer div { height: 100%; width: 100%; background: var(--amber); transform-origin: right; }
+  .card-label svg { width: 18px; height: 18px; }
+  .round-badge { font-family: var(--font-display); font-weight: 700; background: var(--brown-2); color: var(--cream); border-radius: 999px; padding: 2px 10px; font-size: .95rem; }
+  .card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px 2px; }
+  .card-body.swap { animation: swapIn .32s var(--bounce) both; }
+  @keyframes swapIn { from { opacity: 0; transform: translateY(10px) scale(.97); } }
+  .prompt-lead { font-size: .9rem; color: var(--ink-2); margin: 0 0 6px; font-weight: 600; }
+  .prompt { margin: 0; font-family: var(--font-display); font-weight: 700; line-height: 1.2; font-size: clamp(1.7rem, 7vw, 2.2rem); }
+  .prompt.word { font-size: clamp(3rem, 15vw, 4.4rem); text-align: center; }
+  .result-val { font-family: var(--font-display); font-weight: 700; font-size: 3.4rem; line-height: 1; text-align: center; }
+  .result-sub { margin-top: 8px; color: var(--ink-2); font-size: 1rem; text-align: center; }
+  .ph-hit .result-val { color: var(--green-d); }
+  .ph-miss .result-val { color: var(--red); }
 
-  .card.ph-read { background: var(--yellow); color: var(--ink); }
-  .card.ph-live { background: var(--lime); color: var(--ink); }
-  .card.ph-speak {
-    background: var(--lime); color: var(--ink);
-    box-shadow: 0 0 0 calc(var(--level) * 12px) rgba(114,226,126,.28);
+  .cue { display: flex; align-items: center; gap: 12px; border-radius: 18px; padding: 10px 12px; margin: 6px 0 12px; background: var(--cream-2); border: 3px solid transparent; }
+  .cue-icon { width: 50px; height: 50px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--orange); color: var(--ink); border: 3px solid var(--brown); }
+  .cue-icon svg { width: 26px; height: 26px; }
+  .cue-main { flex: 1; min-width: 0; }
+  .cue-title { display: block; font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; line-height: 1.15; }
+  .cue-sub { display: block; font-size: .9rem; color: var(--ink-2); margin-top: 2px; }
+  .cue-count {
+    width: 56px; height: 56px; flex: none; border-radius: 50%; display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 2rem;
+    background: var(--cream); border: 3px solid var(--brown); box-shadow: 0 3px 0 var(--brown);
   }
-  .card.ph-read .card-timer, .card.ph-live .card-timer, .card.ph-speak .card-timer { background: rgba(0,0,0,.14); }
-  .card.ph-read .card-timer div, .card.ph-live .card-timer div, .card.ph-speak .card-timer div { background: var(--ink); }
-  .card.ph-hit .result-val { color: var(--amber); }
-  .card.ph-miss .result-val { color: var(--red); }
+  .cue-count:empty { display: none; }
+  .cue-count.tick { animation: tick .45s var(--bounce); }
+  @keyframes tick { from { transform: scale(1.5); opacity: .3; } }
+  .card.ph-read { border-color: var(--orange); }
+  .card.ph-live, .card.ph-speak { background: var(--green-bg); border-color: var(--green-l); }
+  .card.ph-speak { box-shadow: 0 0 0 3px var(--brown), 0 8px 0 3px var(--brown), 0 0 0 calc(3px + var(--level) * 14px) rgba(123,192,107,.55); }
+  .ph-live .cue, .ph-speak .cue { background: var(--green); border-color: var(--brown); color: #fff; }
+  .ph-live .cue-title, .ph-speak .cue-title { text-shadow: 0 2px 0 var(--green-d); }
+  .ph-live .cue-title { font-size: 1.9rem; }
+  .ph-live .cue-sub, .ph-speak .cue-sub { color: #fff; }
+  .ph-live .cue-icon, .ph-speak .cue-icon { background: var(--cream); color: var(--green-d); }
+  .ph-live .cue-icon { animation: micPulse 1s ease-in-out infinite; }
+  .ph-speak .cue-icon { transform: scale(calc(1 + var(--level) * .25)); }
+  @keyframes micPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.8); transform: scale(1); }
+    50% { box-shadow: 0 0 0 12px rgba(255,255,255,0); transform: scale(1.1); }
+  }
+  .ph-live .card-label, .ph-speak .card-label { background: var(--green); color: #fff; }
+  .ph-read .card-label { background: var(--orange); }
+  .ph-hit .cue, .ph-miss .cue { display: none; }
+  .card-timer .track-fill { transition: none; }
+  .ph-read .card-timer .track-fill { background: linear-gradient(180deg, #FFE39A, var(--gold)); }
 
-  .meter-wrap { margin-top: 16px; }
-  .meter { position: relative; height: 8px; border-radius: 4px; background: #232323; }
-  .meter-fill { position: absolute; inset: 0 0 0 auto; width: 0; border-radius: 4px; background: #5E5E5E; }
-  .meter-fill.on { background: var(--green); }
-  .meter-thr { position: absolute; top: -4px; bottom: -4px; width: 2px; right: 0; background: var(--amber); border-radius: 1px; }
-  .meter-legend { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-top: 6px; }
-  .chips { display: flex; gap: 8px; margin-top: 14px; min-height: 34px; flex-wrap: wrap; }
-  .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 10px; padding: 7px 12px; font-size: .88rem; background: var(--panel-2); }
-  .chip.warn { color: var(--red); background: rgba(240,84,79,.12); }
-  .hint { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: .8rem; color: var(--muted); }
+  .meter-wrap { margin: 0 3px; }
+  .meter-thr { position: absolute; top: -2px; bottom: -2px; width: 5px; right: 0; background: var(--gold); border: 1.5px solid var(--brown); border-radius: 3px; z-index: 1; }
+  .meter-legend { display: flex; justify-content: space-between; gap: 8px; font-size: .8rem; margin-top: 8px; font-weight: 600; }
+  .chips { display: flex; gap: 8px; margin-top: 12px; min-height: 34px; flex-wrap: wrap; justify-content: center; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 12px; font-size: .88rem; font-weight: 600; background: var(--cream); border: 2px solid var(--brown); }
+  .chip.warn { background: #FFE1DC; color: #7A1914; border-color: var(--red); }
+  .hint { margin-top: 12px; font-size: .9rem; text-align: center; }
 
   /* ---------- summary ---------- */
-  .donut-wrap { position: relative; width: 240px; height: 240px; margin: 8px auto 26px; }
+  .panel.with-stars { margin-top: 110px; }
+  .big-stars { position: absolute; top: -118px; left: 0; right: 0; display: flex; justify-content: center; align-items: flex-end; gap: 4px; z-index: 3; }
+  .big-stars .slot { position: relative; width: 78px; height: 78px; }
+  .big-stars .slot:nth-child(2) { width: 96px; height: 96px; transform: translateY(-12px); }
+  .big-stars .slot svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .big-stars .slot .star.on { transform: scale(0); opacity: 0; }
+  .big-stars .slot.pop .star.on { animation: starIn .6s var(--bounce) forwards; }
+  .big-stars .slot.pop::after {
+    content: ""; position: absolute; inset: -10px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,240,170,.9), rgba(255,240,170,0) 65%);
+    animation: shine .8s ease-out forwards; pointer-events: none;
+  }
+  @keyframes starIn { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 70% { transform: scale(1.25) rotate(8deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+  @keyframes shine { from { opacity: 1; transform: scale(.4); } to { opacity: 0; transform: scale(1.5); } }
+  .sum-head { text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; margin: 6px 0 2px; }
+  .sum-sub { text-align: center; margin: 0 0 12px; }
+  .unlock { text-align: center; background: var(--green-bg); color: var(--green-d); border: 2.5px solid var(--green-l); border-radius: 14px; padding: 8px 12px; font-weight: 600; margin-bottom: 12px; }
+  .donut-wrap { position: relative; width: 190px; height: 190px; margin: 0 auto 14px; }
   .donut-wrap svg { width: 100%; height: 100%; }
-  .donut-center {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-  }
-  .donut-val { font-size: 3rem; font-weight: 700; color: var(--amber); line-height: 1; }
-  .donut-l { font-weight: 600; margin-top: 6px; }
-  .donut-s { color: var(--muted); font-size: .9rem; }
-  .banner-wrap { position: relative; margin: 0 6px 22px; }
-  .banner {
-    border: 2.5px solid var(--green);
-    background: #173D22;
-    border-radius: 14px;
-    padding: 13px 14px;
-    text-align: center;
-    font-size: 1rem;
-  }
-  .banner.neutral { border-color: var(--line); background: var(--panel); }
-  .confetti i {
-    position: absolute; width: 7px; height: 14px; border-radius: 2px;
-    animation: pop .5s ease-out both;
-  }
-  @keyframes pop { from { transform: scale(0) rotate(0); opacity: 0; } }
-  .rounds { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-  .rcard { background: var(--panel); border-radius: 12px; overflow: hidden; }
+  .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .donut-val { font-family: var(--font-display); font-weight: 700; font-size: 2.4rem; line-height: 1; color: var(--green-d); }
+  .donut-l { font-weight: 600; margin-top: 4px; font-size: .9rem; }
+  .donut-s { color: var(--ink-2); font-size: .82rem; }
+  .banner { text-align: center; background: var(--green-bg); border: 2.5px solid var(--green-l); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; font-weight: 500; }
+  .banner.neutral { background: var(--cream-2); border-color: var(--cream-3); }
+  .rounds { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .rcard { background: var(--cream-2); border-radius: 12px; overflow: hidden; }
   .rcard-main { display: flex; align-items: stretch; }
-  .rcard-p { flex: 1; padding: 12px 14px; font-size: .92rem; }
-  .rcard-v {
-    width: 88px; flex: none; display: flex; align-items: center; justify-content: center;
-    border-inline-start: 1px solid var(--line); font-weight: 700;
+  .rcard-p { flex: 1; padding: 9px 12px; font-size: .9rem; }
+  .rcard-v { width: 80px; flex: none; display: flex; align-items: center; justify-content: center; border-inline-start: 2px solid var(--cream-3); font-weight: 700; }
+  .rcard-v.hit { color: var(--green-d); }
+  .rcard-v.miss { color: var(--red); font-size: .85rem; }
+  .rcard-meta { display: flex; justify-content: space-between; padding: 4px 12px; background: var(--cream-3); font-size: .78rem; color: var(--ink); }
+
+  /* ---------- dialog + toast ---------- */
+  dialog.dlg { width: min(92vw, 400px); max-height: 90vh; overflow: visible; padding: 34px 18px 18px; margin: auto; }
+  dialog.dlg::backdrop { background: rgba(40,20,5,.55); }
+  dialog.dlg[open] { animation: dlgIn .35s var(--bounce); }
+  @keyframes dlgIn { from { transform: scale(.85); opacity: 0; } }
+  .dlg-close { position: absolute; top: -18px; left: -14px; z-index: 3; }
+  .dlg-scroll { max-height: calc(90vh - 70px); overflow: auto; padding: 2px; }
+  .dlg .btn-stack { margin: 12px 0 14px; }
+  .dlg-status { font-size: .78rem; color: var(--ink-2); display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .dlg-status .bad { color: var(--red); }
+  .toast {
+    position: fixed; z-index: 70; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--cream); color: var(--ink); border: 3px solid var(--brown); border-radius: 999px;
+    box-shadow: 0 4px 0 var(--brown); padding: 8px 18px; font-weight: 600; max-width: 90vw; text-align: center;
+    animation: dlgIn .3s var(--bounce);
   }
-  .rcard-v.hit { color: var(--amber); }
-  .rcard-v.miss { color: var(--red); font-weight: 600; font-size: .88rem; }
-  .rcard-meta {
-    display: flex; justify-content: space-between; padding: 7px 14px;
-    background: #191919; font-size: .78rem; color: var(--muted);
-  }
-  .sum-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
-  .sum-actions .btn-start { width: 100%; padding: 15px; }
+  .fx-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
-    .card.ph-speak { box-shadow: none; }
+    .big-stars .slot.pop .star.on { transform: none; opacity: 1; }
+    .ph-speak .cue-icon { transform: none; }
+    .card.ph-speak { box-shadow: 0 0 0 3px var(--brown), 0 8px 0 3px var(--brown); }
+    .btn:hover, .ibtn:hover, .row:hover, .node:hover .coin { transform: none; }
   }
 </style>
 </head>
 <body>
+<div class="corner">
+  <button id="btn-music" class="ibtn" type="button" aria-pressed="true" aria-label="מוזיקת רקע" data-sound-toggle></button>
+  <button id="btn-settings" class="ibtn" type="button" aria-label="הגדרות" data-icon="gear"></button>
+</div>
 <div class="app">
 
-  <!-- ================= HOME ================= -->
-  <section id="view-home" class="view">
-    <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="11" y="5" width="15" height="21" rx="4" transform="rotate(12 18 15)" fill="none" stroke="#FDB833" stroke-width="2.4"/>
-        <rect x="5" y="4" width="15" height="21" rx="4" fill="#FDB833"/>
-      </svg>
-      <div class="brand-name">Quick<span>Flow</span></div>
+  <!-- ================= WELCOME ================= -->
+  <section id="view-welcome" class="view welcome">
+    <svg class="w-logo" viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="11" y="5" width="15" height="21" rx="4" transform="rotate(12 18 15)" fill="#FDEBC8" stroke="#5A2A12" stroke-width="2"/>
+      <rect x="5" y="4" width="15" height="21" rx="4" fill="#F3A33A" stroke="#5A2A12" stroke-width="2"/>
+      <path d="M10 10h5M10 14h5M10 18h3" stroke="#5A2A12" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <h1 class="w-title on-bg">Quick<span>Flow</span></h1>
+    <p class="w-tag on-bg">המשחק שמאמן אותך לדבר בלי לחשוב פעמיים</p>
+
+    <div class="panel has-ribbon w-body">
+      <span class="ribbon">למה לשחק?</span>
+      <div class="w-sec">
+        <h2 class="h2"><span data-icon="target"></span>המטרה</h2>
+        <p class="w-p">לאמן דיבור ספונטני: לענות מהר, בלי לסנן ובלי להיתקע. מקבלים מילה, משפט או נושא, ועונים בקול.</p>
+      </div>
+      <div class="w-sec">
+        <h2 class="h2"><span data-icon="clock"></span>מה נמדד</h2>
+        <div class="w-grid">
+          <div class="w-item"><span data-icon="clock"></span><b>זמן תגובה</b><span>כמה מהר התחלת לדבר</span></div>
+          <div class="w-item"><span data-icon="check"></span><b>אחוז מענה</b><span>בכמה סבבים ענית</span></div>
+          <div class="w-item"><span data-icon="pause"></span><b>היסוסים</b><span>הפסקות ארוכות באמצע</span></div>
+          <div class="w-item"><span data-icon="wave"></span><b>רצף דיבור</b><span>כמה מהזמן דיברת</span></div>
+        </div>
+      </div>
+      <div class="w-sec">
+        <h2 class="h2"><span data-icon="bolt"></span>מה משתפר</h2>
+        <ul class="w-list">
+          <li><span data-icon="bolt"></span>תגובה מהירה יותר</li>
+          <li><span data-icon="wave"></span>דיבור שוטף</li>
+          <li><span data-icon="pause"></span>פחות היסוסים</li>
+          <li><span data-icon="smile"></span>ביטחון באלתור</li>
+          <li><span data-icon="users"></span>פגישות ושיחות</li>
+        </ul>
+      </div>
+      <div class="w-sec privacy">
+        <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
+        <p>החוויה אישית לגמרי. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. שום הקלטה לא נשמרת ושום מידע לא נשלח. רק התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע.</p>
+      </div>
     </div>
-    <div id="home-pills" class="pills"></div>
+
+    <button id="btn-welcome-go" class="btn btn-green btn-big btn-block w-go" type="button"><span data-icon="play"></span>התחל משחק</button>
+    <p class="w-note on-bg">שלבים קצרים, כוכבים, וצריך רק מיקרופון.</p>
+  </section>
+
+  <!-- ================= HOME (map + free play) ================= -->
+  <section id="view-home" class="view" hidden>
+    <div class="home-head">
+      <div class="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="11" y="5" width="15" height="21" rx="4" transform="rotate(12 18 15)" fill="#FDEBC8" stroke="#5A2A12" stroke-width="2"/>
+          <rect x="5" y="4" width="15" height="21" rx="4" fill="#F3A33A" stroke="#5A2A12" stroke-width="2"/>
+        </svg>
+        <span class="brand-name on-bg">Quick<span>Flow</span></span>
+      </div>
+    </div>
+    <div id="home-pills" class="head-pills"></div>
     <div id="alert" class="alert" role="alert" hidden></div>
-    <p id="week-title" class="week-title"></p>
-    <div id="week-chart"></div>
-    <p class="section-label">מצבי אימון</p>
-    <div id="home-modes" class="rows"></div>
-    <div class="foot">
-      <div class="foot-tools">
-        <button id="btn-export" class="btn-ghost" type="button">ייצוא היסטוריה</button>
-        <button id="btn-reset" class="btn-ghost" type="button">מחיקת היסטוריה</button>
+    <div class="tabs" role="tablist" aria-label="מסכי המשחק">
+      <button id="tab-map" class="tab" role="tab" type="button" aria-controls="panel-map"><span data-icon="map"></span>המסע</button>
+      <button id="tab-free" class="tab" role="tab" type="button" aria-controls="panel-free"><span data-icon="dumbbell"></span>אימון חופשי</button>
+    </div>
+
+    <div id="panel-map" role="tabpanel" aria-labelledby="tab-map">
+      <div class="panel has-ribbon">
+        <span class="ribbon">התוכנית להיום</span>
+        <ol id="plan" class="plan"></ol>
       </div>
-      <div class="foot-status" aria-live="polite">
-        <span id="storage-status"></span>
-        <span id="calib-status"></span>
+      <h2 class="section-label on-bg">מפת השלבים</h2>
+      <div id="map" class="map-wrap"></div>
+    </div>
+
+    <div id="panel-free" role="tabpanel" aria-labelledby="tab-free" hidden>
+      <div class="panel has-ribbon">
+        <span class="ribbon orange">מצבי אימון</span>
+        <p class="muted" style="margin:0 0 10px">בלי יעדים ובלי כוכבים. מתאמנים במצב שבוחרים.</p>
+        <div id="home-modes" class="rows"></div>
       </div>
-      <details class="how">
-        <summary>איך המדידה עובדת</summary>
-        <p>כל סשן מתחיל ב-1.5 שניות של שקט לכיול רעש הרקע. סף הדיבור מחושב מהרעש שנמדד.</p>
-        <p>כרטיס צהוב: קוראים. כרטיס ירוק: מדברים. זמן התגובה נמדד מהרגע שהכרטיס הופך לירוק.</p>
-        <p>סבב בלי תגובה נספר כהחמצה ולא נכנס לחישוב זמן התגובה.</p>
-        <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
-        <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה ואין שליחה לשרת.</p>
-      </details>
+      <div class="panel has-ribbon">
+        <span class="ribbon orange">השבוע שלך</span>
+        <p id="week-title" class="week-title"></p>
+        <div id="week-chart"></div>
+      </div>
+      <div class="panel">
+        <details class="how">
+          <summary>איך המדידה עובדת</summary>
+          <p>כל סשן מתחיל ב-1.5 שניות של שקט לכיול רעש הרקע. סף הדיבור מחושב מהרעש שנמדד.</p>
+          <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דבר עכשיו!" עם מיקרופון מהבהב, מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול שלך מזוהה.</p>
+          <p>סבב בלי תגובה נספר כהחמצה ולא נכנס לחישוב זמן התגובה.</p>
+          <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
+          <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה.</p>
+          <p>המוזיקה והצלילים נעצרים לפני הכיול ולא מתנגנים אף פעם בזמן שהמיקרופון מקשיב.</p>
+        </details>
+      </div>
     </div>
   </section>
 
-  <!-- ================= MODE ================= -->
+  <!-- ================= MODE (free play stats) ================= -->
   <section id="view-mode" class="view" hidden>
     <div class="topbar">
-      <button id="mode-back" class="back" type="button"></button>
+      <button id="mode-back" class="btn btn-cream btn-sm" type="button"></button>
     </div>
-    <div class="mode-head">
-      <span id="mode-icon" class="row-icon"></span>
-      <h2 id="mode-name" class="mode-name"></h2>
+    <div class="panel has-ribbon">
+      <span id="mode-ribbon" class="ribbon orange"></span>
+      <p id="mode-desc" class="mode-desc"></p>
+      <button id="mode-start" class="btn btn-green btn-block" type="button"></button>
+      <p class="section-label">10 הסשנים האחרונים</p>
+      <div id="mode-tiles" class="tiles"></div>
+      <p class="section-label">היסטוריה</p>
+      <div id="mode-hist" class="rows"></div>
     </div>
-    <p id="mode-desc" class="mode-desc"></p>
-    <div class="mode-cta">
-      <span id="mode-count" class="big"></span>
-      <button id="mode-start" class="btn-start" type="button"></button>
+  </section>
+
+  <!-- ================= INTRO (how it works + stage goals) ================= -->
+  <section id="view-intro" class="view" hidden>
+    <div class="topbar">
+      <button id="intro-back" class="btn btn-cream btn-sm" type="button"></button>
     </div>
-    <p class="section-label">10 הסשנים האחרונים</p>
-    <div id="mode-tiles" class="tiles"></div>
-    <p class="section-label">היסטוריה</p>
-    <div id="mode-hist" class="rows"></div>
+    <div class="panel has-ribbon">
+      <span id="intro-ribbon" class="ribbon"></span>
+      <div class="mode-head">
+        <span id="intro-icon"></span>
+        <h2 id="intro-name" class="mode-name"></h2>
+      </div>
+      <p id="intro-meta" class="mode-desc muted"></p>
+      <h3 class="h2"><span data-icon="question"></span>ככה משחקים</h3>
+      <ol id="intro-steps" class="steps"></ol>
+      <div id="intro-goals-wrap">
+        <h3 class="h2"><span data-icon="trophy"></span>איך משיגים כוכבים</h3>
+        <div id="intro-goals" class="goals"></div>
+      </div>
+      <div id="intro-tip" class="tip"></div>
+      <div class="privacy-line"><span data-icon="shield"></span><span>המיקרופון רק מזהה מתי אתה מדבר. שום הקלטה לא נשמרת ושום מידע לא נשלח. הדפדפן יבקש רשות למיקרופון בפעם הראשונה.</span></div>
+      <button id="intro-go" class="btn btn-green btn-big btn-block" type="button" data-mic-start></button>
+    </div>
   </section>
 
   <!-- ================= SESSION ================= -->
   <section id="view-session" class="view" hidden>
     <div class="topbar">
-      <button id="btn-abort" class="back" type="button"></button>
-      <span id="s-title" class="topbar-title"></span>
+      <button id="btn-abort" class="btn btn-cream btn-sm" type="button"></button>
+      <span id="s-title" class="topbar-title on-bg"></span>
     </div>
+    <div id="s-goals" class="goal-strip" hidden></div>
     <div id="s-progress" class="progress" aria-hidden="true"></div>
     <div id="s-legend" class="legend"></div>
-    <div id="card" class="card">
+    <div id="card" class="panel card">
       <div class="card-top">
-        <span id="c-label" class="card-label" aria-live="assertive"></span>
-        <span id="c-round" class="num"></span>
+        <span id="c-label" class="card-label"></span>
+        <span id="c-round" class="round-badge num"></span>
       </div>
-      <div class="card-body">
+      <div id="c-body" class="card-body">
+        <p id="c-lead" class="prompt-lead" hidden></p>
         <p id="c-prompt" class="prompt"></p>
         <div id="c-result" hidden>
           <div id="c-result-val" class="result-val num"></div>
           <div id="c-result-sub" class="result-sub"></div>
         </div>
       </div>
-      <div class="card-timer" aria-hidden="true"><div id="c-timer"></div></div>
+      <div id="c-cue" class="cue" role="status" aria-live="assertive">
+        <span id="cue-icon" class="cue-icon"></span>
+        <span class="cue-main"><span id="cue-title" class="cue-title"></span><span id="cue-sub" class="cue-sub"></span></span>
+        <span id="cue-count" class="cue-count num" aria-hidden="true"></span>
+      </div>
+      <div class="track card-timer" aria-hidden="true"><div id="c-timer" class="track-fill" style="width:100%"></div></div>
     </div>
     <div class="meter-wrap" aria-hidden="true">
-      <div class="meter"><div id="m-fill" class="meter-fill"></div><div id="m-thr" class="meter-thr"></div></div>
-      <div class="meter-legend"><span>עוצמת הקול שלך</span><span>קו כתום: סף דיבור</span></div>
+      <div class="track"><div id="m-fill" class="track-fill dim"></div><div id="m-thr" class="meter-thr"></div></div>
+      <div class="meter-legend on-bg"><span>הפס: עוצמת הקול שלך</span><span>מעבר לקו הצהוב = זוהה דיבור</span></div>
     </div>
     <div id="s-chips" class="chips" aria-live="polite"></div>
-    <div class="hint">Esc או "יציאה" מבטלים את הסשן בלי לשמור.</div>
+    <div class="hint on-bg">"יציאה" (או Esc) עוצרים את השלב בלי לשמור אותו.</div>
   </section>
 
   <!-- ================= SUMMARY ================= -->
   <section id="view-summary" class="view" hidden>
     <div class="topbar">
-      <button id="sum-back" class="back" type="button"></button>
-      <span id="sum-title" class="topbar-title"></span>
+      <button id="sum-back" class="btn btn-cream btn-sm" type="button"></button>
     </div>
-    <div class="donut-wrap">
-      <div id="sum-donut"></div>
-      <div class="donut-center">
-        <div id="sum-val" class="donut-val num"></div>
-        <div class="donut-l">חציון זמן תגובה</div>
-        <div id="sum-sub" class="donut-s num"></div>
+    <div class="panel has-ribbon" id="sum-panel">
+      <div id="sum-stars" class="big-stars" hidden></div>
+      <span id="sum-ribbon" class="ribbon"></span>
+      <p id="sum-head" class="sum-head"></p>
+      <p id="sum-subline" class="sum-sub muted"></p>
+      <div id="sum-unlock" class="unlock" hidden></div>
+      <div id="sum-goals-wrap" hidden>
+        <div id="sum-goals" class="goals"></div>
       </div>
+      <div class="donut-wrap">
+        <div id="sum-donut"></div>
+        <div class="donut-center">
+          <div id="sum-val" class="donut-val num"></div>
+          <div class="donut-l">חציון זמן תגובה</div>
+          <div id="sum-sub" class="donut-s num"></div>
+        </div>
+      </div>
+      <div id="sum-banner"></div>
+      <div id="sum-tiles" class="tiles"></div>
+      <details class="how" style="margin-top:12px">
+        <summary>פירוט סבבים</summary>
+        <div id="sum-rounds" class="rounds"></div>
+      </details>
     </div>
-    <div id="sum-banner" class="banner-wrap"></div>
-    <div id="sum-tiles" class="tiles"></div>
-    <p class="section-label">סבבים</p>
-    <div id="sum-rounds" class="rounds"></div>
-    <div class="sum-actions">
-      <button id="btn-again" class="btn-start" type="button"></button>
-      <button id="btn-to-mode" class="btn-wide" type="button"></button>
+    <div class="btn-stack">
+      <button id="btn-next" class="btn btn-green btn-big btn-block" type="button" data-mic-start></button>
+      <button id="btn-again" class="btn btn-cream btn-block" type="button" data-mic-start></button>
+      <button id="btn-to-map" class="btn btn-cream btn-block" type="button"></button>
     </div>
   </section>
 
 </div>
-<script>
-'use strict';
 
+<!-- ================= SETTINGS DIALOG ================= -->
+<dialog id="dlg-settings" class="panel dlg" aria-labelledby="dlg-title">
+  <span id="dlg-title" class="ribbon">הגדרות</span>
+  <button id="dlg-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
+  <div class="dlg-scroll">
+    <div class="set-row"><b><span data-icon="bell"></span>צלילים</b><button id="tgl-sfx" class="tgl" type="button" role="switch" aria-checked="true" aria-label="צלילים" data-sound-toggle><span></span><i></i></button></div>
+    <div class="set-row"><b><span data-icon="music"></span>מוזיקה</b><button id="tgl-music" class="tgl" type="button" role="switch" aria-checked="true" aria-label="מוזיקה" data-sound-toggle><span></span><i></i></button></div>
+    <div class="btn-stack">
+      <button id="set-help" class="btn btn-cream btn-block" type="button"><span data-icon="question"></span>איך משחקים</button>
+      <button id="set-export" class="btn btn-cream btn-block" type="button"><span data-icon="download"></span>ייצוא היסטוריה</button>
+      <button id="set-reset" class="btn btn-red btn-block" type="button"><span data-icon="trash"></span>מחיקת היסטוריה והתקדמות</button>
+    </div>
+    <div class="privacy">
+      <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
+      <p>שום הקלטה לא נשמרת ושום מידע לא נשלח. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. רק התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה.</p>
+    </div>
+    <div class="dlg-status" aria-live="polite">
+      <span id="storage-status"></span>
+      <span id="calib-status"></span>
+    </div>
+  </div>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script>
 'use strict';
 
 /* ============================================================
@@ -435,8 +810,13 @@ const CONFIG = {
   sparkPoints: 20,
   modes: {
     word_association: {
-      label: 'אסוציאציות',
-      desc: 'אמור את המילה הראשונה שעולה לך. יש 3 שניות.',
+      label: "אסוציאציות",
+      desc: "מופיעה מילה. אמור בקול את המילה הראשונה שעולה לך, תוך 3 שניות. אין תשובה לא נכונה.",
+      short: "מילה אחת, תגובה מהירה",
+      readLabel: "קרא",
+      lead: "המילה:",
+      liveSub: "אמור את המילה הראשונה שעולה לך",
+      speakSub: "מעולה! כשתסיים, פשוט תשתוק",
       rounds: 8,
       readMs: 0,
       responseWindowMs: 3000,
@@ -445,8 +825,13 @@ const CONFIG = {
       trackHesitations: false
     },
     yes_and: {
-      label: 'כן, ו...',
-      desc: 'בנה על המשפט בלי לסנן. קרא בכרטיס הצהוב, ענה כשהוא הופך לירוק.',
+      label: "כן, ו...",
+      desc: "מופיע משפט פתיחה. קרא אותו בזמן הספירה לאחור. כשמופיע \"דבר עכשיו!\" המשך אותו בקול: התחל ב\"כן, ו...\" והוסף רעיון משלך, בלי לסנן.",
+      short: "ממשיכים משפט ומוסיפים רעיון",
+      readLabel: "קרא את המשפט",
+      lead: "משפט הפתיחה:",
+      liveSub: "התחל ב\"כן, ו...\" והוסף רעיון משלך",
+      speakSub: "המשך לבנות. כשתסיים, פשוט תשתוק",
       rounds: 5,
       readMs: 'auto',
       responseWindowMs: 5000,
@@ -455,8 +840,13 @@ const CONFIG = {
       trackHesitations: true
     },
     thirty_sec_rant: {
-      label: 'דבר על זה',
-      desc: '30 שניות של דיבור רציף על נושא.',
+      label: "דבר על זה",
+      desc: "מקבלים נושא ו-3 שניות לחשוב. כשמופיע \"דבר עכשיו!\" מדברים עליו 30 שניות ברצף, בלי לעצור.",
+      short: "30 שניות ברצף על נושא",
+      readLabel: "קרא את הנושא",
+      lead: "הנושא:",
+      liveSub: "דבר על הנושא, בלי לעצור",
+      speakSub: "המשך לדבר עד שהפס נגמר",
       rounds: 1,
       readMs: 3000,
       responseWindowMs: 6000,
@@ -469,40 +859,303 @@ const CONFIG = {
 
 const PROMPTS = {
   yes_and: [
-    'אנחנו פותחים מסעדה שמגישה רק ארוחות בוקר בלילה.',
-    'מחר בבוקר כל המכוניות בעיר הופכות לאופניים.',
-    'החלטתי שמהיום כל הפגישות בחברה יתקיימו בהליכה.',
-    'השכן שלנו התחיל לגדל לאמה על המרפסת.',
-    'הבוס הודיע שמעכשיו עובדים רק בעמידה על רגל אחת.',
-    'מצאנו מפה ישנה במחסן של המשרד.',
-    'העירייה החליטה שכל הרמזורים ינגנו מוזיקה.',
-    'קיבלתי במתנה רובוט שמסרב לשטוף כלים.',
-    'אנחנו מארגנים טיול משפחתי לירח.',
-    'החתול שלי התחיל לענות לטלפון.',
-    'מהיום השרתים שלנו עובדים רק בימי שלישי.',
-    'פתחתי חנות שמוכרת רק דברים שאף אחד לא צריך.',
-    'המעלית בבניין תעבוד רק למי ששר.',
-    'החלטנו להחליף את כל הכיסאות במשרד בנדנדות.',
-    'גילינו שהמקרר שלנו יודע לדבר.'
+    "אנחנו פותחים מסעדה שמגישה רק ארוחות בוקר בלילה.",
+    "מחר בבוקר כל המכוניות בעיר הופכות לאופניים.",
+    "החלטתי שמהיום כל הפגישות בחברה יתקיימו בהליכה.",
+    "השכן שלנו התחיל לגדל לאמה על המרפסת.",
+    "הבוס הודיע שמעכשיו עובדים רק בעמידה על רגל אחת.",
+    "מצאנו מפה ישנה במחסן של המשרד.",
+    "העירייה החליטה שכל הרמזורים ינגנו מוזיקה.",
+    "קיבלתי במתנה רובוט שמסרב לשטוף כלים.",
+    "אנחנו מארגנים טיול משפחתי לירח.",
+    "החתול שלי התחיל לענות לטלפון.",
+    "מהיום השרתים שלנו עובדים רק בימי שלישי.",
+    "פתחתי חנות שמוכרת רק דברים שאף אחד לא צריך.",
+    "המעלית בבניין תעבוד רק למי ששר.",
+    "החלטנו להחליף את כל הכיסאות במשרד בנדנדות.",
+    "גילינו שהמקרר שלנו יודע לדבר.",
+    "השכנה מלמעלה פתחה בית ספר לריקוד לתרנגולות.",
+    "מהיום כל מי שמאחר לפגישה צריך לשיר את הסיכום.",
+    "הטוסטר שלנו התחיל לשלוח לי הודעות.",
+    "העיר שלנו זכתה בתחרות העיר הכי משעממת בעולם.",
+    "המדפסת במשרד הודיעה שהיא יוצאת לחופשה.",
+    "גיליתי שסבתא שלי היא בעצם מרגלת בדימוס.",
+    "אנחנו פותחים חנות גלידה עם טעמים של ארוחת צהריים.",
+    "הכלב של השכנים נבחר לוועד הבית.",
+    "מחר כולם בעבודה מגיעים בתחפושת של פינגווין.",
+    "בנינו מכונת זמן, אבל היא חוזרת רק חמש דקות אחורה.",
+    "מתברר שהמורה שלי לנהיגה היה נהג מרוצים.",
+    "העציץ במשרד קיבל קידום.",
+    "קיבלנו הזמנה לחתונה של שני רובוטים.",
+    "הסופרמרקט החליט שמשלמים רק בבדיחות.",
+    "השעון המעורר שלי התחיל לתת לי עצות לחיים.",
+    "אנחנו מתכננים מסיבת הפתעה לחייזר שגר בקומה שלוש.",
+    "המנהלת הודיעה שישיבת הצוות תתקיים בבריכה.",
+    "פתחנו פודקאסט שמדבר רק על כפיות.",
+    "מצאתי בכיס של המעיל כרטיס לוטו זוכה.",
+    "הגשם החליט לרדת רק על הבניין שלנו.",
+    "הוכרז יום חופש לאומי לכבוד חתולים.",
+    "החלטתי ללמוד לנגן בטובה במרפסת.",
+    "הרכבת החליטה לעצור רק בתחנות שהיא אוהבת.",
+    "הטלפון שלי התחיל לענות לשיחות במקומי.",
+    "הצוות שלנו נבחר לייצג את המדינה באולימפיאדת הישיבות.",
+    "נפתחה מסעדה שבה המלצרים הם תוכים.",
+    "בעל הבית החליט שהדירה שלנו תהיה גם מוזיאון.",
+    "חבר שלי מכר את המכונית וקנה גמל.",
+    "גילינו מעבר סודי מאחורי מכונת הקפה.",
+    "מהיום כל ההודעות בקבוצת ההורים נכתבות בחרוזים.",
+    "המזגן בעבודה התחיל לספר בדיחות.",
+    "אחי החליט להתחתן בתוך מעלית.",
+    "הזמינו אותנו להופיע בקרקס בתור לוליינים.",
+    "הבנק הודיע שמעכשיו הריבית משולמת בעוגיות.",
+    "התעוררתי הבוקר ואני מדבר רק בשפה של דולפינים.",
+    "אמא שלי פתחה ערוץ וידאו על קיפול כביסה.",
+    "החלטנו שבמשרד כל יום חמישי הוא יום פיג'מה.",
+    "השכן קנה פיל וטוען שזה כלב גדול.",
+    "בנינו רובוט שמכין קפה, אבל הוא מכין רק תה.",
+    "מצאנו דינוזאור קטן בגינה הציבורית.",
+    "המשרד שלנו עובר לגור על ספינה.",
+    "הילדים הצביעו שארוחת הערב תהיה רק קינוחים.",
+    "המחשב שלי ביקש יום מחלה.",
+    "אנחנו פותחים מלון לכלבים עם ספא.",
+    "הבוס ביקש שכל מצגת תכלול לפחות שיר אחד.",
+    "העירייה שתלה עצי שוקולד בשדרה.",
+    "גיליתי שהחתול שלי מנהל עסק באינטרנט.",
+    "מהיום נוסעים לעבודה ברכבל.",
+    "הזמנתי פיצה, ובמקומה הגיע קוסם.",
+    "נהג האוטובוס מבקש מכל נוסע לספר בדיחה.",
+    "השכנים פתחו גן חיות קטן בחניה.",
+    "המקרר הודיע שהוא בדיאטה.",
+    "הזמינו אותי להיות שופט בתחרות חומוס ארצית.",
+    "בשנה הבאה כל ילד בכיתה מקבל רובוט עוזר.",
+    "החלטתי לגדל עגבניות על הגג של המשרד."
   ],
   word_association: [
-    'מעלית', 'גשם', 'פגישה', 'קפה', 'תקציב', 'אופנוע', 'שעון', 'חלון',
-    'סולם', 'דלת', 'ים', 'מפתח', 'ענן', 'רכבת', 'לימון', 'מדבר',
-    'גשר', 'ספר', 'שוק', 'כוכב', 'חשמל', 'שמיכה', 'מגדלור', 'דבש'
+    "מעלית",
+    "גשם",
+    "פגישה",
+    "קפה",
+    "תקציב",
+    "אופנוע",
+    "שעון",
+    "חלון",
+    "סולם",
+    "דלת",
+    "ים",
+    "מפתח",
+    "ענן",
+    "רכבת",
+    "לימון",
+    "מדבר",
+    "גשר",
+    "ספר",
+    "שוק",
+    "כוכב",
+    "חשמל",
+    "שמיכה",
+    "מגדלור",
+    "דבש",
+    "שוקולד",
+    "מטרייה",
+    "חתול",
+    "כלב",
+    "פיצה",
+    "חוף",
+    "הר",
+    "יער",
+    "נהר",
+    "ירח",
+    "שמש",
+    "שלג",
+    "רוח",
+    "ברק",
+    "פרפר",
+    "דבורה",
+    "תפוח",
+    "בננה",
+    "אבטיח",
+    "עוגה",
+    "לחם",
+    "גבינה",
+    "מרק",
+    "סלט",
+    "כריך",
+    "מזלג",
+    "כוס",
+    "צלחת",
+    "מקרר",
+    "תנור",
+    "מיטה",
+    "כרית",
+    "מראה",
+    "מנורה",
+    "ספה",
+    "שטיח",
+    "מחשב",
+    "טלפון",
+    "מקלדת",
+    "מסך",
+    "מצלמה",
+    "אוזניות",
+    "שלט",
+    "סוללה",
+    "מטען",
+    "אוטובוס",
+    "מטוס",
+    "אונייה",
+    "אופניים",
+    "מונית",
+    "רמזור",
+    "כביש",
+    "צומת",
+    "תחנה",
+    "מזוודה",
+    "דרכון",
+    "מלון",
+    "מפה",
+    "מצפן",
+    "אוהל",
+    "מדורה",
+    "תרמיל",
+    "כובע",
+    "משקפיים",
+    "נעליים",
+    "גרביים",
+    "חולצה",
+    "מעיל",
+    "צעיף",
+    "גיטרה",
+    "תוף",
+    "פסנתר",
+    "שיר",
+    "ריקוד",
+    "סרט",
+    "תיאטרון",
+    "קרקס",
+    "ליצן",
+    "קוסם",
+    "בלון",
+    "מתנה",
+    "חתונה",
+    "מסיבה",
+    "זיקוקים",
+    "כדורגל",
+    "כדורסל",
+    "בריכה",
+    "ריצה",
+    "מדליה",
+    "גביע",
+    "שופט",
+    "משרוקית",
+    "משרד",
+    "בוס",
+    "מייל",
+    "מצגת",
+    "חופשה",
+    "משכורת",
+    "מדפסת",
+    "עט",
+    "מחברת",
+    "תיק",
+    "מורה",
+    "מבחן",
+    "פיל",
+    "ג'ירפה",
+    "אריה",
+    "קוף",
+    "דולפין",
+    "לוויתן",
+    "תמנון",
+    "צב",
+    "ינשוף",
+    "תרנגול",
+    "פינגווין",
+    "דינוזאור",
+    "רובוט",
+    "חללית",
+    "חייזר",
+    "דרקון",
+    "טירה",
+    "אוצר",
+    "פיראט",
+    "גלידה",
+    "פופקורן",
+    "סבתא",
+    "שכנים",
+    "מוזיאון",
+    "ספרייה",
+    "סופרמרקט",
+    "מאפייה",
+    "פלאפל",
+    "חומוס",
+    "קקטוס",
+    "פרח",
+    "עץ",
+    "גינה",
+    "מזרקה",
+    "יום הולדת",
+    "לוח זמנים",
+    "ראיון עבודה",
+    "בית ספר",
+    "גן חיות"
   ],
+  word_abstract: ["חופש", "אומץ", "זמן", "סוד", "הצלחה", "כעס", "שקט", "זיכרון", "חלום", "אמון", "הפתעה", "סבלנות", "צחוק", "פחד", "געגוע", "תקווה", "בלגן", "שגרה", "סקרנות", "גאווה", "אחריות", "שינוי", "מזל", "חברות", "נוסטלגיה", "רעיון", "עתיד", "ילדות", "כבוד", "שמחה", "עייפות", "אהבה", "התחלה", "סוף", "הרפתקה", "ביטחון", "יצירתיות", "מנוחה", "לחץ", "חוכמה"],
   thirty_sec_rant: [
-    'למה מכונות כביסה תמיד מעלימות גרב אחת',
-    'מענה קולי בשירות לקוחות',
-    'הודעות קוליות של שלוש דקות',
-    'תחבורה ציבורית ביום שישי',
-    'קבוצות וואטסאפ של הורים',
-    'למה כל אפליקציה רוצה לשלוח התראות',
-    'חניה במרכז העיר',
-    'אנשים שמדברים ברמקול בטלפון בציבור',
-    'פגישה שהייתה יכולה להיות מייל',
-    'עדכוני תוכנה בזמן הכי לא נוח',
-    'תורים בדואר',
-    'ההרגל לבדוק את הטלפון כל דקה'
+    "למה מכונות כביסה תמיד מעלימות גרב אחת",
+    "מענה קולי בשירות לקוחות",
+    "הודעות קוליות של שלוש דקות",
+    "תחבורה ציבורית ביום שישי",
+    "קבוצות וואטסאפ של הורים",
+    "למה כל אפליקציה רוצה לשלוח התראות",
+    "חניה במרכז העיר",
+    "אנשים שמדברים ברמקול בטלפון בציבור",
+    "פגישה שהייתה יכולה להיות מייל",
+    "עדכוני תוכנה בזמן הכי לא נוח",
+    "תורים בדואר",
+    "ההרגל לבדוק את הטלפון כל דקה",
+    "הדבר הכי טוב בבוקר",
+    "למה כולם צריכים ללמוד לבשל",
+    "החופשה המושלמת בעיניך",
+    "הסדרה האחרונה שראית",
+    "מה היית משנה בעיר שלך",
+    "למה חתולים שולטים באינטרנט",
+    "איך נראה יום עבודה מושלם",
+    "המאכל הכי מוערך מדי",
+    "למה כולם מאחרים לחתונות",
+    "הטכנולוגיה שהכי משגעת אותך",
+    "קניות באינטרנט מול קניות בחנות",
+    "כלבים או חתולים",
+    "למה כל כך קשה לקום מוקדם",
+    "הדרך הכי טובה לבלות סוף שבוע",
+    "מה הופך מורה למורה טוב",
+    "עבודה מהבית",
+    "חדר כושר בינואר",
+    "למה אף אחד לא קורא את התנאים וההגבלות",
+    "המצאה שהעולם עדיין צריך",
+    "איך לשרוד חתונה של 500 איש",
+    "הרגל קטן ששיפר לך את החיים",
+    "מה היית עושה עם מיליון שקל",
+    "למה פקקים מוציאים מכולם את הגרוע",
+    "ים או הרים",
+    "ארוחות שישי משפחתיות",
+    "העתיד של המכוניות",
+    "למה אנשים אוהבים לצלם אוכל",
+    "מוזיקה בזמן עבודה",
+    "הספר או הסרט שהכי השפיע עליך",
+    "מה היית עושה אם היית ראש העיר ליום אחד",
+    "למה כל כך קשה להחליט מה לאכול",
+    "שכנים רועשים",
+    "קיץ בישראל",
+    "איך מציגים רעיון בפגישה",
+    "רשתות חברתיות",
+    "למה חשוב לטייל",
+    "הדרך הכי טובה ללמוד שפה חדשה",
+    "יום שבו הכל משתבש",
+    "לנסוע לעבודה באופניים",
+    "חיות מחמד במשרד",
+    "האם ארוחת בוקר היא הארוחה הכי חשובה",
+    "דבר אחד שהיית מלמד כל ילד",
+    "למה תמיד שוכחים משהו כשיוצאים מהבית"
   ]
 };
 
@@ -815,32 +1468,435 @@ class AudioEngine {
 }
 
 /* ============================================================
- * UI layer: icons, charts, rings
+ * UI layer (2026-09-28 redesign): cartoon game look, level map,
+ * stars, music and sound effects. Measurement code above is unchanged.
  * ============================================================ */
 const $ = id => document.getElementById(id);
 
+const svgI = (d, extra) => '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"' + (extra || '') + '>' + d + '</svg>';
 const Icons = {
-  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',
-  back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  flame: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.2 1.2-3.6 2.2-4.6.2 1.6 1 2.6 2 3 0-3.2-.6-5.6.8-8.4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>',
-  mic: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
-  bolt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 14h6l-1 7 8-11h-6z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>',
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+  back: svgI('<path d="M9 5l7 7-7 7"/>'),
+  mic: svgI('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>'),
+  eye: svgI('<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
+  hush: svgI('<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l4 6M21 9l-4 6"/>'),
+  music: svgI('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'),
+  musicOff: svgI('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M3 3l18 18"/>'),
+  bell: svgI('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>'),
+  gear: svgI('<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>'),
+  close: svgI('<path d="M6 6l12 12M18 6L6 18"/>', ' stroke-width="3.2"'),
+  lock: svgI('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+  shield: svgI('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>'),
+  clock: svgI('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>'),
+  check: svgI('<path d="M5 12l5 5 9-10"/>', ' stroke-width="3"'),
+  x: svgI('<path d="M7 7l10 10M17 7L7 17"/>', ' stroke-width="3"'),
+  pause: svgI('<path d="M9 6v12M15 6v12"/>', ' stroke-width="3"'),
+  wave: svgI('<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>'),
+  bolt: svgI('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>'),
+  target: svgI('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>'),
+  smile: svgI('<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9.5h.01M15 9.5h.01"/>'),
+  users: svgI('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>'),
+  flame: svgI('<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.2 1.2-3.6 2.2-4.6.2 1.6 1 2.6 2 3 0-3.2-.6-5.6.8-8.4z"/>'),
+  bulb: svgI('<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>'),
+  map: svgI('<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'),
+  dumbbell: svgI('<path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/>'),
+  question: svgI('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7M12 17h.01"/>'),
+  trophy: svgI('<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8M10 17h4"/>'),
+  download: svgI('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'),
+  trash: svgI('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'),
+  redo: svgI('<path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/>'),
   modes: {
-    word_association: { bg: 'rgba(61,220,107,.16)', fg: '#3DDC6B',
-      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/></svg>' },
-    yes_and: { bg: 'rgba(253,184,51,.16)', fg: '#FDB833',
-      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>' },
-    thirty_sec_rant: { bg: 'rgba(255,210,31,.14)', fg: '#FFD21F',
-      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' }
+    word_association: { bg: '#3E7B35',
+      svg: svgI('<circle cx="8" cy="12" r="4"/><circle cx="16" cy="12" r="4"/>') },
+    yes_and: { bg: '#D27F22',
+      svg: svgI('<path d="M12 5v14M5 12h14"/>', ' stroke-width="3"') },
+    thirty_sec_rant: { bg: '#C73A34',
+      svg: svgI('<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>') }
+  }
+};
+const STAR_PATH = 'M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z';
+const starSvg = on => '<svg class="star ' + (on ? 'on' : 'off') + '" viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR_PATH + '"/></svg>';
+const starsRow = (n, total) => { let h = ''; for (let i = 0; i < (total || 3); i++) h += starSvg(i < n); return h; };
+const secs = ms => { const v = ms / 1000; return (Number.isInteger(v) ? String(v) : v.toFixed(1)) + ' שניות'; };
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ============================================================
+ * Stages: 14 steps that mix the 3 modes with rising difficulty.
+ * Only the per-round config changes. The measurement code is shared.
+ * Star rules (cumulative):
+ *   rounds modes: 1 = answered >= min, 2 = + median <= t2, 3 = + all answered and median <= t3
+ *   rant: 1 = started speaking in time, 2 = + reaction <= t2, 3 = + hesitations <= maxHes
+ * ============================================================ */
+const STAGES = [
+  { id: 1, mode: 'word_association', name: 'חימום', tier: 'easy', rounds: 6, responseWindowMs: 3500, min: 4, t2: 1800, t3: 1300,
+    tip: 'אמור את המילה הראשונה שעולה, גם אם היא מוזרה. אין טעויות.' },
+  { id: 2, mode: 'yes_and', name: 'כן, ו... ראשון', tier: 'easy', rounds: 3, responseWindowMs: 6000, min: 2, t2: 2500, t3: 1800,
+    tip: 'התחל ב"כן, ו..." ואז הוסף פרט אחד בלבד. זה מספיק.' },
+  { id: 3, mode: 'word_association', name: 'אסוציאציות בקצב', tier: 'easy', rounds: 8, responseWindowMs: 3000, min: 6, t2: 1500, t3: 1100,
+    tip: 'אל תחפש מילה חכמה. הראשונה שעולה היא הנכונה.' },
+  { id: 4, mode: 'thirty_sec_rant', name: 'דבר 20 שניות', rounds: 1, readMs: 4000, responseWindowMs: 6000, speakMs: 20000, t2: 3000, maxHes: 2,
+    tip: 'נתקעת? תאר מה אתה רואה, או תן דוגמה מהחיים.' },
+  { id: 5, mode: 'yes_and', name: 'כן, ו... בקצב', tier: 'all', rounds: 5, responseWindowMs: 5000, min: 3, t2: 2000, t3: 1500,
+    tip: 'אל תתכנן את כל התשובה. התחל לדבר, והרעיון יגיע תוך כדי.' },
+  { id: 6, mode: 'word_association', name: 'מילים מופשטות', tier: 'abstract', rounds: 8, responseWindowMs: 3000, min: 6, t2: 1600, t3: 1200,
+    tip: 'מילה מופשטת? אמור תמונה שעולה לך. למשל "חופש" ואז "ים".' },
+  { id: 7, mode: 'thirty_sec_rant', name: 'דבר 30 שניות', rounds: 1, readMs: 3000, responseWindowMs: 6000, speakMs: 30000, t2: 2500, maxHes: 2,
+    tip: 'בנה שלושה חלקים: דעה, דוגמה, סיכום.' },
+  { id: 8, mode: 'yes_and', name: 'כן, ו... מהיר', tier: 'hard', rounds: 5, responseWindowMs: 4000, min: 3, t2: 1800, t3: 1300,
+    tip: 'הוסף פרט מצחיק או מפתיע. ככל שזה מוגזם יותר, קל יותר.' },
+  { id: 9, mode: 'word_association', name: 'ברק', tier: 'mix', rounds: 10, responseWindowMs: 2500, min: 7, t2: 1300, t3: 1000,
+    tip: 'נשום לפני הסבב, ודבר מיד כשמופיע "דבר עכשיו!".' },
+  { id: 10, mode: 'thirty_sec_rant', name: 'דבר 45 שניות', rounds: 1, readMs: 3000, responseWindowMs: 5000, speakMs: 45000, t2: 2000, maxHes: 3,
+    tip: 'נגמרו הרעיונות? אמור "ועוד דבר..." ועבור לנקודה חדשה.' },
+  { id: 11, mode: 'yes_and', name: 'מאסטר כן, ו...', tier: 'hard', rounds: 6, responseWindowMs: 3500, min: 4, t2: 1600, t3: 1200,
+    tip: 'אחרי "כן, ו..." ענה על שאלה אחת: מי, איפה, או מה קרה אחר כך.' },
+  { id: 12, mode: 'word_association', name: 'ברק כפול', tier: 'mix', rounds: 12, responseWindowMs: 2000, min: 9, t2: 1100, t3: 900,
+    tip: 'אל תעצור לשפוט. מילה מוזרה זה בסדר, העיקר מהר.' },
+  { id: 13, mode: 'thirty_sec_rant', name: 'דקה שלמה', rounds: 1, readMs: 2000, responseWindowMs: 4000, speakMs: 60000, t2: 1500, maxHes: 4,
+    tip: 'דבר כאילו אתה מספר לחבר. לא צריך להיות מושלם.' },
+  { id: 14, mode: 'yes_and', name: 'הגמר', tier: 'all', rounds: 8, responseWindowMs: 3000, min: 6, t2: 1500, t3: 1100,
+    tip: 'שלב אחרון! היה נועז, והוסף רעיון חדש בכל פעם.' }
+];
+
+const Stages = {
+  byId(id) { return STAGES.find(s => s.id === id) || null; },
+  cfg(st) {
+    const cfg = Object.assign({}, CONFIG.modes[st.mode]);
+    ['rounds', 'readMs', 'responseWindowMs', 'speakMs'].forEach(k => { if (st[k] !== undefined) cfg[k] = st[k]; });
+    return cfg;
+  },
+  isRant(st) { return st.mode === 'thirty_sec_rant'; },
+  goals(st) {
+    if (this.isRant(st)) {
+      return [
+        'התחלת לדבר תוך ' + secs(st.responseWindowMs),
+        'וגם התחלת תוך ' + secs(st.t2),
+        'וגם עד ' + st.maxHes + ' היסוסים'
+      ];
+    }
+    return [
+      'ענית על ' + st.min + ' מתוך ' + st.rounds + ' לפחות',
+      'וגם חציון זמן תגובה עד ' + secs(st.t2),
+      'וגם ענית על הכול, עם חציון עד ' + secs(st.t3)
+    ];
+  },
+  checks(st, rec) {
+    const med = rec.medianLatencyMs;
+    if (this.isRant(st)) {
+      const a = rec.answeredRounds >= 1;
+      const b = a && med !== null && med <= st.t2;
+      const c = b && rec.hesitationsCount !== null && rec.hesitationsCount <= st.maxHes;
+      return [a, b, c];
+    }
+    const a = rec.answeredRounds >= st.min;
+    const b = a && med !== null && med <= st.t2;
+    const c = b && rec.answeredRounds === rec.totalRounds && med <= st.t3;
+    return [a, b, c];
+  },
+  stars(st, rec) { return this.checks(st, rec).filter(Boolean).length; }
+};
+
+/* Progress: best stars per stage. Separate key, the history schema is untouched. */
+const Progress = {
+  key: 'quickflow_progress',
+  data: { version: 1, stars: {} },
+  load() {
+    try {
+      const d = JSON.parse(localStorage.getItem(this.key));
+      if (d && d.version === 1 && d.stars && typeof d.stars === 'object') this.data = d;
+    } catch (e) { /* keep defaults */ }
+  },
+  save() { try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch (e) { /* memory only */ } },
+  stars(id) { const n = this.data.stars[id]; return typeof n === 'number' ? Math.max(0, Math.min(3, n)) : 0; },
+  unlocked(id) { return id === 1 || this.stars(id - 1) >= 1; },
+  record(id, n) { const prev = this.stars(id); if (n > prev) { this.data.stars[id] = n; this.save(); } return prev; },
+  total() { return STAGES.reduce((a, st) => a + this.stars(st.id), 0); },
+  frontier() {
+    return STAGES.find(st => this.stars(st.id) < 1) || STAGES.find(st => this.stars(st.id) < 3) || STAGES[STAGES.length - 1];
+  },
+  plan() {
+    const i = STAGES.indexOf(this.frontier());
+    return STAGES.slice(i, i + 3);
+  },
+  reset() { this.data = { version: 1, stars: {} }; this.save(); }
+};
+
+/* Prompt pools per difficulty tier, and a recently-used list so the
+ * next sessions do not repeat the same prompts. */
+const Pools = {
+  get(mode, tier) {
+    if (mode === 'word_association') {
+      if (tier === 'abstract') return PROMPTS.word_abstract;
+      if (tier === 'easy') return PROMPTS.word_association;
+      return PROMPTS.word_association.concat(PROMPTS.word_abstract);
+    }
+    if (mode === 'yes_and') {
+      const byLen = PROMPTS.yes_and.slice().sort((a, b) => a.length - b.length);
+      const half = Math.ceil(byLen.length / 2);
+      if (tier === 'easy') return byLen.slice(0, half);
+      if (tier === 'hard') return byLen.slice(-half);
+      return PROMPTS.yes_and;
+    }
+    return PROMPTS[mode];
+  }
+};
+const Recent = {
+  key: 'quickflow_recent_prompts',
+  read() {
+    try { const v = JSON.parse(localStorage.getItem(this.key) || '{}'); return v && typeof v === 'object' ? v : {}; }
+    catch (e) { return {}; }
+  },
+  pick(mode, pool, n) {
+    const data = this.read();
+    const recent = Array.isArray(data[mode]) ? data[mode].filter(p => typeof p === 'string') : [];
+    const fresh = Util.shuffle(pool.filter(p => !recent.includes(p)));
+    const picked = fresh.slice(0, n);
+    const oldFirst = recent.filter(p => pool.includes(p));
+    for (let i = 0; picked.length < n && i < oldFirst.length; i++) picked.push(oldFirst[i]);
+    const keep = Math.max(n, Math.floor(PROMPTS[mode].length * 0.6));
+    data[mode] = recent.filter(p => !picked.includes(p)).concat(picked).slice(-keep);
+    try { localStorage.setItem(this.key, JSON.stringify(data)); } catch (e) { /* ignore */ }
+    return picked;
   }
 };
 
-const Draw = {
-  modeIcon(mode) {
-    const m = Icons.modes[mode];
-    return '<span class="row-icon" style="background:' + m.bg + ';color:' + m.fg + '">' + m.svg + '</span>';
+/* ============================================================
+ * Sound: background music + short effects, all made with Web Audio.
+ * Own AudioContext, separate from the mic context.
+ * SAFETY: the mic has no echo cancellation, so before the mic opens we
+ * fade the output to zero and SUSPEND this context (silence()).
+ * It only runs again on non-listening screens (scene = true).
+ * ============================================================ */
+const Sound = {
+  musicKey: 'quickflow_music',
+  sfxKey: 'quickflow_sfx',
+  music: true, sfx: true, scene: true, unlocked: false,
+  ctx: null, out: null, musicBus: null, noise: null,
+  timer: null, nextTime: 0, step: 0, isOpen: false, closing: null, sfxUntil: 0,
+  bpm: 112, vol: 0.55,
+
+  init() {
+    try {
+      this.music = localStorage.getItem(this.musicKey) !== 'off';
+      this.sfx = localStorage.getItem(this.sfxKey) !== 'off';
+    } catch (e) { /* defaults */ }
+    const wake = e => {
+      const t = e.target && e.target.closest ? e.target : null;
+      if (t && t.closest('[data-sound-toggle]')) return;
+      this.unlocked = true;
+      if (t && t.closest('[data-mic-start]')) return; // mic is about to open, stay quiet
+      this.apply();
+    };
+    document.addEventListener('pointerdown', wake, true);
+    document.addEventListener('keydown', wake, true);
+    document.addEventListener('visibilitychange', () => this.apply());
+  },
+  supported() { return !!(window.AudioContext || window.webkitAudioContext); },
+  persist() {
+    try {
+      localStorage.setItem(this.musicKey, this.music ? 'on' : 'off');
+      localStorage.setItem(this.sfxKey, this.sfx ? 'on' : 'off');
+    } catch (e) { /* ignore */ }
+  },
+  toggleMusic() {
+    if (!this.unlocked && this.music) { this.unlocked = true; this.apply(); App.renderSoundUi(); return; }
+    this.unlocked = true;
+    this.music = !this.music;
+    this.persist(); this.apply(); App.renderSoundUi();
+  },
+  toggleSfx() {
+    this.unlocked = true;
+    this.sfx = !this.sfx;
+    this.persist(); App.renderSoundUi();
+    if (this.sfx) this.play('pop');
+  },
+  setScene(ok) { this.scene = ok; this.apply(); App.renderSoundUi(); },
+  gate() { return this.scene && this.unlocked && !document.hidden && this.supported(); },
+  shouldRun() { return this.gate() && (this.music || performance.now() < this.sfxUntil); },
+
+  ensure() {
+    if (this.ctx) return true;
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new Ctx();
+      const comp = ctx.createDynamicsCompressor();
+      this.out = ctx.createGain(); this.out.gain.value = 0;
+      this.musicBus = ctx.createGain(); this.musicBus.gain.value = 0;
+      this.musicBus.connect(this.out);
+      this.out.connect(comp); comp.connect(ctx.destination);
+      const len = Math.floor(ctx.sampleRate * 0.2);
+      this.noise = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = this.noise.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      this.ctx = ctx;
+      return true;
+    } catch (e) { return false; }
+  },
+  ramp(param, to, sec) {
+    const t = this.ctx.currentTime;
+    param.cancelScheduledValues(t);
+    param.setValueAtTime(param.value, t);
+    param.linearRampToValueAtTime(to, t + sec);
+  },
+  open() {
+    if (!this.ensure()) return Promise.resolve(false);
+    const ctx = this.ctx;
+    this.closing = null;
+    const p = ctx.state === 'running' ? Promise.resolve() : ctx.resume();
+    return p.then(() => {
+      if (!this.shouldRun()) return false;
+      this.ramp(this.out.gain, 1, 0.05);
+      this.isOpen = true;
+      return true;
+    }, () => false);
+  },
+  close(ms) {
+    if (!this.ctx) { this.isOpen = false; return Promise.resolve(); }
+    if (this.closing) return this.closing;
+    const ctx = this.ctx;
+    const running = ctx.state === 'running';
+    if (running) this.ramp(this.out.gain, 0, ms / 1000);
+    const done = new Promise(res => setTimeout(async () => {
+      if (!this.shouldRun()) {
+        clearInterval(this.timer); this.timer = null;
+        this.out.gain.cancelScheduledValues(0);
+        this.out.gain.value = 0;
+        this.musicBus.gain.cancelScheduledValues(0);
+        this.musicBus.gain.value = 0;
+        try { if (ctx.state !== 'closed') await ctx.suspend(); } catch (e) { /* ignore */ }
+        this.isOpen = false;
+      }
+      if (this.closing === done) this.closing = null;
+      res();
+    }, running ? ms + 40 : 0));
+    this.closing = done;
+    return done;
+  },
+  apply() {
+    if (this.shouldRun()) {
+      this.open().then(ok => {
+        if (!ok) return;
+        if (this.music) this.startMusic(); else this.stopMusic();
+      });
+    } else {
+      this.close(300);
+    }
+  },
+  /* Called right before the mic opens. Resolves only when the output is silent and suspended. */
+  silence() {
+    this.scene = false;
+    App.renderSoundUi();
+    return this.close(250);
+  },
+  /* Extra guard, called from the mic loop: if anything is still open, shut it. */
+  guard() {
+    if (this.closing || !this.ctx) return;
+    if (this.isOpen || this.ctx.state === 'running') this.close(60);
   },
 
+  startMusic() {
+    this.ramp(this.musicBus.gain, this.vol, 1.5);
+    if (!this.timer) {
+      this.nextTime = this.ctx.currentTime + 0.1;
+      this.timer = setInterval(() => this.schedule(), 25);
+    }
+  },
+  stopMusic() {
+    if (!this.ctx) return;
+    this.ramp(this.musicBus.gain, 0, 0.4);
+    setTimeout(() => { if (!this.music) { clearInterval(this.timer); this.timer = null; } }, 450);
+  },
+
+  // I - vi - IV - V in C, 8 bars, eighth notes. 0 = rest.
+  chords: [[60, 64, 67], [57, 60, 64], [53, 57, 60], [55, 59, 62]],
+  bass: [36, 33, 29, 31],
+  melody: [
+    [72, 0, 76, 79, 76, 0, 72, 74], [76, 0, 72, 69, 72, 0, 0, 0],
+    [69, 72, 77, 76, 74, 0, 72, 0], [74, 0, 71, 74, 79, 0, 0, 0],
+    [79, 0, 76, 0, 72, 74, 76, 0], [72, 0, 69, 72, 76, 0, 74, 0],
+    [72, 0, 77, 0, 76, 74, 72, 0], [71, 74, 79, 0, 74, 0, 71, 0]
+  ],
+  schedule() {
+    const ctx = this.ctx;
+    if (!ctx || ctx.state !== 'running') return;
+    const dur = 60 / this.bpm / 2;
+    if (this.nextTime < ctx.currentTime - 0.1) this.nextTime = ctx.currentTime + 0.05;
+    while (this.nextTime < ctx.currentTime + 0.15) {
+      this.playStep(this.step, this.nextTime, dur);
+      this.nextTime += dur;
+      this.step = (this.step + 1) % 64;
+    }
+  },
+  playStep(i, t, d) {
+    const bar = Math.floor(i / 8), pos = i % 8;
+    const chord = this.chords[bar % 4];
+    const m = this.melody[bar][pos];
+    if (m) this.tone(m, t, d * 1.7, 'triangle', 0.16, this.musicBus);
+    this.tone(chord[[0, 1, 2, 1][pos % 4]], t, d * 0.9, 'square', 0.025, this.musicBus, 1400);
+    if (pos === 0 || pos === 4) this.tone(this.bass[bar % 4], t, d * 1.8, 'sine', 0.3, this.musicBus);
+    if (pos === 6) this.tone(this.bass[bar % 4] + 7, t, d * 1.2, 'sine', 0.22, this.musicBus);
+    if (pos % 2 === 1) this.hat(t, 0.035);
+  },
+  tone(midi, t, len, type, vol, dest, lp) {
+    const ctx = this.ctx;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = type;
+    o.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+    o.connect(g);
+    if (lp) {
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp;
+      g.connect(f); f.connect(dest);
+    } else {
+      g.connect(dest);
+    }
+    o.start(t); o.stop(t + len + 0.05);
+  },
+  hat(t, vol) {
+    const ctx = this.ctx;
+    const src = ctx.createBufferSource(); src.buffer = this.noise;
+    const f = ctx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 7000;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+    src.connect(f); f.connect(g); g.connect(this.musicBus);
+    src.start(t); src.stop(t + 0.06);
+  },
+
+  /* Short effects. Never while the mic listens (gate() is false then). */
+  play(name, n) {
+    if (!this.sfx || !this.gate()) return;
+    this.sfxUntil = performance.now() + 1800;
+    this.open().then(ok => {
+      if (!ok) return;
+      const t = this.ctx.currentTime + 0.02;
+      if (name === 'star') {
+        const base = [76, 79, 84][n || 0];
+        this.tone(base, t, 0.35, 'triangle', 0.35, this.out);
+        this.tone(base + 12, t + 0.06, 0.4, 'sine', 0.2, this.out);
+      } else if (name === 'win') {
+        [72, 76, 79, 84].forEach((m, k) => this.tone(m, t + k * 0.1, 0.4, 'triangle', 0.28, this.out));
+      } else if (name === 'soft') {
+        [67, 64].forEach((m, k) => this.tone(m, t + k * 0.14, 0.35, 'triangle', 0.22, this.out));
+      } else {
+        this.tone(84, t, 0.09, 'sine', 0.22, this.out);
+      }
+      if (this.music) this.startMusic();
+      setTimeout(() => this.apply(), 1900);
+    });
+  }
+};
+
+/* ============================================================
+ * Drawing helpers
+ * ============================================================ */
+const Draw = {
+  modeIcon(mode, extraClass) {
+    const m = Icons.modes[mode];
+    return '<span class="row-icon' + (extraClass ? ' ' + extraClass : '') + '" style="background:' + m.bg + '">' + m.svg + '</span>';
+  },
   ring(pct, size, sw, color, text) {
     const r = (size - sw) / 2;
     const c = 2 * Math.PI * r;
@@ -854,7 +1910,6 @@ const Draw = {
       (text ? '<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">' + text + '</text>' : '') +
       '</svg>';
   },
-
   // 7-day chart. Time runs right-to-left (RTL): oldest on the right, today on the left.
   week(counts, labels) {
     const w = 360, h = 104, padX = 20, top = 16, bottom = 64;
@@ -869,22 +1924,48 @@ const Draw = {
     s += '<polyline class="ln" points="' + line + '"/>';
     pts.forEach((p, i) => {
       const today = i === 6;
-      s += '<circle class="node' + (today ? ' today' : '') + '" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="13"/>';
-      s += '<text class="v' + (today ? ' today' : '') + '" x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" text-anchor="middle" dominant-baseline="central">' + p.v + '</text>';
+      s += '<circle class="cnode' + (today ? ' today' : '') + '" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="13"/>';
+      s += '<text class="v" x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" text-anchor="middle" dominant-baseline="central">' + p.v + '</text>';
       s += '<text class="d" x="' + p.x.toFixed(1) + '" y="' + (h - 8) + '" text-anchor="middle">' + labels[i] + '</text>';
     });
     return s + '</svg>';
-  },
+  }
+};
 
+/* Confetti on a canvas, no library. Skipped when reduced motion is on. */
+const Fx = {
+  reduced() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; },
   confetti() {
-    const colors = ['#F0544F', '#FFD21F', '#3DDC6B', '#FDB833', '#B06CF0', '#4AA8F0'];
-    const spots = [
-      [-14, '8%', -30], [-18, '22%', 20], [44, '30%', 60], [48, '72%', -20],
-      [-10, '86%', 40], [40, '94%', -50], [-20, '55%', 15]
-    ];
-    return '<span class="confetti" aria-hidden="true">' + spots.map((sp, i) =>
-      '<i style="top:' + sp[0] + 'px;right:' + sp[1] + ';background:' + colors[i % colors.length] +
-      ';transform:rotate(' + sp[2] + 'deg);animation-delay:' + (i * 40) + 'ms"></i>').join('') + '</span>';
+    if (this.reduced()) return;
+    const c = document.createElement('canvas');
+    c.className = 'fx-canvas';
+    c.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(c);
+    const dpr = window.devicePixelRatio || 1;
+    c.width = innerWidth * dpr; c.height = innerHeight * dpr;
+    const g = c.getContext('2d');
+    g.scale(dpr, dpr);
+    const colors = ['#FFC83D', '#F3A33A', '#7BC06B', '#C73A34', '#FDEBC8', '#4AA8F0'];
+    const parts = Array.from({ length: 140 }, () => ({
+      x: innerWidth / 2 + (Math.random() - .5) * 80, y: innerHeight * .35,
+      vx: (Math.random() - .5) * 13, vy: -Math.random() * 13 - 4,
+      r: Math.random() * Math.PI, vr: (Math.random() - .5) * .35,
+      w: 6 + Math.random() * 6, h: 10 + Math.random() * 8, c: colors[Math.floor(Math.random() * colors.length)]
+    }));
+    const t0 = performance.now();
+    const tick = now => {
+      const el = now - t0;
+      g.clearRect(0, 0, innerWidth, innerHeight);
+      parts.forEach(p => {
+        p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        g.save(); g.translate(p.x, p.y); g.rotate(p.r);
+        g.globalAlpha = Math.max(0, 1 - el / 2600);
+        g.fillStyle = p.c; g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r)));
+        g.restore();
+      });
+      if (el < 2600) requestAnimationFrame(tick); else c.remove();
+    };
+    requestAnimationFrame(tick);
   }
 };
 
@@ -932,54 +2013,170 @@ const Origin = {
   }
 };
 
+
+/* Steps shown before a stage or a free session. Numbers come from the real config. */
+const Steps = {
+  for(mode, cfg) {
+    const w = secs(cfg.responseWindowMs);
+    if (mode === 'word_association') return [
+      ['מופיעה מילה', 'והמשחק מתחיל להקשיב מיד.'],
+      ['דבר עכשיו!', 'אמור בקול את המילה הראשונה שעולה לך. יש ' + w + ' להתחיל.'],
+      ['שתוק כשסיימת', 'הסבב נגמר לבד, ועוברים למילה הבאה.']
+    ];
+    if (mode === 'yes_and') return [
+      ['קרא את המשפט', 'יש כמה שניות, עם ספירה לאחור.'],
+      ['דבר עכשיו!', 'התחל ב"כן, ו..." והוסף רעיון משלך. יש ' + w + ' להתחיל.'],
+      ['שתוק כשסיימת', 'אחרי ' + secs(cfg.endOnSilenceMs) + ' של שקט הסבב נגמר. אפשר לדבר עד ' + secs(cfg.speakMs) + '.']
+    ];
+    return [
+      ['קרא את הנושא', 'יש ' + secs(cfg.readMs) + ' לחשוב, עם ספירה לאחור.'],
+      ['דבר עכשיו!', 'דבר על הנושא ' + secs(cfg.speakMs) + ' ברצף. כל דעה מתאימה.'],
+      ['אל תעצור', 'שקט של ' + secs(CONFIG.hesitationMs) + ' ומעלה נספר כהיסוס. הפס מראה כמה זמן נשאר.']
+    ];
+  }
+};
+const FREE_TIPS = {
+  word_association: 'אמור את המילה הראשונה שעולה, גם אם היא מוזרה.',
+  yes_and: 'התחל ב"כן, ו..." ואז הוסף פרט אחד. זה מספיק.',
+  thirty_sec_rant: 'נתקעת? תאר מה אתה רואה, או תן דוגמה מהחיים.'
+};
+const Seen = {
+  key: 'quickflow_seen_modes',
+  list() { try { const a = JSON.parse(localStorage.getItem(this.key)); return Array.isArray(a) ? a : []; } catch (e) { return []; } },
+  has(m) { return this.list().includes(m); },
+  add(m) { const a = this.list(); if (!a.includes(m)) { a.push(m); try { localStorage.setItem(this.key, JSON.stringify(a)); } catch (e) { /* ignore */ } } }
+};
+
+
+/* ============================================================
+ * App controller: views + RAF loop + explicit phase machine
+ * calibrating -> reading -> awaiting -> speaking -> between -> ...
+ * ============================================================ */
 const App = {
   audio: new AudioEngine(),
   s: null,
   rafId: null,
-  modeKey: null,
+  modeKey: 'word_association',
+  pending: null,
+  last: null,
+  starting: false,
+  view: null,
+  homeTab: 'map',
+  cardKey: null,
+  sumActions: {},
 
   init() {
     Storage.load();
-    $('mode-back').innerHTML = Icons.back + 'בית';
+    Progress.load();
+    Sound.init();
+    document.querySelectorAll('[data-icon]').forEach(el => {
+      const ic = Icons[el.dataset.icon];
+      if (ic) el.insertAdjacentHTML('afterbegin', ic);
+    });
+    $('mode-back').innerHTML = Icons.back + 'חזרה';
+    $('intro-back').innerHTML = Icons.back + 'חזרה';
     $('btn-abort').innerHTML = Icons.back + 'יציאה';
     $('mode-start').innerHTML = Icons.play + 'התחל';
 
-    $('mode-back').addEventListener('click', () => this.go('home'));
-    $('mode-start').addEventListener('click', () => this.start(this.modeKey));
+    $('btn-welcome-go').addEventListener('click', () => { Sound.play('pop'); this.go('home'); });
+    $('tab-map').addEventListener('click', () => this.setTab('map'));
+    $('tab-free').addEventListener('click', () => this.setTab('free'));
+    const pickStage = e => {
+      const b = e.target.closest('[data-stage]');
+      if (!b) return;
+      const st = Stages.byId(Number(b.dataset.stage));
+      if (!st) return;
+      if (!Progress.unlocked(st.id)) { this.toast('השג לפחות כוכב אחד בשלב ' + (st.id - 1) + ' כדי לפתוח את השלב הזה'); return; }
+      this.openIntro({ stage: st });
+    };
+    $('plan').addEventListener('click', pickStage);
+    $('map').addEventListener('click', pickStage);
+    $('mode-back').addEventListener('click', () => { this.homeTab = 'free'; this.go('home'); });
+    $('mode-start').addEventListener('click', () => this.openIntro({ mode: this.modeKey }));
+    $('intro-back').addEventListener('click', () => {
+      if (this.pending && this.pending.mode) this.go('mode'); else this.go('home');
+    });
+    $('intro-go').addEventListener('click', () => this.begin(this.pending));
     $('btn-abort').addEventListener('click', () => this.abort());
-    $('sum-back').addEventListener('click', () => this.go('mode'));
-    $('btn-to-mode').addEventListener('click', () => this.go('mode'));
-    $('btn-again').addEventListener('click', () => this.start(this.modeKey));
-    $('btn-export').addEventListener('click', () => this.exportData());
-    $('btn-reset').addEventListener('click', () => this.resetData());
+    $('sum-back').addEventListener('click', () => this.go('home'));
+    $('btn-next').addEventListener('click', () => this.sumActions.next && this.sumActions.next());
+    $('btn-again').addEventListener('click', () => this.sumActions.again && this.sumActions.again());
+    $('btn-to-map').addEventListener('click', () => this.go('home'));
+
+    $('btn-music').addEventListener('click', () => Sound.toggleMusic());
+    $('btn-settings').addEventListener('click', () => this.openSettings());
+    const dlg = $('dlg-settings');
+    $('dlg-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+    $('tgl-sfx').addEventListener('click', () => Sound.toggleSfx());
+    $('tgl-music').addEventListener('click', () => Sound.toggleMusic());
+    $('set-help').addEventListener('click', () => { dlg.close(); this.go('welcome'); });
+    $('set-export').addEventListener('click', () => this.exportData());
+    $('set-reset').addEventListener('click', () => this.resetData());
+
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.s) this.abort(); });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden && this.s) this.abort('הסשן בוטל כי הלשונית הוסתרה. ברקע הדפדפן מאט את המדידה.');
     });
     window.addEventListener('pagehide', () => this.audio.stop());
 
-    this.go('home');
-    if (Storage.message) this.showAlert(Storage.message);
-    if (!Origin.ok()) {
-      this.showAlert(Origin.msg());
-    } else if (!AudioEngine.supported()) {
-      this.showAlert('הדפדפן לא תומך בגישה למיקרופון. פתח ב-Chrome מכתובת https או localhost.');
-    }
+    this.renderSoundUi();
+    this.go('welcome');
+    if (Storage.message) this.setAlert(Storage.message);
+    if (!Origin.ok()) this.setAlert(Origin.msg());
+    else if (!AudioEngine.supported()) this.setAlert('הדפדפן לא תומך בגישה למיקרופון. פתח ב-Chrome מכתובת https או localhost.');
   },
 
   /* ---------- navigation ---------- */
   go(view) {
-    ['home', 'mode', 'session', 'summary'].forEach(v => { $('view-' + v).hidden = v !== view; });
+    ['welcome', 'home', 'mode', 'intro', 'session', 'summary'].forEach(v => { $('view-' + v).hidden = v !== view; });
+    this.view = view;
     if (view === 'home') this.renderHome();
     if (view === 'mode') this.renderMode();
+    $('btn-settings').hidden = view === 'session';
+    // Music and effects may play only on screens where the mic is off.
+    Sound.setScene(view !== 'session');
     window.scrollTo(0, 0);
   },
 
-  showAlert(msg) {
+  setTab(tab) {
+    this.homeTab = tab;
+    ['map', 'free'].forEach(t => {
+      $('tab-' + t).setAttribute('aria-selected', String(t === tab));
+      $('panel-' + t).hidden = t !== tab;
+    });
+  },
+
+  setAlert(msg) {
     const el = $('alert');
     el.textContent = msg || '';
     el.hidden = !msg;
-    if (msg && $('view-home').hidden) this.go('home');
+  },
+  showAlert(msg) {
+    this.setAlert(msg);
+    if (msg && this.view !== 'home') this.go('home');
+  },
+  toast(msg) {
+    const el = $('toast');
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(this.toastT);
+    this.toastT = setTimeout(() => { el.hidden = true; }, 2800);
+  },
+
+  renderSoundUi() {
+    const b = $('btn-music');
+    if (!b) return;
+    b.innerHTML = Sound.music ? Icons.music : Icons.musicOff;
+    b.setAttribute('aria-pressed', String(Sound.music));
+    const held = Sound.music && !Sound.scene;
+    b.classList.toggle('held', held);
+    b.title = !Sound.music ? 'מוזיקה כבויה. לחץ להפעלה' : held ? 'המוזיקה מושתקת בזמן שהמיקרופון מקשיב' : 'מוזיקה פועלת. לחץ להשתקה';
+    [['tgl-music', Sound.music], ['tgl-sfx', Sound.sfx]].forEach(([id, on]) => {
+      const t = $(id);
+      t.setAttribute('aria-checked', String(on));
+      t.querySelector('span').textContent = on ? 'פועל' : 'כבוי';
+    });
   },
 
   /* ---------- stats ---------- */
@@ -1006,16 +2203,72 @@ const App = {
     };
   },
 
-  /* ---------- home ---------- */
+
+  /* ---------- home: map + plan + free play ---------- */
   renderHome() {
     const sessions = Storage.store.sessions;
-    const answered = sessions.reduce((a, r) => a + (r.answeredRounds || 0), 0);
     const streak = Dates.streak(sessions);
+    const passed = STAGES.filter(st => Progress.stars(st.id) >= 1).length;
     $('home-pills').innerHTML =
-      '<span class="pill">' + Icons.flame + '<span class="num">' + streak + '</span> ימים ברצף</span>' +
-      '<span class="pill"><span class="num">' + sessions.length + '</span> סשנים</span>' +
-      '<span class="pill"><span class="num">' + answered + '</span> תגובות</span>';
+      '<span class="pill">' + starSvg(true) + '<span class="sr">כוכבים: </span><span class="num">' + Progress.total() + '/' + (STAGES.length * 3) + '</span></span>' +
+      '<span class="pill">' + Icons.trophy + '<span class="num">' + passed + '/' + STAGES.length + '</span> שלבים</span>' +
+      '<span class="pill">' + Icons.flame + (streak === 1 ? 'יום ראשון ברצף' : '<span class="num">' + streak + '</span> ימים ברצף') + '</span>';
+    this.renderPlan();
+    this.renderMap();
+    this.renderFree();
+    this.setTab(this.homeTab);
+  },
 
+  renderPlan() {
+    const plan = Progress.plan();
+    const tags = ['עכשיו', 'אחר כך', 'ואז'];
+    const allDone = Progress.total() === STAGES.length * 3;
+    $('plan').innerHTML = (allDone ? '<li class="now"><span class="plan-main"><b>השגת את כל הכוכבים!</b><span class="plan-tip">אפשר לשחק שוב כל שלב, או להתאמן באימון חופשי.</span></span></li>' : '') +
+      plan.map((st, i) => {
+        const playable = Progress.unlocked(st.id);
+        return '<li class="' + (i === 0 ? 'now' : '') + '">' +
+          '<span class="plan-n">' + st.id + '</span>' +
+          '<span class="plan-main"><span class="plan-tag">' + tags[i] + ' | ' + CONFIG.modes[st.mode].label + '</span>' +
+          '<b>' + esc(st.name) + '</b>' +
+          '<span class="plan-tip">' + Icons.bulb + '<span>' + esc(st.tip) + '</span></span></span>' +
+          (i === 0 && playable ? '<button class="btn btn-green btn-sm" type="button" data-stage="' + st.id + '">' + Icons.play + 'שחק</button>' : '') +
+          '</li>';
+      }).join('');
+  },
+
+  renderMap() {
+    const xs = [50, 76, 50, 24];
+    const rowH = 112, top = 40;
+    const n = STAGES.length;
+    const f = Progress.frontier();
+    let lines = '';
+    for (let i = 0; i < n - 1; i++) {
+      lines += '<line class="' + (Progress.stars(STAGES[i].id) >= 1 ? 'done' : '') + '" x1="' + xs[i % 4] + '%" y1="' + (top + i * rowH + 35) +
+        '" x2="' + xs[(i + 1) % 4] + '%" y2="' + (top + (i + 1) * rowH + 35) + '"/>';
+    }
+    let nodes = '';
+    STAGES.forEach((st, i) => {
+      const locked = !Progress.unlocked(st.id);
+      const stars = Progress.stars(st.id);
+      const cur = st === f && !locked;
+      const label = 'שלב ' + st.id + ', ' + st.name + ', ' + CONFIG.modes[st.mode].label +
+        (locked ? ', נעול' : ', ' + stars + ' מתוך 3 כוכבים');
+      nodes += '<button type="button" class="node' + (locked ? ' locked' : '') + (cur ? ' current' : '') + '" style="left:' + xs[i % 4] +
+        '%;top:' + (top + i * rowH) + 'px" data-stage="' + st.id + '" aria-label="' + esc(label) + '">' +
+        (cur ? '<span class="here" aria-hidden="true">כאן</span>' : '') +
+        '<span class="coin">' + (locked ? Icons.lock : st.id) + '</span>' +
+        Draw.modeIcon(st.mode, 'mode-dot') +
+        '<span class="stars-mini">' + starsRow(stars) + '</span>' +
+        '<span class="node-name">' + esc(st.name) + '</span></button>';
+    });
+    const h = top + n * rowH;
+    const map = $('map');
+    map.style.height = h + 'px';
+    map.innerHTML = '<svg class="map-svg" height="' + h + '" aria-hidden="true">' + lines + '</svg>' + nodes;
+  },
+
+  renderFree() {
+    const sessions = Storage.store.sessions;
     const days = Dates.lastSevenDays();
     const counts = days.map(d => sessions.filter(s => Dates.dayKey(s.timestamp) === Dates.dayKey(d.getTime())).length);
     const weekTotal = counts.reduce((a, b) => a + b, 0);
@@ -1033,18 +2286,16 @@ const App = {
       row.className = 'row';
       row.setAttribute('role', 'button');
       row.tabIndex = 0;
-      row.setAttribute('aria-label', cfg.label + ', פתח מצב');
-      const sub = st.count ? 'חציון ' + Util.sec(st.median) + ' | שיא ' + Util.sec(st.best) : cfg.desc;
-      const ring = st.answerRate === null
-        ? ''
-        : Draw.ring(st.answerRate, 40, 3.5, 'var(--green)', Math.round(st.answerRate * 100) + '%');
+      row.setAttribute('aria-label', cfg.label + ', נתונים והיסטוריה');
+      const sub = st.count ? 'חציון ' + Util.sec(st.median) + ' | שיא ' + Util.sec(st.best) : cfg.short;
+      const ring = st.answerRate === null ? '' : Draw.ring(st.answerRate, 40, 3.5, 'var(--green)', Math.round(st.answerRate * 100) + '%');
       row.innerHTML = Draw.modeIcon(key) +
         '<span class="row-main"><span class="row-title">' + cfg.label + '</span><span class="row-sub">' + sub + '</span></span>' +
         ring +
-        '<button class="play" type="button" aria-label="התחל ' + cfg.label + '">' + Icons.play + '</button>';
+        '<button class="ibtn play" type="button" aria-label="התחל ' + cfg.label + '">' + Icons.play + '</button>';
       row.addEventListener('click', e => {
         this.modeKey = key;
-        if (e.target.closest('.play')) this.start(key);
+        if (e.target.closest('.play')) this.openIntro({ mode: key });
         else this.go('mode');
       });
       row.addEventListener('keydown', e => {
@@ -1052,12 +2303,11 @@ const App = {
       });
       list.appendChild(row);
     });
-    this.renderStatus();
   },
 
   renderStatus() {
     const st = $('storage-status');
-    st.textContent = Storage.mode === 'local' ? 'שמירה: מקומית' : 'שמירה: זיכרון בלבד';
+    st.textContent = Storage.mode === 'local' ? 'שמירה: מקומית בדפדפן' : 'שמירה: זיכרון בלבד';
     st.classList.toggle('bad', Storage.mode !== 'local');
     const c = Storage.store.calibration;
     const cs = $('calib-status');
@@ -1065,16 +2315,13 @@ const App = {
     cs.classList.toggle('bad', !!c && c.noiseFloor > CONFIG.vad.noisyFloor);
   },
 
-  /* ---------- mode ---------- */
+  /* ---------- free play mode screen ---------- */
   renderMode() {
     const key = this.modeKey;
     const cfg = CONFIG.modes[key];
     const st = this.modeStats(key);
-    $('mode-icon').outerHTML = Draw.modeIcon(key).replace('class="row-icon"', 'id="mode-icon" class="row-icon"');
-    $('mode-name').textContent = cfg.label;
+    $('mode-ribbon').innerHTML = cfg.label;
     $('mode-desc').textContent = cfg.desc + ' ' + cfg.rounds + (cfg.rounds === 1 ? ' סבב.' : ' סבבים.');
-    $('mode-count').innerHTML = st.count ? '<span class="num">' + st.count + '</span> סשנים' : 'מצב חדש';
-
     const tiles = [
       ['חציון זמן תגובה', Util.sec(st.median), true],
       ['שיא אישי', Util.sec(st.best), false],
@@ -1083,8 +2330,7 @@ const App = {
     if (cfg.trackHesitations) tiles.push(['היסוסים לדקה', st.hesPerMin === null ? 'אין' : st.hesPerMin.toFixed(1), false]);
     else tiles.push(['סשנים', String(st.count), false]);
     $('mode-tiles').innerHTML = tiles.map(t =>
-      '<div class="tile"><div class="tile-l">' + t[0] + '</div><div class="tile-v num' + (t[2] ? ' amber' : '') + '">' + t[1] + '</div></div>').join('');
-
+      '<div class="tile"><div class="tile-l">' + t[0] + '</div><div class="tile-v num' + (t[2] ? ' hi' : '') + '">' + t[1] + '</div></div>').join('');
     const hist = $('mode-hist');
     if (!st.count) {
       hist.innerHTML = '<div class="empty">עוד אין סשנים במצב הזה. לחץ "התחל" לסשן הראשון.</div>';
@@ -1096,15 +2342,63 @@ const App = {
       '<span class="m num">' + Dates.short(r.timestamp) + '</span></div>').join('');
   },
 
+  /* ---------- intro: how it works + goals, shown before a stage ---------- */
+  openIntro(opts) {
+    this.pending = opts;
+    const st = opts.stage || null;
+    const mode = st ? st.mode : opts.mode;
+    const mcfg = CONFIG.modes[mode];
+    const cfg = st ? Stages.cfg(st) : mcfg;
+    $('intro-ribbon').textContent = st ? 'שלב ' + st.id : 'אימון חופשי';
+    $('intro-icon').innerHTML = Draw.modeIcon(mode);
+    $('intro-name').textContent = st ? st.name : mcfg.label;
+    $('intro-meta').textContent = (st ? 'מצב: ' + mcfg.label + ' | ' : '') + cfg.rounds + (cfg.rounds === 1 ? ' סבב' : ' סבבים') +
+      (st ? '' : ' | ' + mcfg.short);
+    $('intro-steps').innerHTML = Steps.for(mode, cfg).map((s, i) =>
+      '<li class="step' + (i === 1 ? ' go' : '') + '"><span class="step-n">' + (i + 1) + '</span><span><b>' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></span></li>').join('');
+    $('intro-goals-wrap').hidden = !st;
+    if (st) {
+      const best = Progress.stars(st.id);
+      $('intro-goals').innerHTML = Stages.goals(st).map((g, i) =>
+        '<div class="goal"><span class="stars-mini">' + starsRow(i + 1, i + 1) + '</span><span>' + esc(g) + '</span></div>').join('') +
+        (best ? '<div class="goal muted">השיא שלך בשלב הזה: ' + best + ' מתוך 3 כוכבים</div>' : '');
+    }
+    $('intro-tip').innerHTML = Icons.bulb + '<span><b>טיפ: </b>' + esc(st ? st.tip : FREE_TIPS[mode]) + '</span>';
+    $('intro-go').innerHTML = Icons.play + (st ? 'התחל שלב ' + st.id : 'יאללה, מתחילים!');
+    this.go('intro');
+  },
+
+  /* Replay or next stage: straight in if the player already knows the mode. */
+  quick(opts) {
+    const mode = opts.stage ? opts.stage.mode : opts.mode;
+    if (Seen.has(mode)) this.begin(opts); else this.openIntro(opts);
+  },
+
+  openSettings() {
+    this.renderStatus();
+    this.renderSoundUi();
+    $('dlg-settings').showModal();
+  },
+
   /* ---------- session rendering ---------- */
-  setCard(phase, label, prompt, result) {
+  setCard(phase, label, prompt, result, cue) {
     const card = $('card');
-    card.className = 'card ph-' + phase;
-    $('c-label').innerHTML = label ? '<i></i>' + label : '';
+    card.className = 'panel card ph-' + phase;
+    $('c-label').innerHTML = label || '';
     const p = $('c-prompt');
     const r = $('c-result');
+    const lead = $('c-lead');
+    const body = $('c-body');
+    const key = result ? 'result-' + phase : prompt;
+    if (key !== this.cardKey) {
+      this.cardKey = key;
+      body.classList.remove('swap');
+      void body.offsetWidth;
+      body.classList.add('swap');
+    }
     if (result) {
       p.hidden = true;
+      lead.hidden = true;
       r.hidden = false;
       $('c-result-val').textContent = result.val;
       $('c-result-sub').textContent = result.sub;
@@ -1113,19 +2407,39 @@ const App = {
       p.hidden = false;
       p.textContent = prompt;
       p.className = 'prompt' + (prompt.length <= 10 ? ' word' : '');
+      const showLead = !!(this.s && phase !== 'calib' && this.s.cfg.lead);
+      lead.hidden = !showLead;
+      if (showLead) lead.textContent = this.s.cfg.lead;
+    }
+    const c = $('c-cue');
+    c.hidden = !cue;
+    if (cue) {
+      $('cue-icon').innerHTML = cue.icon;
+      $('cue-title').textContent = cue.title;
+      $('cue-sub').textContent = cue.sub || '';
+      this.setCount(cue.count);
     }
   },
 
+  setCount(n) {
+    const el = $('cue-count');
+    const v = n ? String(n) : '';
+    if (el.textContent === v) return;
+    el.textContent = v;
+    el.classList.remove('tick');
+    if (v) { void el.offsetWidth; el.classList.add('tick'); }
+  },
+
   setTimer(fraction) {
-    $('c-timer').style.transform = 'scaleX(' + Math.max(0, Math.min(1, fraction)).toFixed(4) + ')';
+    $('c-timer').style.width = (Math.max(0, Math.min(1, fraction)) * 100).toFixed(2) + '%';
   },
 
   setMeter(rms, threshold, speaking) {
     const scale = v => Math.min(1, Math.sqrt(v / 0.25));
     const fill = $('m-fill');
     fill.style.width = (scale(rms) * 100).toFixed(1) + '%';
-    fill.classList.toggle('on', !!speaking);
-    if (threshold) $('m-thr').style.right = (scale(threshold) * 100).toFixed(1) + '%';
+    fill.classList.toggle('dim', !speaking);
+    if (threshold) $('m-thr').style.right = 'calc(' + (scale(threshold) * 100).toFixed(1) + '% - 2px)';
     const lvl = threshold ? Math.min(1, rms / (threshold * 4)) : 0;
     $('card').style.setProperty('--level', lvl.toFixed(3));
   },
@@ -1145,18 +2459,26 @@ const App = {
     const miss = s.rounds.length - hit;
     const left = s.cfg.rounds - s.rounds.length;
     $('s-legend').innerHTML =
-      '<span><i style="background:var(--amber)"></i>נענו <b class="num">' + hit + '</b></span>' +
-      '<span><i style="background:var(--red)"></i>הוחמצו <b class="num">' + miss + '</b></span>' +
-      '<span><i style="background:#5A5A5A"></i>נותרו <b class="num">' + left + '</b></span>';
-    $('c-round').textContent = s.roundIdx >= 0 ? (s.roundIdx + 1) + '/' + s.cfg.rounds : '';
+      '<span><i style="background:var(--green-l)"></i>ענית <b class="num">' + hit + '</b></span>' +
+      '<span><i style="background:#F07068"></i>פספסת <b class="num">' + miss + '</b></span>' +
+      '<span><i style="background:#9B6A45"></i>נשארו <b class="num">' + left + '</b></span>';
+    $('c-round').textContent = s.roundIdx >= 0 ? 'סבב ' + (s.roundIdx + 1) + '/' + s.cfg.rounds : '';
   },
 
   setChips(html) { $('s-chips').innerHTML = html || ''; },
 
+  goalStrip(st) {
+    const on = n => '<span class="stars-mini">' + starsRow(n, n) + '</span>';
+    const parts = Stages.isRant(st)
+      ? [on(1) + 'מתחיל לדבר', on(2) + 'תוך ' + secs(st.t2), on(3) + 'עד ' + st.maxHes + ' היסוסים']
+      : [on(1) + st.min + '/' + st.rounds + ' תשובות', on(2) + 'חציון עד ' + secs(st.t2), on(3) + 'הכול, עד ' + secs(st.t3)];
+    return '<b>יעד:</b>' + parts.map(p => '<span>' + p + '</span>').join('');
+  },
+
   /* ---------- session lifecycle ---------- */
-  async start(mode) {
-    if (this.s || !mode) return;
-    this.showAlert('');
+  async begin(opts) {
+    if (this.s || this.starting || !opts) return;
+    this.setAlert('');
     if (!Origin.ok()) {
       this.showAlert(Origin.msg());
       return;
@@ -1165,12 +2487,21 @@ const App = {
       this.showAlert('הדפדפן לא תומך בגישה למיקרופון.');
       return;
     }
+    const st = opts.stage || null;
+    const mode = st ? st.mode : opts.mode;
+    const cfg = st ? Stages.cfg(st) : CONFIG.modes[mode];
     this.modeKey = mode;
-    const cfg = CONFIG.modes[mode];
+    this.starting = true;
 
+    // The mic is raw (no echo cancellation). Music and effects fade out and the
+    // sound context is suspended BEFORE calibration can start.
+    const quiet = Sound.silence();
     try {
-      await this.audio.start();
+      const mic = this.audio.start(); // creates its AudioContext now, inside the user gesture
+      await Promise.all([mic, quiet]);
     } catch (e) {
+      this.starting = false;
+      await quiet;
       const msgs = {
         NotAllowedError: 'הגישה למיקרופון נחסמה. בדוק שתי הרשאות: הרשאת האתר (סמל המנעול בשורת הכתובת) והרשאת הדפדפן במערכת (הגדרות > אפליקציות > הדפדפן > הרשאות > מיקרופון).',
         SecurityError: 'הגישה למיקרופון נחסמה. אפשר אותה דרך סמל המנעול בשורת הכתובת ונסה שוב.',
@@ -1179,12 +2510,16 @@ const App = {
         ContextNotRunning: 'מנוע השמע לא הופעל. לחץ שוב על התחל.'
       };
       this.showAlert(msgs[e.name] || ('הפעלת המיקרופון נכשלה: ' + (e.name || e.message)));
+      Sound.setScene(this.view !== 'session');
       return;
     }
+    this.starting = false;
+    Seen.add(mode);
+    this.last = opts;
 
     this.s = {
-      mode, cfg,
-      prompts: Util.shuffle(PROMPTS[mode]).slice(0, cfg.rounds),
+      mode, cfg, stage: st,
+      prompts: Recent.pick(mode, Pools.get(mode, st ? st.tier : 'mix'), cfg.rounds),
       roundIdx: -1,
       rounds: [],
       phase: 'calibrating',
@@ -1201,9 +2536,13 @@ const App = {
     };
 
     this.go('session');
-    $('s-title').textContent = cfg.label;
+    this.cardKey = null;
+    $('s-title').textContent = st ? 'שלב ' + st.id + ': ' + st.name : CONFIG.modes[mode].label;
+    $('s-goals').hidden = !st;
+    if (st) $('s-goals').innerHTML = this.goalStrip(st);
     this.renderProgress();
-    this.setCard('calib', 'כיול', 'שקט לרגע. מודד רעש רקע.');
+    this.setCard('calib', Icons.hush + 'כיול', 'מיד מתחילים', null,
+      { icon: Icons.hush, title: 'שקט לרגע', sub: 'בודק את רעש החדר. שום דבר לא מוקלט.' });
     this.setChips('');
     this.setTimer(1);
     this.setMeter(0, null, false);
@@ -1236,7 +2575,8 @@ const App = {
     this.setChips(this.baseChips());
     if (s.readMs > 0) {
       s.phase = 'reading';
-      this.setCard('read', 'קרא', prompt);
+      this.setCard('read', Icons.eye + s.cfg.readLabel, prompt, null,
+        { icon: Icons.eye, title: 'עוד רגע תורך', sub: 'קרא בשקט, וחכה ל"דבר עכשיו!"', count: Math.ceil(s.readMs / 1000) });
       this.setTimer(1);
     } else {
       this.cue(s.phaseStart);
@@ -1250,7 +2590,8 @@ const App = {
     s.cueAt = t;
     s.vad.reset();
     s.rm = new RoundMetrics(t, CONFIG.hesitationMs);
-    this.setCard('live', 'דבר עכשיו', s.prompts[s.roundIdx]);
+    this.setCard('live', Icons.mic + 'תורך', s.prompts[s.roundIdx], null,
+      { icon: Icons.mic, title: 'דבר עכשיו!', sub: s.cfg.liveSub });
   },
 
   endRound(t, missed, byTime) {
@@ -1270,12 +2611,12 @@ const App = {
     s.phaseStart = t;
     this.renderProgress();
     if (missed) {
-      this.setCard('miss', 'החמצה', null, { val: 'אין תגובה', sub: 'הסבב לא נכנס לחישוב זמן התגובה' });
+      this.setCard('miss', Icons.x + 'לא נשמע קול', null, { val: 'פספוס', sub: 'לא זוהה דיבור בזמן. הסבב לא נכנס לחישוב זמן התגובה.' });
     } else {
       const sub = cfg.trackHesitations
-        ? 'זמן תגובה | ' + r.hesitations + ' היסוסים | דיבור ' + Util.sec(r.voicedMs)
-        : 'זמן תגובה';
-      this.setCard('hit', 'נענה', null, { val: Util.sec(r.latencyMs), sub });
+        ? 'הזמן עד שהתחלת לדבר | ' + r.hesitations + ' היסוסים | דיבור ' + Util.sec(r.voicedMs)
+        : 'הזמן עד שהתחלת לדבר';
+      this.setCard('hit', Icons.check + 'יפה!', null, { val: Util.sec(r.latencyMs), sub });
     }
     this.setTimer(0);
   },
@@ -1283,6 +2624,7 @@ const App = {
   loop(t) {
     const s = this.s;
     if (!s) return;
+    Sound.guard(); // belt and braces: nothing may play while the mic is live
     const cfg = s.cfg;
     const rms = this.audio.rms();
     this.setMeter(rms, s.threshold, s.vad ? s.vad.speaking : false);
@@ -1301,6 +2643,7 @@ const App = {
       case 'reading': {
         const el = t - s.phaseStart;
         this.setTimer(1 - el / s.readMs);
+        this.setCount(Math.max(1, Math.ceil((s.readMs - el) / 1000)));
         if (el >= s.readMs) this.cue(t);
         break;
       }
@@ -1312,7 +2655,8 @@ const App = {
           if (ev.type === 'onset') {
             s.phase = 'speaking';
             s.speakStart = ev.t;
-            this.setCard('speak', 'קול מזוהה, המשך', s.prompts[s.roundIdx]);
+            this.setCard('speak', Icons.mic + 'שומע אותך', s.prompts[s.roundIdx], null,
+              { icon: Icons.mic, title: 'שומע אותך!', sub: cfg.speakSub });
           }
         }
         if (s.phase === 'awaiting' && el >= cfg.responseWindowMs) this.endRound(t, true, false);
@@ -1325,7 +2669,9 @@ const App = {
         const gap = s.rm.currentGap(t);
         if (cfg.trackHesitations) {
           let chips = this.baseChips() + '<span class="chip">היסוסים <b class="num">' + s.rm.hesitations + '</b></span>';
-          if (gap >= CONFIG.hesitationMs) chips += '<span class="chip warn">הפסקה ' + (gap / 1000).toFixed(1) + 's</span>';
+          if (gap >= CONFIG.hesitationMs) {
+            chips += '<span class="chip warn">שקט ' + (gap / 1000).toFixed(1) + 's' + (cfg.endOnSilenceMs ? '' : ', המשך לדבר') + '</span>';
+          }
           this.setChips(chips);
         }
         if (cfg.endOnSilenceMs && !s.vad.speaking && gap >= cfg.endOnSilenceMs) {
@@ -1357,43 +2703,112 @@ const App = {
     const before = this.modeStats(s.mode);
     const rec = buildSessionRecord(s.mode, s.cfg, s.rounds, s.startedAtWall, performance.now() - s.startedAt, s.threshold);
     Storage.appendSession(rec);
-    this.renderSummary(s, rec, before);
-    this.go('summary');
+    let result = null;
+    if (s.stage) {
+      const checks = Stages.checks(s.stage, rec);
+      const stars = checks.filter(Boolean).length;
+      const prev = Progress.record(s.stage.id, stars);
+      result = { stars, prev, checks };
+    }
+    this.renderSummary(s, rec, before, result);
+    this.go('summary'); // mic is fully stopped here, music may come back
+    this.celebrate(s, rec, before, result);
   },
 
   async abort(msg) {
-    if (!this.s) return;
+    const s = this.s;
+    if (!s) return;
     this.s = null;
     cancelAnimationFrame(this.rafId);
     await this.audio.stop();
-    this.go(msg ? 'home' : 'mode');
+    this.go(msg || s.stage ? 'home' : 'mode');
     if (msg) this.showAlert(msg);
   },
 
   /* ---------- summary ---------- */
-  renderSummary(s, rec, before) {
+  renderSummary(s, rec, before, result) {
     const cfg = s.cfg;
-    $('sum-back').innerHTML = Icons.back + cfg.label;
-    $('sum-title').textContent = 'סיכום';
+    const st = s.stage;
+    $('sum-back').innerHTML = Icons.back + 'למפה';
     const rate = rec.totalRounds ? rec.answeredRounds / rec.totalRounds : 0;
-    $('sum-donut').innerHTML = Draw.ring(rate, 240, 16, 'var(--amber)', '');
+    $('sum-donut').innerHTML = Draw.ring(rate, 190, 14, 'var(--green)', '');
     $('sum-val').textContent = Util.sec(rec.medianLatencyMs);
     $('sum-sub').textContent = rec.answeredRounds + '/' + rec.totalRounds + ' סבבים נענו';
+    const panel = $('sum-panel');
+    panel.classList.toggle('with-stars', !!st);
+    $('sum-stars').hidden = !st;
+    $('sum-goals-wrap').hidden = !st;
+    $('sum-unlock').hidden = true;
+    const ribbon = $('sum-ribbon');
 
-    let text, win = true;
-    if (rec.medianLatencyMs !== null && before.best !== null && rec.medianLatencyMs < before.best) {
-      text = 'שיא אישי חדש: <b class="num">' + Util.sec(rec.medianLatencyMs) + '</b> (קודם ' + Util.sec(before.best) + ')';
-    } else if (before.count === 0 && rec.answeredRounds > 0) {
-      text = 'הסשן הראשון במצב הזה הושלם';
-    } else if (rec.missedRounds === 0) {
-      text = 'כל הסבבים נענו, בלי החמצות';
+    if (st) {
+      $('sum-stars').innerHTML = [0, 1, 2].map(i =>
+        '<span class="slot">' + starSvg(false) + (i < result.stars ? starSvg(true) : '') + '</span>').join('') +
+        '<span class="sr">' + result.stars + ' מתוך 3 כוכבים</span>';
+      ribbon.textContent = 'שלב ' + st.id + ': ' + st.name;
+      ribbon.className = 'ribbon' + (result.stars ? '' : ' red');
+      $('sum-head').textContent = ['כמעט!', 'עברת!', 'כל הכבוד!', 'מושלם!'][result.stars];
+      $('sum-subline').textContent = result.stars
+        ? 'השגת ' + result.stars + ' מתוך 3 כוכבים' + (result.prev > result.stars ? '. השיא שלך בשלב: ' + result.prev : '')
+        : 'צריך לפחות כוכב אחד כדי לפתוח את השלב הבא. נסה שוב!';
+      $('sum-goals').innerHTML = Stages.goals(st).map((g, i) =>
+        '<div class="goal ' + (result.checks[i] ? 'ok' : 'no') + '"><span class="goal-mark">' + (result.checks[i] ? Icons.check : Icons.x) +
+        '</span><span class="stars-mini">' + starsRow(i + 1, i + 1) + '</span><span>' + esc(g) + '</span></div>').join('');
+      const next = Stages.byId(st.id + 1);
+      if (next && result.stars >= 1 && result.prev < 1) {
+        $('sum-unlock').hidden = false;
+        $('sum-unlock').textContent = 'נפתח שלב חדש: ' + next.name;
+      }
+      $('sum-banner').innerHTML = result.stars < 3 ? '<div class="banner neutral"><b>טיפ לפעם הבאה: </b>' + esc(st.tip) + '</div>' : '';
+
+      const nb = $('btn-next'), ab = $('btn-again');
+      if (result.stars >= 1 && next) {
+        nb.innerHTML = 'לשלב הבא' + Icons.play;
+        this.sumActions.next = () => this.quick({ stage: next });
+        ab.hidden = false;
+        ab.innerHTML = Icons.redo + 'שוב';
+        this.sumActions.again = () => this.quick({ stage: st });
+      } else if (result.stars >= 1) {
+        nb.innerHTML = Icons.trophy + 'סיימת את המסע! למפה';
+        this.sumActions.next = () => this.go('home');
+        ab.hidden = false;
+        ab.innerHTML = Icons.redo + 'שוב';
+        this.sumActions.again = () => this.quick({ stage: st });
+      } else {
+        nb.innerHTML = Icons.redo + 'נסה שוב';
+        this.sumActions.next = () => this.quick({ stage: st });
+        ab.hidden = true;
+      }
+      $('btn-to-map').innerHTML = Icons.map + 'למפה';
+      this.homeTab = 'map';
     } else {
-      win = false;
-      text = rec.answeredRounds
-        ? 'השיא שלך: <b class="num">' + Util.sec(before.best !== null ? Math.min(before.best, rec.medianLatencyMs) : rec.medianLatencyMs) + '</b>. סשן נוסף יחזק את השליפה.'
-        : 'לא זוהו תגובות. בדוק שהקו הכתום במד מתחת לרמת הדיבור שלך.';
+      ribbon.textContent = 'סיכום | ' + cfg.label;
+      ribbon.className = 'ribbon orange';
+      $('sum-head').textContent = '';
+      $('sum-subline').textContent = '';
+      let text, win = true;
+      if (rec.medianLatencyMs !== null && before.best !== null && rec.medianLatencyMs < before.best) {
+        text = 'שיא אישי חדש: <b class="num">' + Util.sec(rec.medianLatencyMs) + '</b> (קודם ' + Util.sec(before.best) + ')';
+      } else if (before.count === 0 && rec.answeredRounds > 0) {
+        text = 'הסשן הראשון במצב הזה הושלם';
+      } else if (rec.missedRounds === 0) {
+        text = 'כל הסבבים נענו, בלי החמצות';
+      } else {
+        win = false;
+        text = rec.answeredRounds
+          ? 'השיא שלך: <b class="num">' + Util.sec(before.best !== null ? Math.min(before.best, rec.medianLatencyMs) : rec.medianLatencyMs) + '</b>. סשן נוסף יחזק את השליפה.'
+          : 'לא זוהו תגובות. בדוק שהקו הצהוב במד נמצא מתחת לרמת הדיבור שלך.';
+      }
+      s.win = win;
+      $('sum-banner').innerHTML = '<div class="banner' + (win ? '' : ' neutral') + '">' + text + '</div>';
+      $('btn-next').innerHTML = Icons.play + 'סשן נוסף';
+      this.sumActions.next = () => this.begin({ mode: s.mode });
+      $('btn-again').hidden = false;
+      $('btn-again').innerHTML = Icons.back + 'חזרה ל' + cfg.label;
+      this.sumActions.again = () => this.go('mode');
+      $('btn-to-map').innerHTML = Icons.map + 'למפה';
+      this.homeTab = 'free';
     }
-    $('sum-banner').innerHTML = '<div class="banner' + (win ? '' : ' neutral') + '">' + text + '</div>' + (win ? Draw.confetti() : '');
 
     const tiles = [
       ['ממוצע זמן תגובה', Util.sec(rec.avgLatencyMs)],
@@ -1427,9 +2842,28 @@ const App = {
       card.append(main, meta);
       wrap.appendChild(card);
     });
+  },
 
-    $('btn-again').innerHTML = Icons.play + 'סשן נוסף';
-    $('btn-to-mode').textContent = 'חזרה ל' + cfg.label;
+  /* Stars fly in one by one, with a chime each (only if sound is on). */
+  celebrate(s, rec, before, result) {
+    if (!s.stage) {
+      if (s.win) setTimeout(() => { if (this.view === 'summary') { Fx.confetti(); Sound.play('win'); } }, 300);
+      return;
+    }
+    const slots = document.querySelectorAll('#sum-stars .slot');
+    const reduced = Fx.reduced();
+    for (let i = 0; i < result.stars; i++) {
+      setTimeout(() => {
+        if (this.view !== 'summary') return;
+        slots[i].classList.add('pop');
+        Sound.play('star', i);
+      }, reduced ? 0 : 500 + i * 450);
+    }
+    setTimeout(() => {
+      if (this.view !== 'summary') return;
+      if (result.stars === 3) { Fx.confetti(); Sound.play('win'); }
+      if (result.stars === 0) Sound.play('soft');
+    }, reduced ? 0 : 500 + result.stars * 450);
   },
 
   /* ---------- data tools ---------- */
@@ -1446,11 +2880,12 @@ const App = {
   },
 
   resetData() {
-    if (!Storage.store.sessions.length) return;
-    if (!confirm('למחוק את כל היסטוריית הסשנים? הפעולה לא הפיכה.')) return;
+    if (!confirm('למחוק את כל היסטוריית הסשנים ואת כל הכוכבים? הפעולה לא הפיכה.')) return;
     Storage.clearSessions();
-    this.renderHome();
-    this.showAlert('ההיסטוריה נמחקה');
+    Progress.reset();
+    $('dlg-settings').close();
+    this.go('home');
+    this.toast('ההיסטוריה וההתקדמות נמחקו');
   }
 };
 
