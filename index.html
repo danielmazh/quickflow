@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4E8A45">
 <title>QuickFlow | משחק ספונטניות</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect x=%225%22 y=%224%22 width=%2215%22 height=%2221%22 rx=%224%22 fill=%22%23F3A33A%22/%3E%3C/svg%3E">
@@ -37,9 +37,9 @@
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
-  html, body { margin: 0; }
+  /* 2026-09-28: the page never scrolls. Every view fits one screen; long content scrolls inside its panel. */
+  html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; }
   body {
-    min-height: 100vh;
     background-color: var(--bg);
     background-image:
       radial-gradient(circle at 20% 20%, rgba(255,255,255,.07) 0 2px, transparent 3px),
@@ -66,13 +66,28 @@
   .app {
     width: 100%;
     max-width: 460px;
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
     margin: 0 auto;
-    padding: 16px 16px 40px;
+    padding: calc(10px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
-  .view { display: flex; flex-direction: column; flex: 1; }
+  .view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .tabpanel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  /* panel that takes the free height, with an inner scroll area */
+  .panel.fill { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .scroll {
+    flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+    margin: 0 -8px; padding: 2px 8px 22px;
+    scrollbar-width: thin; scrollbar-color: var(--orange-d) transparent;
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
+  }
+  .scroll::-webkit-scrollbar { width: 6px; }
+  .scroll::-webkit-scrollbar-thumb { background: var(--orange-d); border-radius: 3px; }
+  .scroll::-webkit-scrollbar-track { background: transparent; }
   .view:not([hidden]) { animation: viewIn .4s var(--bounce) both; }
   @keyframes viewIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
 
@@ -90,10 +105,10 @@
     border: 6px solid var(--orange);
     border-radius: 28px;
     box-shadow: 0 0 0 3px var(--brown), 0 8px 0 3px var(--brown), inset 0 4px 0 rgba(255,255,255,.55), inset 0 -5px 0 rgba(210,127,34,.18);
-    padding: 18px 16px 16px;
-    margin: 0 3px 26px;
+    padding: 14px 14px 12px;
+    margin: 0 3px 16px;
   }
-  .panel.has-ribbon { margin-top: 26px; padding-top: 30px; }
+  .panel.has-ribbon { margin-top: 24px; padding-top: 28px; }
   .ribbon {
     position: absolute; top: -24px; left: 50%; transform: translateX(-50%);
     z-index: 2;
@@ -162,7 +177,7 @@
   .ibtn[aria-pressed="false"] { background: radial-gradient(circle, #E9DCC4 0 54%, #BFA27A 56%); color: var(--ink-2); }
   .ibtn.held { opacity: .6; }
   .corner {
-    position: fixed; z-index: 50; top: 12px;
+    position: fixed; z-index: 50; top: calc(10px + env(safe-area-inset-top));
     left: max(10px, calc(50% - 230px + 10px));
     display: flex; gap: 8px;
   }
@@ -180,7 +195,7 @@
   }
   .tgl i { width: 28px; height: 28px; border-radius: 50%; background: var(--cream); border: 2.5px solid var(--brown); order: -1; transition: transform .25s var(--bounce); }
   .tgl[aria-checked="false"] { background: var(--red); text-shadow: 0 2px 0 var(--red-d); flex-direction: row-reverse; padding: 0 14px 0 6px; }
-  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 4px; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 4px; }
   .set-row b { font-family: var(--font-display); font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
   .set-row b svg { width: 22px; height: 22px; color: var(--orange-d); }
 
@@ -214,16 +229,17 @@
   .track-fill.dim { background: linear-gradient(180deg, #E6D2AE, #C9AE82); transition: none; }
 
   /* ---------- top bars ---------- */
-  .topbar { display: flex; align-items: center; gap: 12px; min-height: 52px; margin-bottom: 14px; padding-left: 112px; }
+  .topbar { display: flex; align-items: center; gap: 12px; min-height: 52px; margin-bottom: 6px; padding-left: 112px; flex: none; }
   .topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }
 
   /* ---------- welcome ---------- */
-  .welcome { text-align: center; padding-top: 50px; }
-  .w-logo { width: 96px; height: 96px; margin: 0 auto 6px; animation: floaty 3.2s ease-in-out infinite; filter: drop-shadow(0 4px 0 var(--brown)); }
+  .welcome { text-align: center; }
+  .w-hero { display: flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 56px; padding-left: 112px; flex: none; }
+  .w-logo { width: 52px; height: 52px; flex: none; animation: floaty 3.2s ease-in-out infinite; filter: drop-shadow(0 3px 0 var(--brown)); }
   @keyframes floaty { 50% { transform: translateY(-8px) rotate(-5deg); } }
-  .w-title { font-family: var(--font-display); font-weight: 700; font-size: 3.2rem; line-height: 1; margin: 0; direction: ltr; }
+  .w-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1; margin: 0; direction: ltr; }
   .w-title span { color: var(--gold); }
-  .w-tag { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; margin: 10px 0 34px; }
+  .w-tag { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.05rem, 4.6vw, 1.3rem); margin: 4px 0 0; flex: none; }
   .w-body { text-align: right; }
   .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .w-item { background: var(--cream-2); border-radius: 14px; padding: 10px; box-shadow: inset 0 -3px 0 rgba(210,127,34,.25); }
@@ -248,23 +264,26 @@
     border: 4px solid rgba(255,255,255,.8); animation: ring 1.8s ease-out infinite;
   }
   @keyframes ring { from { opacity: .9; transform: scale(.96); } to { opacity: 0; transform: scale(1.1); } }
-  .w-note { font-size: .95rem; margin: 14px 0 0; font-weight: 600; }
+  .w-note { font-size: .9rem; margin: 10px 0 0; font-weight: 600; flex: none; }
+  .w-go { flex: none; }
 
   /* ---------- home: header + tabs ---------- */
-  .home-head { display: flex; align-items: center; gap: 10px; min-height: 52px; padding-left: 112px; margin-bottom: 10px; }
+  .home-head { display: flex; align-items: center; gap: 10px; min-height: 52px; padding-left: 112px; margin-bottom: 4px; flex: none; }
   .brand { display: flex; align-items: center; gap: 8px; }
   .brand svg { width: 36px; height: 36px; filter: drop-shadow(0 3px 0 var(--brown)); }
   .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; direction: ltr; }
   .brand-name span { color: var(--gold); }
-  .head-pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 18px; }
+  .head-pills { display: flex; gap: 6px; flex-wrap: nowrap; overflow: hidden; margin: 2px 0 10px; flex: none; }
+  .head-pills .pill { font-size: .88rem; padding: 2px 10px 2px 8px; white-space: nowrap; }
+  .head-pills .pill svg { width: 17px; height: 17px; }
   .tabs {
-    display: flex; gap: 6px; padding: 5px; margin: 0 3px 18px;
+    display: flex; gap: 4px; padding: 4px; margin: 0 3px 12px; flex: none;
     background: var(--brown-2); border: 3px solid var(--brown); border-radius: 999px;
     box-shadow: 0 4px 0 var(--brown);
   }
   .tab {
     flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 9px 10px; border-radius: 999px; color: var(--cream);
+    padding: 7px 6px; border-radius: 999px; color: var(--cream);
     font-family: var(--font-display); font-weight: 700; font-size: 1.05rem;
     transition: background-color .2s, transform .2s var(--bounce);
   }
@@ -273,7 +292,8 @@
   .tab:active { transform: scale(.96); }
   .alert {
     background: #FFE1DC; border: 3px solid var(--red); color: #6E1512;
-    border-radius: 16px; padding: 12px 14px; font-size: .95rem; margin: 0 3px 16px; font-weight: 500;
+    border-radius: 16px; padding: 8px 12px; font-size: .88rem; margin: 0 3px 10px; font-weight: 500;
+    flex: none; max-height: 30dvh; overflow: auto;
   }
 
   /* today's plan */
@@ -330,6 +350,53 @@
     padding: 1px 10px; font-family: var(--font-display); font-weight: 700; font-size: .85rem; white-space: nowrap;
     text-shadow: 0 1px 0 var(--green-d);
   }
+
+  /* map board: one SVG picture that scales to fit, no scroll */
+  .panel.board {
+    flex: 1; min-height: 0; padding: 4px; margin-bottom: 12px;
+    background: radial-gradient(ellipse at 50% 40%, #B9E29F, #8CC873 70%, #7BB862);
+    overflow: hidden;
+  }
+  .map-board { width: 100%; height: 100%; }
+  .map-board > svg { width: 100%; height: 100%; display: block; }
+  .mp-edge { fill: none; stroke: #C9955A; stroke-width: 24; stroke-linecap: round; stroke-linejoin: round; }
+  .mp-road { fill: none; stroke: #F6DDA8; stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+  .mp-dash { fill: none; stroke: #C9955A; stroke-width: 3; stroke-dasharray: 3 11; stroke-linecap: round; }
+  .mp-done { fill: none; stroke: var(--gold); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 12; }
+  .snode { cursor: pointer; outline: none; }
+  .snode .hit { fill: transparent; }
+  .snode .outer { fill: var(--orange); stroke: var(--brown); stroke-width: 4; }
+  .snode .inner { fill: var(--cream); }
+  .snode .shadow { fill: var(--brown); }
+  .snode .n { font-family: var(--font-display); font-weight: 700; font-size: 22px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+  .snode.locked .outer { fill: #A89274; }
+  .snode.locked .inner { fill: #D9CDB6; }
+  .snode.current .outer { fill: var(--green-l); }
+  .snode.current .inner { fill: #fff; }
+  .snode .bob { transform-box: fill-box; transform-origin: center; }
+  .snode.current .bob { animation: bob 1.4s ease-in-out infinite; }
+  .snode:hover .coin-g { transform: scale(1.08); }
+  .snode .coin-g { transform-box: fill-box; transform-origin: center; transition: transform .2s var(--bounce); }
+  .snode:focus-visible .outer { stroke: #fff; stroke-width: 6; }
+  .snode .mstar.on { fill: var(--gold); stroke: var(--brown); stroke-width: 1.8; }
+  .snode .mstar.off { fill: #EAD5AA; stroke: #A9825A; stroke-width: 1.6; }
+  .here-tag rect { fill: var(--green); stroke: var(--brown); stroke-width: 2.5; }
+  .here-tag text { fill: #fff; font-family: var(--font-display); font-weight: 700; font-size: 13px; text-anchor: middle; dominant-baseline: central; }
+  .deco-trunk { fill: #7A3E1C; }
+  .deco-leaf { fill: #3E7B35; stroke: var(--brown); stroke-width: 2.5; }
+  .deco-leaf2 { fill: #57A04A; stroke: var(--brown); stroke-width: 2.5; }
+  .deco-bush { fill: #4E9A43; stroke: var(--brown); stroke-width: 2; }
+  .deco-flower { fill: #fff; }
+  .deco-label { font-family: var(--font-display); font-weight: 700; font-size: 13px; fill: #fff; paint-order: stroke; stroke: var(--brown); stroke-width: 4; text-anchor: middle; }
+  .next-bar {
+    display: flex; align-items: center; gap: 10px; flex: none;
+    background: var(--cream); border: 3px solid var(--brown); border-radius: 18px;
+    box-shadow: 0 4px 0 var(--brown); padding: 7px 10px; margin: 0 3px 6px;
+  }
+  .next-main { flex: 1; min-width: 0; }
+  .next-main b { display: block; font-family: var(--font-display); font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .next-main span { display: block; font-size: .8rem; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .next-bar .btn { flex: none; }
 
   /* ---------- free play list ---------- */
   .rows { display: flex; flex-direction: column; gap: 10px; }
@@ -400,24 +467,27 @@
   .tip { display: flex; gap: 10px; align-items: flex-start; background: #FFF6E2; border: 2.5px dashed var(--orange); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
   .tip svg { width: 22px; height: 22px; flex: none; color: var(--orange-d); }
   .tip b { font-family: var(--font-display); }
-  .privacy-line { display: flex; gap: 8px; align-items: flex-start; font-size: .85rem; color: var(--green-d); background: var(--green-bg); border-radius: 12px; padding: 9px 12px; margin-bottom: 16px; }
+  .privacy-line { display: flex; gap: 8px; align-items: flex-start; font-size: .85rem; color: var(--green-d); background: var(--green-bg); border-radius: 12px; padding: 9px 12px; margin-bottom: 4px; }
+  .foot-btn { flex: none; margin: 0 3px 6px; width: calc(100% - 6px); }
+  .btn-row { display: flex; gap: 10px; flex: none; margin: 12px 3px 6px; }
+  .btn-row .btn { flex: 1; }
   .privacy-line svg { width: 18px; height: 18px; flex: none; color: var(--green); }
 
   /* ---------- session ---------- */
-  .goal-strip { font-size: .85rem; background: var(--cream); border: 2.5px solid var(--brown); border-radius: 12px; padding: 5px 10px; margin: 0 3px 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+  .goal-strip { flex: none; font-size: .8rem; background: var(--cream); border: 2.5px solid var(--brown); border-radius: 12px; padding: 3px 10px; margin: 0 3px 8px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
   .goal-strip span { display: inline-flex; align-items: center; gap: 4px; }
   .goal-strip svg { width: 15px; height: 15px; }
-  .progress { display: flex; gap: 4px; padding: 4px; margin: 0 3px 8px; background: var(--brown-2); border: 4px solid var(--orange); border-radius: 999px; box-shadow: 0 0 0 3px var(--brown); }
+  .progress { flex: none; display: flex; gap: 4px; padding: 3px; margin: 0 3px 6px; background: var(--brown-2); border: 4px solid var(--orange); border-radius: 999px; box-shadow: 0 0 0 3px var(--brown); }
   .seg { flex: 1; height: 12px; border-radius: 999px; background: #9B6A45; }
   .seg.hit { background: var(--green-l); }
   .seg.miss { background: #F07068; }
   .seg.cur { background: var(--gold); animation: blink 1s ease-in-out infinite; }
   @keyframes blink { 50% { opacity: .55; } }
-  .legend { display: flex; gap: 8px; margin: 6px 0 14px; flex-wrap: wrap; justify-content: center; }
+  .legend { flex: none; display: flex; gap: 8px; margin: 4px 0 8px; flex-wrap: wrap; justify-content: center; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; background: var(--cream); border: 2px solid var(--brown); border-radius: 999px; padding: 2px 10px; font-size: .85rem; font-weight: 600; }
   .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1.5px solid var(--brown); }
 
-  .card { flex: 1; min-height: 360px; display: flex; flex-direction: column; margin-bottom: 18px; transition: background-color .2s, border-color .2s; }
+  .card { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-bottom: 14px; padding: 10px 12px; transition: background-color .2s, border-color .2s; }
   .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .card-label {
     display: inline-flex; align-items: center; gap: 6px;
@@ -426,18 +496,18 @@
   }
   .card-label svg { width: 18px; height: 18px; }
   .round-badge { font-family: var(--font-display); font-weight: 700; background: var(--brown-2); color: var(--cream); border-radius: 999px; padding: 2px 10px; font-size: .95rem; }
-  .card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px 2px; }
+  .card-body { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: 6px 2px; }
   .card-body.swap { animation: swapIn .32s var(--bounce) both; }
   @keyframes swapIn { from { opacity: 0; transform: translateY(10px) scale(.97); } }
   .prompt-lead { font-size: .9rem; color: var(--ink-2); margin: 0 0 6px; font-weight: 600; }
-  .prompt { margin: 0; font-family: var(--font-display); font-weight: 700; line-height: 1.2; font-size: clamp(1.7rem, 7vw, 2.2rem); }
-  .prompt.word { font-size: clamp(3rem, 15vw, 4.4rem); text-align: center; }
-  .result-val { font-family: var(--font-display); font-weight: 700; font-size: 3.4rem; line-height: 1; text-align: center; }
+  .prompt { margin: 0; font-family: var(--font-display); font-weight: 700; line-height: 1.2; font-size: clamp(1.3rem, min(7vw, 4.4dvh), 2.2rem); }
+  .prompt.word { font-size: clamp(2.2rem, min(15vw, 9dvh), 4.4rem); text-align: center; }
+  .result-val { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 7dvh, 3.4rem); line-height: 1; text-align: center; }
   .result-sub { margin-top: 8px; color: var(--ink-2); font-size: 1rem; text-align: center; }
   .ph-hit .result-val { color: var(--green-d); }
   .ph-miss .result-val { color: var(--red); }
 
-  .cue { display: flex; align-items: center; gap: 12px; border-radius: 18px; padding: 10px 12px; margin: 6px 0 12px; background: var(--cream-2); border: 3px solid transparent; }
+  .cue { flex: none; display: flex; align-items: center; gap: 12px; border-radius: 18px; padding: 8px 10px; margin: 4px 0 10px; background: var(--cream-2); border: 3px solid transparent; }
   .cue-icon { width: 50px; height: 50px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--orange); color: var(--ink); border: 3px solid var(--brown); }
   .cue-icon svg { width: 26px; height: 26px; }
   .cue-main { flex: 1; min-width: 0; }
@@ -456,7 +526,7 @@
   .card.ph-speak { box-shadow: 0 0 0 3px var(--brown), 0 8px 0 3px var(--brown), 0 0 0 calc(3px + var(--level) * 14px) rgba(123,192,107,.55); }
   .ph-live .cue, .ph-speak .cue { background: var(--green); border-color: var(--brown); color: #fff; }
   .ph-live .cue-title, .ph-speak .cue-title { text-shadow: 0 2px 0 var(--green-d); }
-  .ph-live .cue-title { font-size: 1.9rem; }
+  .ph-live .cue-title { font-size: 1.7rem; }
   .ph-live .cue-sub, .ph-speak .cue-sub { color: #fff; }
   .ph-live .cue-icon, .ph-speak .cue-icon { background: var(--cream); color: var(--green-d); }
   .ph-live .cue-icon { animation: micPulse 1s ease-in-out infinite; }
@@ -471,19 +541,28 @@
   .card-timer .track-fill { transition: none; }
   .ph-read .card-timer .track-fill { background: linear-gradient(180deg, #FFE39A, var(--gold)); }
 
-  .meter-wrap { margin: 0 3px; }
+  .meter-wrap { margin: 0 3px; flex: none; }
+  .card-timer { flex: none; }
   .meter-thr { position: absolute; top: -2px; bottom: -2px; width: 5px; right: 0; background: var(--gold); border: 1.5px solid var(--brown); border-radius: 3px; z-index: 1; }
   .meter-legend { display: flex; justify-content: space-between; gap: 8px; font-size: .8rem; margin-top: 8px; font-weight: 600; }
-  .chips { display: flex; gap: 8px; margin-top: 12px; min-height: 34px; flex-wrap: wrap; justify-content: center; }
+  .chips { flex: none; display: flex; gap: 8px; margin-top: 8px; min-height: 30px; flex-wrap: wrap; justify-content: center; }
   .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 12px; font-size: .88rem; font-weight: 600; background: var(--cream); border: 2px solid var(--brown); }
   .chip.warn { background: #FFE1DC; color: #7A1914; border-color: var(--red); }
-  .hint { margin-top: 12px; font-size: .9rem; text-align: center; }
+  .hint { flex: none; margin-top: 6px; font-size: .85rem; text-align: center; }
+  @media (max-height: 720px) {
+    .hint { display: none; }
+    .meter-legend { margin-top: 4px; font-size: .75rem; }
+    .cue-icon { width: 42px; height: 42px; }
+    .cue-count { width: 46px; height: 46px; font-size: 1.6rem; }
+    .cue-title { font-size: 1.2rem; }
+    .ph-live .cue-title { font-size: 1.45rem; }
+    .track { height: 18px; }
+  }
 
   /* ---------- summary ---------- */
-  .panel.with-stars { margin-top: 110px; }
-  .big-stars { position: absolute; top: -118px; left: 0; right: 0; display: flex; justify-content: center; align-items: flex-end; gap: 4px; z-index: 3; }
-  .big-stars .slot { position: relative; width: 78px; height: 78px; }
-  .big-stars .slot:nth-child(2) { width: 96px; height: 96px; transform: translateY(-12px); }
+  .big-stars { flex: none; display: flex; justify-content: center; align-items: flex-end; gap: 4px; margin: 12px 0 2px; }
+  .big-stars .slot { position: relative; width: clamp(44px, 8dvh, 64px); height: clamp(44px, 8dvh, 64px); }
+  .big-stars .slot:nth-child(2) { width: clamp(54px, 10dvh, 80px); height: clamp(54px, 10dvh, 80px); transform: translateY(-8px); }
   .big-stars .slot svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .big-stars .slot .star.on { transform: scale(0); opacity: 0; }
   .big-stars .slot.pop .star.on { animation: starIn .6s var(--bounce) forwards; }
@@ -494,13 +573,14 @@
   }
   @keyframes starIn { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 70% { transform: scale(1.25) rotate(8deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
   @keyframes shine { from { opacity: 1; transform: scale(.4); } to { opacity: 0; transform: scale(1.5); } }
-  .sum-head { text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; margin: 6px 0 2px; }
-  .sum-sub { text-align: center; margin: 0 0 12px; }
+  .sum-head { flex: none; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1.1; margin: 0; }
+  .sum-head:empty, .sum-sub:empty { display: none; }
+  .sum-sub { flex: none; text-align: center; margin: 0 0 8px; font-size: .92rem; }
   .unlock { text-align: center; background: var(--green-bg); color: var(--green-d); border: 2.5px solid var(--green-l); border-radius: 14px; padding: 8px 12px; font-weight: 600; margin-bottom: 12px; }
-  .donut-wrap { position: relative; width: 190px; height: 190px; margin: 0 auto 14px; }
+  .donut-wrap { position: relative; width: 150px; height: 150px; margin: 4px auto 10px; }
   .donut-wrap svg { width: 100%; height: 100%; }
   .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-  .donut-val { font-family: var(--font-display); font-weight: 700; font-size: 2.4rem; line-height: 1; color: var(--green-d); }
+  .donut-val { font-family: var(--font-display); font-weight: 700; font-size: 2rem; line-height: 1; color: var(--green-d); }
   .donut-l { font-weight: 600; margin-top: 4px; font-size: .9rem; }
   .donut-s { color: var(--ink-2); font-size: .82rem; }
   .banner { text-align: center; background: var(--green-bg); border: 2.5px solid var(--green-l); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; font-weight: 500; }
@@ -515,12 +595,12 @@
   .rcard-meta { display: flex; justify-content: space-between; padding: 4px 12px; background: var(--cream-3); font-size: .78rem; color: var(--ink); }
 
   /* ---------- dialog + toast ---------- */
-  dialog.dlg { width: min(92vw, 400px); max-height: 90vh; overflow: visible; padding: 34px 18px 18px; margin: auto; }
+  dialog.dlg { width: min(92vw, 400px); max-height: calc(100dvh - 48px); overflow: visible; padding: 30px 16px 12px; margin: auto; }
   dialog.dlg::backdrop { background: rgba(40,20,5,.55); }
   dialog.dlg[open] { animation: dlgIn .35s var(--bounce); }
   @keyframes dlgIn { from { transform: scale(.85); opacity: 0; } }
   .dlg-close { position: absolute; top: -18px; left: -14px; z-index: 3; }
-  .dlg-scroll { max-height: calc(90vh - 70px); overflow: auto; padding: 2px; }
+  .dlg-scroll { max-height: calc(100dvh - 100px); overflow-y: auto; padding: 2px 8px 22px; margin: 0 -8px; scrollbar-width: thin; scrollbar-color: var(--orange-d) transparent; -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), transparent); }
   .dlg .btn-stack { margin: 12px 0 14px; }
   .dlg-status { font-size: .78rem; color: var(--ink-2); display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
   .dlg-status .bad { color: var(--red); }
@@ -550,16 +630,19 @@
 
   <!-- ================= WELCOME ================= -->
   <section id="view-welcome" class="view welcome">
+    <div class="w-hero">
     <svg class="w-logo" viewBox="0 0 32 32" aria-hidden="true">
       <rect x="11" y="5" width="15" height="21" rx="4" transform="rotate(12 18 15)" fill="#FDEBC8" stroke="#5A2A12" stroke-width="2"/>
       <rect x="5" y="4" width="15" height="21" rx="4" fill="#F3A33A" stroke="#5A2A12" stroke-width="2"/>
       <path d="M10 10h5M10 14h5M10 18h3" stroke="#5A2A12" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
     <h1 class="w-title on-bg">Quick<span>Flow</span></h1>
+    </div>
     <p class="w-tag on-bg">המשחק שמאמן אותך לדבר בלי לחשוב פעמיים</p>
 
-    <div class="panel has-ribbon w-body">
+    <div class="panel has-ribbon fill w-body">
       <span class="ribbon">למה לשחק?</span>
+      <div class="scroll">
       <div class="w-sec">
         <h2 class="h2"><span data-icon="target"></span>המטרה</h2>
         <p class="w-p">לאמן דיבור ספונטני: לענות מהר, בלי לסנן ובלי להיתקע. מקבלים מילה, משפט או נושא, ועונים בקול.</p>
@@ -587,6 +670,7 @@
         <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
         <p>החוויה אישית לגמרי. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. שום הקלטה לא נשמרת ושום מידע לא נשלח. רק התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע.</p>
       </div>
+      </div>
     </div>
 
     <button id="btn-welcome-go" class="btn btn-green btn-big btn-block w-go" type="button"><span data-icon="play"></span>התחל משחק</button>
@@ -607,40 +691,42 @@
     <div id="home-pills" class="head-pills"></div>
     <div id="alert" class="alert" role="alert" hidden></div>
     <div class="tabs" role="tablist" aria-label="מסכי המשחק">
-      <button id="tab-map" class="tab" role="tab" type="button" aria-controls="panel-map"><span data-icon="map"></span>המסע</button>
-      <button id="tab-free" class="tab" role="tab" type="button" aria-controls="panel-free"><span data-icon="dumbbell"></span>אימון חופשי</button>
+      <button id="tab-map" class="tab" role="tab" type="button" aria-controls="panel-map"><span data-icon="map"></span>מפה</button>
+      <button id="tab-plan" class="tab" role="tab" type="button" aria-controls="panel-plan"><span data-icon="list"></span>תוכנית</button>
+      <button id="tab-free" class="tab" role="tab" type="button" aria-controls="panel-free"><span data-icon="dumbbell"></span>חופשי</button>
     </div>
 
-    <div id="panel-map" role="tabpanel" aria-labelledby="tab-map">
-      <div class="panel has-ribbon">
+    <div id="panel-map" class="tabpanel" role="tabpanel" aria-labelledby="tab-map">
+      <div class="panel board"><div id="map" class="map-board"></div></div>
+      <div id="next-bar" class="next-bar"></div>
+    </div>
+
+    <div id="panel-plan" class="tabpanel" role="tabpanel" aria-labelledby="tab-plan" hidden>
+      <div class="panel has-ribbon fill">
         <span class="ribbon">התוכנית להיום</span>
-        <ol id="plan" class="plan"></ol>
+        <div class="scroll"><ol id="plan" class="plan"></ol></div>
       </div>
-      <h2 class="section-label on-bg">מפת השלבים</h2>
-      <div id="map" class="map-wrap"></div>
     </div>
 
-    <div id="panel-free" role="tabpanel" aria-labelledby="tab-free" hidden>
-      <div class="panel has-ribbon">
-        <span class="ribbon orange">מצבי אימון</span>
-        <p class="muted" style="margin:0 0 10px">בלי יעדים ובלי כוכבים. מתאמנים במצב שבוחרים.</p>
-        <div id="home-modes" class="rows"></div>
-      </div>
-      <div class="panel has-ribbon">
-        <span class="ribbon orange">השבוע שלך</span>
-        <p id="week-title" class="week-title"></p>
-        <div id="week-chart"></div>
-      </div>
-      <div class="panel">
-        <details class="how">
-          <summary>איך המדידה עובדת</summary>
-          <p>כל סשן מתחיל ב-1.5 שניות של שקט לכיול רעש הרקע. סף הדיבור מחושב מהרעש שנמדד.</p>
-          <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דבר עכשיו!" עם מיקרופון מהבהב, מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול שלך מזוהה.</p>
-          <p>סבב בלי תגובה נספר כהחמצה ולא נכנס לחישוב זמן התגובה.</p>
-          <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
-          <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה.</p>
-          <p>המוזיקה והצלילים נעצרים לפני הכיול ולא מתנגנים אף פעם בזמן שהמיקרופון מקשיב.</p>
-        </details>
+    <div id="panel-free" class="tabpanel" role="tabpanel" aria-labelledby="tab-free" hidden>
+      <div class="panel has-ribbon fill">
+        <span class="ribbon orange">אימון חופשי</span>
+        <div class="scroll">
+          <p class="muted" style="margin:0 0 10px">בלי יעדים ובלי כוכבים. מתאמנים במצב שבוחרים.</p>
+          <div id="home-modes" class="rows"></div>
+          <p class="section-label">השבוע שלך</p>
+          <p id="week-title" class="week-title"></p>
+          <div id="week-chart"></div>
+          <details class="how">
+            <summary>איך המדידה עובדת</summary>
+            <p>כל סשן מתחיל ב-1.5 שניות של שקט לכיול רעש הרקע. סף הדיבור מחושב מהרעש שנמדד.</p>
+            <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דבר עכשיו!" עם מיקרופון מהבהב, מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול שלך מזוהה.</p>
+            <p>סבב בלי תגובה נספר כהחמצה ולא נכנס לחישוב זמן התגובה.</p>
+            <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
+            <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה.</p>
+            <p>המוזיקה והצלילים נעצרים לפני הכיול ולא מתנגנים אף פעם בזמן שהמיקרופון מקשיב.</p>
+          </details>
+        </div>
       </div>
     </div>
   </section>
@@ -650,15 +736,17 @@
     <div class="topbar">
       <button id="mode-back" class="btn btn-cream btn-sm" type="button"></button>
     </div>
-    <div class="panel has-ribbon">
+    <div class="panel has-ribbon fill">
       <span id="mode-ribbon" class="ribbon orange"></span>
-      <p id="mode-desc" class="mode-desc"></p>
-      <button id="mode-start" class="btn btn-green btn-block" type="button"></button>
-      <p class="section-label">10 הסשנים האחרונים</p>
-      <div id="mode-tiles" class="tiles"></div>
-      <p class="section-label">היסטוריה</p>
-      <div id="mode-hist" class="rows"></div>
+      <div class="scroll">
+        <p id="mode-desc" class="mode-desc"></p>
+        <p class="section-label">10 הסשנים האחרונים</p>
+        <div id="mode-tiles" class="tiles"></div>
+        <p class="section-label">היסטוריה</p>
+        <div id="mode-hist" class="rows"></div>
+      </div>
     </div>
+    <button id="mode-start" class="btn btn-green btn-big foot-btn" type="button"></button>
   </section>
 
   <!-- ================= INTRO (how it works + stage goals) ================= -->
@@ -666,8 +754,9 @@
     <div class="topbar">
       <button id="intro-back" class="btn btn-cream btn-sm" type="button"></button>
     </div>
-    <div class="panel has-ribbon">
+    <div class="panel has-ribbon fill">
       <span id="intro-ribbon" class="ribbon"></span>
+      <div class="scroll">
       <div class="mode-head">
         <span id="intro-icon"></span>
         <h2 id="intro-name" class="mode-name"></h2>
@@ -681,8 +770,9 @@
       </div>
       <div id="intro-tip" class="tip"></div>
       <div class="privacy-line"><span data-icon="shield"></span><span>המיקרופון רק מזהה מתי אתה מדבר. שום הקלטה לא נשמרת ושום מידע לא נשלח. הדפדפן יבקש רשות למיקרופון בפעם הראשונה.</span></div>
-      <button id="intro-go" class="btn btn-green btn-big btn-block" type="button" data-mic-start></button>
+      </div>
     </div>
+    <button id="intro-go" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
   </section>
 
   <!-- ================= SESSION ================= -->
@@ -725,36 +815,38 @@
   <!-- ================= SUMMARY ================= -->
   <section id="view-summary" class="view" hidden>
     <div class="topbar">
-      <button id="sum-back" class="btn btn-cream btn-sm" type="button"></button>
+      <button id="sum-back" class="btn btn-cream btn-sm" type="button" hidden></button>
     </div>
-    <div class="panel has-ribbon" id="sum-panel">
-      <div id="sum-stars" class="big-stars" hidden></div>
+    <div class="panel has-ribbon fill" id="sum-panel">
       <span id="sum-ribbon" class="ribbon"></span>
+      <div id="sum-stars" class="big-stars" hidden></div>
       <p id="sum-head" class="sum-head"></p>
       <p id="sum-subline" class="sum-sub muted"></p>
-      <div id="sum-unlock" class="unlock" hidden></div>
-      <div id="sum-goals-wrap" hidden>
-        <div id="sum-goals" class="goals"></div>
-      </div>
-      <div class="donut-wrap">
-        <div id="sum-donut"></div>
-        <div class="donut-center">
-          <div id="sum-val" class="donut-val num"></div>
-          <div class="donut-l">חציון זמן תגובה</div>
-          <div id="sum-sub" class="donut-s num"></div>
+      <div class="scroll">
+        <div id="sum-unlock" class="unlock" hidden></div>
+        <div id="sum-goals-wrap" hidden>
+          <div id="sum-goals" class="goals"></div>
         </div>
+        <div class="donut-wrap">
+          <div id="sum-donut"></div>
+          <div class="donut-center">
+            <div id="sum-val" class="donut-val num"></div>
+            <div class="donut-l">חציון זמן תגובה</div>
+            <div id="sum-sub" class="donut-s num"></div>
+          </div>
+        </div>
+        <div id="sum-banner"></div>
+        <div id="sum-tiles" class="tiles"></div>
+        <details class="how" style="margin-top:12px">
+          <summary>פירוט סבבים</summary>
+          <div id="sum-rounds" class="rounds"></div>
+        </details>
       </div>
-      <div id="sum-banner"></div>
-      <div id="sum-tiles" class="tiles"></div>
-      <details class="how" style="margin-top:12px">
-        <summary>פירוט סבבים</summary>
-        <div id="sum-rounds" class="rounds"></div>
-      </details>
     </div>
-    <div class="btn-stack">
-      <button id="btn-next" class="btn btn-green btn-big btn-block" type="button" data-mic-start></button>
-      <button id="btn-again" class="btn btn-cream btn-block" type="button" data-mic-start></button>
-      <button id="btn-to-map" class="btn btn-cream btn-block" type="button"></button>
+    <button id="btn-next" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
+    <div class="btn-row">
+      <button id="btn-again" class="btn btn-cream" type="button" data-mic-start></button>
+      <button id="btn-to-map" class="btn btn-cream" type="button"></button>
     </div>
   </section>
 
@@ -1504,6 +1596,7 @@ const Icons = {
   trophy: svgI('<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8M10 17h4"/>'),
   download: svgI('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'),
   trash: svgI('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'),
+  list: svgI('<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', ' stroke-width="2.8"'),
   redo: svgI('<path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/>'),
   modes: {
     word_association: { bg: '#3E7B35',
@@ -1685,10 +1778,13 @@ const Sound = {
       if (t && t.closest('[data-sound-toggle]')) return;
       this.unlocked = true;
       if (t && t.closest('[data-mic-start]')) return; // mic is about to open, stay quiet
-      this.apply();
+      this.kick();
     };
-    document.addEventListener('pointerdown', wake, true);
-    document.addEventListener('keydown', wake, true);
+    // 2026-09-28 fix: only listening to pointerdown missed real user activations
+    // (touch pointerdown and Safari do not count as a gesture), so the context
+    // stayed suspended while the button said "on". Try on every activation event.
+    ['pointerdown', 'pointerup', 'mousedown', 'touchend', 'click', 'keydown'].forEach(ev =>
+      document.addEventListener(ev, wake, true));
     document.addEventListener('visibilitychange', () => this.apply());
   },
   supported() { return !!(window.AudioContext || window.webkitAudioContext); },
@@ -1698,11 +1794,30 @@ const Sound = {
       localStorage.setItem(this.sfxKey, this.sfx ? 'on' : 'off');
     } catch (e) { /* ignore */ }
   },
+  /* Must run synchronously inside a user gesture: create or resume the context there. */
+  kick() {
+    if (!this.shouldRun() || !this.ensure()) { this.apply(); return; }
+    const ctx = this.ctx;
+    if (ctx.state !== 'running') {
+      try { ctx.resume(); } catch (e) { /* retried on the next gesture */ }
+      try { // iOS unlock: start a silent one-sample buffer inside the gesture
+        const b = ctx.createBufferSource();
+        b.buffer = ctx.createBuffer(1, 1, 22050);
+        b.connect(ctx.destination);
+        b.start(0);
+      } catch (e) { /* ignore */ }
+    }
+    this.apply();
+  },
+  isPlaying() { return !!(this.music && this.ctx && this.ctx.state === 'running' && this.timer && this.isOpen); },
   toggleMusic() {
-    if (!this.unlocked && this.music) { this.unlocked = true; this.apply(); App.renderSoundUi(); return; }
     this.unlocked = true;
+    // Setting is on but nothing plays yet (blocked by the browser): start it, do not turn it off.
+    if (this.music && this.scene && !this.isPlaying()) { this.kick(); App.renderSoundUi(); return; }
     this.music = !this.music;
-    this.persist(); this.apply(); App.renderSoundUi();
+    this.persist();
+    if (this.music) this.kick(); else this.apply();
+    App.renderSoundUi();
   },
   toggleSfx() {
     this.unlocked = true;
@@ -1728,6 +1843,10 @@ const Sound = {
       this.noise = ctx.createBuffer(1, len, ctx.sampleRate);
       const d = this.noise.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      ctx.onstatechange = () => {
+        if (typeof App !== 'undefined') App.renderSoundUi();
+        if (ctx.state === 'running' && this.music && !this.timer && this.shouldRun()) this.apply();
+      };
       this.ctx = ctx;
       return true;
     } catch (e) { return false; }
@@ -1765,6 +1884,7 @@ const Sound = {
         this.musicBus.gain.value = 0;
         try { if (ctx.state !== 'closed') await ctx.suspend(); } catch (e) { /* ignore */ }
         this.isOpen = false;
+        App.renderSoundUi();
       }
       if (this.closing === done) this.closing = null;
       res();
@@ -1800,11 +1920,12 @@ const Sound = {
       this.nextTime = this.ctx.currentTime + 0.1;
       this.timer = setInterval(() => this.schedule(), 25);
     }
+    App.renderSoundUi();
   },
   stopMusic() {
     if (!this.ctx) return;
     this.ramp(this.musicBus.gain, 0, 0.4);
-    setTimeout(() => { if (!this.music) { clearInterval(this.timer); this.timer = null; } }, 450);
+    setTimeout(() => { if (!this.music) { clearInterval(this.timer); this.timer = null; } App.renderSoundUi(); }, 450);
   },
 
   // I - vi - IV - V in C, 8 bars, eighth notes. 0 = rest.
@@ -2081,6 +2202,7 @@ const App = {
     $('btn-welcome-go').addEventListener('click', () => { Sound.play('pop'); this.go('home'); });
     $('tab-map').addEventListener('click', () => this.setTab('map'));
     $('tab-free').addEventListener('click', () => this.setTab('free'));
+    $('tab-plan').addEventListener('click', () => this.setTab('plan'));
     const pickStage = e => {
       const b = e.target.closest('[data-stage]');
       if (!b) return;
@@ -2091,6 +2213,10 @@ const App = {
     };
     $('plan').addEventListener('click', pickStage);
     $('map').addEventListener('click', pickStage);
+    $('next-bar').addEventListener('click', pickStage);
+    $('map').addEventListener('keydown', e => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('[data-stage]')) { e.preventDefault(); pickStage(e); }
+    });
     $('mode-back').addEventListener('click', () => { this.homeTab = 'free'; this.go('home'); });
     $('mode-start').addEventListener('click', () => this.openIntro({ mode: this.modeKey }));
     $('intro-back').addEventListener('click', () => {
@@ -2141,7 +2267,7 @@ const App = {
 
   setTab(tab) {
     this.homeTab = tab;
-    ['map', 'free'].forEach(t => {
+    ['map', 'plan', 'free'].forEach(t => {
       $('tab-' + t).setAttribute('aria-selected', String(t === tab));
       $('panel-' + t).hidden = t !== tab;
     });
@@ -2167,11 +2293,15 @@ const App = {
   renderSoundUi() {
     const b = $('btn-music');
     if (!b) return;
-    b.innerHTML = Sound.music ? Icons.music : Icons.musicOff;
-    b.setAttribute('aria-pressed', String(Sound.music));
-    const held = Sound.music && !Sound.scene;
-    b.classList.toggle('held', held);
-    b.title = !Sound.music ? 'מוזיקה כבויה. לחץ להפעלה' : held ? 'המוזיקה מושתקת בזמן שהמיקרופון מקשיב' : 'מוזיקה פועלת. לחץ להשתקה';
+    const playing = Sound.isPlaying();
+    const held = Sound.music && !Sound.scene;          // mic is on, music waits
+    const waiting = Sound.music && Sound.scene && !playing; // setting on, browser still blocks audio
+    b.innerHTML = playing || held ? Icons.music : Icons.musicOff;
+    b.setAttribute('aria-pressed', String(playing || held));
+    b.classList.toggle('held', held || waiting);
+    b.title = playing ? 'מוזיקה פועלת. לחץ להשתקה'
+      : held ? 'המוזיקה מושתקת בזמן שהמיקרופון מקשיב'
+      : waiting ? 'לחץ כדי להפעיל את המוזיקה' : 'מוזיקה כבויה. לחץ להפעלה';
     [['tgl-music', Sound.music], ['tgl-sfx', Sound.sfx]].forEach(([id, on]) => {
       const t = $(id);
       t.setAttribute('aria-checked', String(on));
@@ -2221,6 +2351,9 @@ const App = {
 
   renderPlan() {
     const plan = Progress.plan();
+    const nx = plan[0];
+    $('next-bar').innerHTML = '<span class="plan-n">' + nx.id + '</span><span class="next-main"><b>הבא: ' + esc(nx.name) + '</b><span>' +
+      esc(nx.tip) + '</span></span><button class="btn btn-green btn-sm" type="button" data-stage="' + nx.id + '">' + Icons.play + 'שחק</button>';
     const tags = ['עכשיו', 'אחר כך', 'ואז'];
     const allDone = Progress.total() === STAGES.length * 3;
     $('plan').innerHTML = (allDone ? '<li class="now"><span class="plan-main"><b>השגת את כל הכוכבים!</b><span class="plan-tip">אפשר לשחק שוב כל שלב, או להתאמן באימון חופשי.</span></span></li>' : '') +
@@ -2236,35 +2369,65 @@ const App = {
       }).join('');
   },
 
+  /* The level map is one SVG picture (viewBox scales to fit the board, no scroll).
+   * The road winds from stage 1 (bottom right) up to stage 14 (top). */
   renderMap() {
-    const xs = [50, 76, 50, 24];
-    const rowH = 112, top = 40;
-    const n = STAGES.length;
+    const P = [[285, 392], [210, 398], [135, 392], [60, 380], [82, 292], [170, 300], [262, 288],
+      [286, 196], [210, 188], [133, 196], [58, 186], [86, 96], [172, 104], [258, 88]];
     const f = Progress.frontier();
-    let lines = '';
-    for (let i = 0; i < n - 1; i++) {
-      lines += '<line class="' + (Progress.stars(STAGES[i].id) >= 1 ? 'done' : '') + '" x1="' + xs[i % 4] + '%" y1="' + (top + i * rowH + 35) +
-        '" x2="' + xs[(i + 1) % 4] + '%" y2="' + (top + (i + 1) * rowH + 35) + '"/>';
-    }
+    // Smooth road: quadratic curves through the midpoints between stages.
+    const curve = pts => {
+      let c = 'M' + pts[0][0] + ',' + pts[0][1];
+      for (let i = 1; i < pts.length - 1; i++) {
+        c += ' Q' + pts[i][0] + ',' + pts[i][1] + ' ' + (pts[i][0] + pts[i + 1][0]) / 2 + ',' + (pts[i][1] + pts[i + 1][1]) / 2;
+      }
+      return c + ' L' + pts[pts.length - 1][0] + ',' + pts[pts.length - 1][1];
+    };
+    const d = curve(P);
+    const doneIdx = STAGES.findIndex(st => Progress.stars(st.id) < 1);
+    const doneN = doneIdx === -1 ? P.length : doneIdx + 1;
+    let done = '';
+    if (doneN > 1) done = '<path class="mp-done" d="' + curve(P.slice(0, doneN)) + '"/>';
+    const tree = (x, y, k) => '<g transform="translate(' + x + ',' + y + ') scale(' + (k || 1) + ')"><rect class="deco-trunk" x="-3" y="4" width="6" height="12" rx="2"/>' +
+      '<circle class="deco-leaf" cx="0" cy="-2" r="12"/><circle class="deco-leaf2" cx="-4" cy="-6" r="5"/></g>';
+    const bush = (x, y) => '<g transform="translate(' + x + ',' + y + ')"><ellipse class="deco-bush" cx="0" cy="0" rx="14" ry="8"/><circle class="deco-flower" cx="-5" cy="-2" r="2"/><circle class="deco-flower" cx="5" cy="1" r="2"/></g>';
+    const deco =
+      tree(22, 330) + tree(320, 250, .9) + tree(22, 140, .8) + tree(318, 150, 1.1) + tree(26, 50, .9) + tree(120, 40, .7) +
+      bush(172, 350) + bush(172, 246) + bush(250, 142) + bush(104, 150) + bush(214, 50) +
+      // start flag
+      '<g transform="translate(326,398)"><title>התחלה</title><rect class="deco-trunk" x="-2" y="-30" width="4" height="34"/><path d="M2 -30 L-14 -23 L2 -16 Z" fill="#C73A34" stroke="#5A2A12" stroke-width="2"/></g>' +
+      // goal trophy
+      '<g transform="translate(314,58)"><circle r="20" fill="#FFC83D" stroke="#5A2A12" stroke-width="3.5"/>' +
+      Icons.trophy.replace('<svg ', '<svg x="-12" y="-12" width="24" height="24" style="color:#5A2A12" ') + '</g>';
+    const star = (x, y, on) => '<path class="mstar ' + (on ? 'on' : 'off') + '" transform="translate(' + (x - 7) + ',' + (y - 7) + ') scale(.58)" d="' + STAR_PATH + '"/>';
     let nodes = '';
     STAGES.forEach((st, i) => {
+      const [x, y] = P[i];
       const locked = !Progress.unlocked(st.id);
       const stars = Progress.stars(st.id);
       const cur = st === f && !locked;
+      const m = Icons.modes[st.mode];
       const label = 'שלב ' + st.id + ', ' + st.name + ', ' + CONFIG.modes[st.mode].label +
         (locked ? ', נעול' : ', ' + stars + ' מתוך 3 כוכבים');
-      nodes += '<button type="button" class="node' + (locked ? ' locked' : '') + (cur ? ' current' : '') + '" style="left:' + xs[i % 4] +
-        '%;top:' + (top + i * rowH) + 'px" data-stage="' + st.id + '" aria-label="' + esc(label) + '">' +
-        (cur ? '<span class="here" aria-hidden="true">כאן</span>' : '') +
-        '<span class="coin">' + (locked ? Icons.lock : st.id) + '</span>' +
-        Draw.modeIcon(st.mode, 'mode-dot') +
-        '<span class="stars-mini">' + starsRow(stars) + '</span>' +
-        '<span class="node-name">' + esc(st.name) + '</span></button>';
+      nodes += '<g class="snode' + (locked ? ' locked' : '') + (cur ? ' current' : '') + '" data-stage="' + st.id + '" role="button" tabindex="0" aria-label="' + esc(label) + '">' +
+        '<title>' + esc(label) + '</title>' +
+        '<circle class="hit" cx="' + x + '" cy="' + (y + 6) + '" r="36"/>' +
+        '<g class="bob"><g class="coin-g">' +
+        '<circle class="shadow" cx="' + x + '" cy="' + (y + 5) + '" r="27"/>' +
+        '<circle class="outer" cx="' + x + '" cy="' + y + '" r="27"/>' +
+        '<circle class="inner" cx="' + x + '" cy="' + y + '" r="17"/>' +
+        (locked
+          ? Icons.lock.replace('<svg ', '<svg x="' + (x - 10) + '" y="' + (y - 10) + '" width="20" height="20" style="color:#6C5A45" ')
+          : '<text class="n" x="' + x + '" y="' + (y + 1) + '">' + st.id + '</text>') +
+        '<circle cx="' + (x + 21) + '" cy="' + (y - 20) + '" r="10" fill="' + m.bg + '" stroke="#5A2A12" stroke-width="2.5"/>' +
+        m.svg.replace('<svg ', '<svg x="' + (x + 14) + '" y="' + (y - 27) + '" width="14" height="14" style="color:#fff" ') +
+        '</g></g>' +
+        star(x - 15, y + 35, stars >= 1) + star(x, y + 38, stars >= 2) + star(x + 15, y + 35, stars >= 3) +
+        (cur ? '<g class="here-tag"><rect x="' + (x - 20) + '" y="' + (y - 52) + '" width="40" height="20" rx="10"/><text x="' + x + '" y="' + (y - 42) + '">כאן</text></g>' : '') +
+        '</g>';
     });
-    const h = top + n * rowH;
-    const map = $('map');
-    map.style.height = h + 'px';
-    map.innerHTML = '<svg class="map-svg" height="' + h + '" aria-hidden="true">' + lines + '</svg>' + nodes;
+    $('map').innerHTML = '<svg viewBox="0 0 340 440" preserveAspectRatio="xMidYMid meet" role="group" aria-label="מפת 14 השלבים">' +
+      deco + '<path class="mp-edge" d="' + d + '"/><path class="mp-road" d="' + d + '"/><path class="mp-dash" d="' + d + '"/>' + done + nodes + '</svg>';
   },
 
   renderFree() {
