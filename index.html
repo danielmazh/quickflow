@@ -890,13 +890,28 @@ const CONFIG = {
     attackMs: 60,        // continuous time above ON threshold to confirm speech start
     releaseMs: 250,      // continuous time below OFF threshold to confirm speech end
     offRatio: 0.7,       // OFF threshold = ON threshold * offRatio (hysteresis)
-    minThreshold: 0.01,  // lower bound for calibrated threshold
+    // 2026-09-30: was 0.01. The voice band filter removes rumble energy, so a quiet voice
+    // now sits lower on the meter. 0.006 lets it pass without raising the voice.
+    minThreshold: 0.006, // lower bound for calibrated threshold
     calibMs: 1500,       // silence calibration duration
     calibK: 3,           // threshold = mean + K * std
     calibFloorMult: 2.5, // and at least floor * mult
-    noisyFloor: 0.05     // above this the room is too noisy
+    noisyFloor: 0.05,    // above this the room is too noisy
+    // 2026-09-30: voice band filter in front of the analyser. Road rumble, engine and
+    // A/C hum sit mostly below 150 Hz. Hiss and wind tops sit above 4 kHz.
+    bandLowHz: 150,      // high-pass corner
+    bandHighHz: 4000,    // low-pass corner
+    // 2026-09-30: noise in a car changes with speed. Re-estimate the floor from quiet
+    // moments (reading, and 'between' after the tail of the answer) and blend it in.
+    adaptTailMs: 400,    // skip this much of 'between' so the end of the answer is not noise
+    adaptMinSamples: 20, // about 0.3 s of frames before a re-estimate is trusted
+    adaptMaxSamples: 120,// keep only the last ~2 s
+    adaptBlend: 0.5      // new threshold = old * (1 - blend) + estimate * blend
   },
   hesitationMs: 1200,
+  // 2026-09-30: operator asked for a little more reading time. Added to every
+  // reading phase (yes_and, rant, stages). Word association has none and stays 0.
+  readExtraMs: 500,
   betweenRoundsMs: 900,
   statsWindow: 10,
   sparkPoints: 20,
@@ -1281,8 +1296,8 @@ const Util = {
     return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
   },
   readMsFor(cfg, prompt) {
-    if (cfg.readMs !== 'auto') return cfg.readMs;
-    return Math.min(3500, Math.max(1200, prompt.length * 45));
+    const base = cfg.readMs !== 'auto' ? cfg.readMs : Math.min(3500, Math.max(1200, prompt.length * 45));
+    return base > 0 ? base + CONFIG.readExtraMs : 0;
   }
 };
 
@@ -1292,11 +1307,15 @@ const Util = {
  * ============================================================ */
 class VadTracker {
   constructor(threshold, vadCfg) {
-    this.on = threshold;
-    this.off = threshold * vadCfg.offRatio;
+    this.offRatio = vadCfg.offRatio;
+    this.setThreshold(threshold);
     this.attackMs = vadCfg.attackMs;
     this.releaseMs = vadCfg.releaseMs;
     this.reset();
+  }
+  setThreshold(threshold) {
+    this.on = threshold;
+    this.off = threshold * this.offRatio;
   }
   reset() {
     this.speaking = false;
@@ -1501,14 +1520,17 @@ const Storage = {
 };
 
 /* ============================================================
- * Audio engine: raw mic (no AGC / NS / EC), analyser only,
- * never connected to speakers. Full lifecycle management.
+ * Audio engine: mic with the browser's noise suppression, echo
+ * cancellation and auto gain (2026-09-30, was raw), then a voice band
+ * filter, then the analyser. Never connected to speakers.
  * ============================================================ */
 class AudioEngine {
   constructor() {
     this.ctx = null;
     this.stream = null;
     this.source = null;
+    this.hp = null;
+    this.lp = null;
     this.analyser = null;
     this.buf = null;
   }
@@ -1521,8 +1543,17 @@ class AudioEngine {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     this.ctx = new Ctx();
     try {
+      // 2026-09-30: was all false (raw mic). In a car the user had to raise the voice.
+      // NS removes steady road/A-C noise, AEC removes car speakers, AGC lifts a quiet voice.
+      // Unsupported keys are ignored by the browser, so this is safe on every engine.
       this.stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          voiceIsolation: true, // newer Chrome only; ignored elsewhere
+          channelCount: 1
+        },
         video: false
       });
       if (this.ctx.state === 'suspended') await this.ctx.resume();
@@ -1534,7 +1565,18 @@ class AudioEngine {
       this.analyser = this.ctx.createAnalyser();
       this.analyser.fftSize = CONFIG.fftSize;
       this.source = this.ctx.createMediaStreamSource(this.stream);
-      this.source.connect(this.analyser); // no connection to ctx.destination
+      // Voice band only: the VAD then reacts to speech, not to rumble or hiss.
+      this.hp = this.ctx.createBiquadFilter();
+      this.hp.type = 'highpass';
+      this.hp.frequency.value = CONFIG.vad.bandLowHz;
+      this.hp.Q.value = 0.707;
+      this.lp = this.ctx.createBiquadFilter();
+      this.lp.type = 'lowpass';
+      this.lp.frequency.value = CONFIG.vad.bandHighHz;
+      this.lp.Q.value = 0.707;
+      this.source.connect(this.hp);
+      this.hp.connect(this.lp);
+      this.lp.connect(this.analyser); // no connection to ctx.destination
       this.buf = new Float32Array(this.analyser.fftSize);
     } catch (e) {
       await this.stop();
@@ -1549,10 +1591,11 @@ class AudioEngine {
     return Math.sqrt(s / this.buf.length);
   }
   async stop() {
-    try { if (this.source) this.source.disconnect(); } catch (_) {}
+    [this.source, this.hp, this.lp].forEach(n => { try { if (n) n.disconnect(); } catch (_) {} });
     if (this.stream) this.stream.getTracks().forEach(t => t.stop());
     const ctx = this.ctx;
-    this.source = null; this.analyser = null; this.stream = null; this.buf = null; this.ctx = null;
+    this.source = null; this.hp = null; this.lp = null;
+    this.analyser = null; this.stream = null; this.buf = null; this.ctx = null;
     if (ctx && ctx.state !== 'closed') {
       try { await ctx.close(); } catch (_) {}
     }
@@ -2150,7 +2193,7 @@ const Steps = {
       ['שתוק כשסיימת', 'אחרי ' + secs(cfg.endOnSilenceMs) + ' של שקט הסבב נגמר. אפשר לדבר עד ' + secs(cfg.speakMs) + '.']
     ];
     return [
-      ['קרא את הנושא', 'יש ' + secs(cfg.readMs) + ' לחשוב, עם ספירה לאחור.'],
+      ['קרא את הנושא', 'יש ' + secs(Util.readMsFor(cfg, '')) + ' לחשוב, עם ספירה לאחור.'],
       ['דבר עכשיו!', 'דבר על הנושא ' + secs(cfg.speakMs) + ' ברצף. כל דעה מתאימה.'],
       ['אל תעצור', 'שקט של ' + secs(CONFIG.hesitationMs) + ' ומעלה נספר כהיסוס. הפס מראה כמה זמן נשאר.']
     ];
@@ -2168,6 +2211,47 @@ const Seen = {
   add(m) { const a = this.list(); if (!a.includes(m)) { a.push(m); try { localStorage.setItem(this.key, JSON.stringify(a)); } catch (e) { /* ignore */ } } }
 };
 
+
+/* ============================================================
+ * Screen Wake Lock (2026-09-30): keep the screen on while a session
+ * runs, like a video player. App.go() asks for it on the session view
+ * and drops it on every other view. The browser drops it by itself when
+ * the tab is hidden, the app is minimized or the phone is locked.
+ * No permission prompt. Needs https. No-op where not supported.
+ * ============================================================ */
+const ScreenAwake = {
+  sentinel: null,
+  want: false,
+  pending: false,
+  supported() { return 'wakeLock' in navigator; },
+  init() {
+    // The lock is lost when the page is hidden. If we still want it on return, take it again.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && this.want) this.acquire();
+    });
+  },
+  async acquire() {
+    this.want = true;
+    if (!this.supported() || this.sentinel || this.pending || document.visibilityState !== 'visible') return;
+    this.pending = true;
+    try {
+      const lock = await navigator.wakeLock.request('screen');
+      if (!this.want) { lock.release().catch(() => {}); return; } // view changed while we waited
+      this.sentinel = lock;
+      lock.addEventListener('release', () => { if (this.sentinel === lock) this.sentinel = null; });
+    } catch (e) {
+      // Denied (low battery mode, policy, not visible). The screen just follows system timeout.
+    } finally {
+      this.pending = false;
+    }
+  },
+  release() {
+    this.want = false;
+    const lock = this.sentinel;
+    this.sentinel = null;
+    if (lock) lock.release().catch(() => {});
+  }
+};
 
 /* ============================================================
  * App controller: views + RAF loop + explicit phase machine
@@ -2190,6 +2274,7 @@ const App = {
     Storage.load();
     Progress.load();
     Sound.init();
+    ScreenAwake.init();
     document.querySelectorAll('[data-icon]').forEach(el => {
       const ic = Icons[el.dataset.icon];
       if (ic) el.insertAdjacentHTML('afterbegin', ic);
@@ -2262,6 +2347,8 @@ const App = {
     $('btn-settings').hidden = view === 'session';
     // Music and effects may play only on screens where the mic is off.
     Sound.setScene(view !== 'session');
+    // Screen stays on only on the live session view.
+    if (view === 'session') ScreenAwake.acquire(); else ScreenAwake.release();
     window.scrollTo(0, 0);
   },
 
@@ -2656,8 +2743,8 @@ const App = {
     this.modeKey = mode;
     this.starting = true;
 
-    // The mic is raw (no echo cancellation). Music and effects fade out and the
-    // sound context is suspended BEFORE calibration can start.
+    // Echo cancellation is on since 2026-09-30, but it is not perfect. Music and
+    // effects still fade out and the sound context is suspended BEFORE calibration.
     const quiet = Sound.silence();
     try {
       const mic = this.audio.start(); // creates its AudioContext now, inside the user gesture
@@ -2721,7 +2808,29 @@ const App = {
     s.threshold = thr;
     s.vad = new VadTracker(thr, v);
     s.noisy = floor > v.noisyFloor;
+    s.adapt = [];
     Storage.setCalibration({ noiseFloor: floor, threshold: thr, at: Date.now() });
+  },
+
+  /* 2026-09-30: follow a changing noise floor (car speed, window, A/C).
+   * Median, not mean, so a short cough or "yes!" in the sample does not lift it. */
+  adaptThreshold() {
+    const s = this.s;
+    const v = CONFIG.vad;
+    if (!s.adapt || s.adapt.length < v.adaptMinSamples) return;
+    const floor = Util.median(s.adapt);
+    const est = Math.max(v.minThreshold, floor * v.calibFloorMult);
+    s.threshold = s.threshold * (1 - v.adaptBlend) + est * v.adaptBlend;
+    s.vad.setThreshold(s.threshold);
+    s.noisy = floor > v.noisyFloor;
+    s.adapt = [];
+  },
+
+  collectQuiet(rms) {
+    const a = this.s.adapt;
+    if (!a) return;
+    a.push(rms);
+    if (a.length > CONFIG.vad.adaptMaxSamples) a.shift();
   },
 
   baseChips() {
@@ -2751,6 +2860,7 @@ const App = {
     s.phase = 'awaiting';
     s.phaseStart = t;
     s.cueAt = t;
+    this.adaptThreshold();
     s.vad.reset();
     s.rm = new RoundMetrics(t, CONFIG.hesitationMs);
     this.setCard('live', Icons.mic + 'תורך', s.prompts[s.roundIdx], null,
@@ -2804,6 +2914,7 @@ const App = {
         break;
       }
       case 'reading': {
+        this.collectQuiet(rms);
         const el = t - s.phaseStart;
         this.setTimer(1 - el / s.readMs);
         this.setCount(Math.max(1, Math.ceil((s.readMs - el) / 1000)));
@@ -2845,6 +2956,7 @@ const App = {
         break;
       }
       case 'between': {
+        if (t - s.phaseStart >= CONFIG.vad.adaptTailMs) this.collectQuiet(rms);
         if (t - s.phaseStart >= CONFIG.betweenRoundsMs) {
           if (s.roundIdx + 1 >= cfg.rounds) {
             this.finish();
