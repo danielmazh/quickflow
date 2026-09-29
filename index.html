@@ -198,6 +198,9 @@
   .set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 4px; }
   .set-row b { font-family: var(--font-display); font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
   .set-row b svg { width: 22px; height: 22px; color: var(--orange-d); }
+  /* 2026-09-30: read-aloud toggle is disabled when the browser has no Hebrew voice */
+  .tgl:disabled { opacity: .5; cursor: not-allowed; }
+  .set-note { margin: 0 4px 6px; font-size: .82rem; color: var(--ink-2); }
 
   /* stars */
   .star path { stroke-linejoin: round; }
@@ -539,6 +542,15 @@
   .ph-read .card-label { background: var(--orange); }
   .ph-hit .cue, .ph-miss .cue { display: none; }
   .card-timer .track-fill { transition: none; }
+  /* 2026-09-30: "שנה כיוון!" signal in the new_choice mode. Big flash over the card. */
+  .switch-flash {
+    position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; text-align: center;
+    border-radius: 22px; background: rgba(243,163,58,.94); color: #fff; pointer-events: none;
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, min(11vw, 7dvh), 3.4rem);
+    text-shadow: 0 3px 0 var(--brown), 2px 0 0 var(--brown), -2px 0 0 var(--brown);
+    animation: switchIn .5s var(--bounce) both;
+  }
+  @keyframes switchIn { 0% { opacity: 0; transform: scale(.7); } 60% { opacity: 1; transform: scale(1.06); } 100% { transform: scale(1); } }
   .ph-read .card-timer .track-fill { background: linear-gradient(180deg, #FFE39A, var(--gold)); }
 
   .meter-wrap { margin: 0 3px; flex: none; }
@@ -725,6 +737,7 @@
             <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
             <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה.</p>
             <p>המוזיקה והצלילים נעצרים לפני הכיול ולא מתנגנים אף פעם בזמן שהמיקרופון מקשיב.</p>
+            <p>הקראה בקול (בהגדרות): המשחק מקריא את המילה או הנושא. בזמן ההקראה המיקרופון לא נמדד, וזמן התגובה נספר רק אחרי שההקראה נגמרה.</p>
           </details>
         </div>
       </div>
@@ -803,6 +816,7 @@
         <span id="cue-count" class="cue-count num" aria-hidden="true"></span>
       </div>
       <div class="track card-timer" aria-hidden="true"><div id="c-timer" class="track-fill" style="width:100%"></div></div>
+      <div id="c-flash" class="switch-flash" role="alert" hidden>שנה כיוון!</div>
     </div>
     <div class="meter-wrap" aria-hidden="true">
       <div class="track"><div id="m-fill" class="track-fill dim"></div><div id="m-thr" class="meter-thr"></div></div>
@@ -859,6 +873,8 @@
   <div class="dlg-scroll">
     <div class="set-row"><b><span data-icon="bell"></span>צלילים</b><button id="tgl-sfx" class="tgl" type="button" role="switch" aria-checked="true" aria-label="צלילים" data-sound-toggle><span></span><i></i></button></div>
     <div class="set-row"><b><span data-icon="music"></span>מוזיקה</b><button id="tgl-music" class="tgl" type="button" role="switch" aria-checked="true" aria-label="מוזיקה" data-sound-toggle><span></span><i></i></button></div>
+    <div class="set-row"><b><span data-icon="speaker"></span>הקראה בקול</b><button id="tgl-tts" class="tgl" type="button" role="switch" aria-checked="true" aria-label="הקראה בקול" aria-describedby="tts-note"><span></span><i></i></button></div>
+    <p id="tts-note" class="set-note" hidden>אין בדפדפן הזה קול בעברית, לכן אי אפשר להפעיל הקראה.</p>
     <div class="btn-stack">
       <button id="set-help" class="btn btn-cream btn-block" type="button"><span data-icon="question"></span>איך משחקים</button>
       <button id="set-export" class="btn btn-cream btn-block" type="button"><span data-icon="download"></span>ייצוא היסטוריה</button>
@@ -906,13 +922,25 @@ const CONFIG = {
     adaptTailMs: 400,    // skip this much of 'between' so the end of the answer is not noise
     adaptMinSamples: 20, // about 0.3 s of frames before a re-estimate is trusted
     adaptMaxSamples: 120,// keep only the last ~2 s
-    adaptBlend: 0.5      // new threshold = old * (1 - blend) + estimate * blend
+    adaptBlend: 0.5,     // new threshold = old * (1 - blend) + estimate * blend
+    // 2026-09-30: was the median. A test with speech during reading lifted the threshold
+    // to 0.43. A low percentile reads the gaps between words, so talking does not lift it.
+    adaptPercentile: 0.2
   },
   hesitationMs: 1200,
   // 2026-09-30: operator asked for a little more reading time. Added to every
   // reading phase (yes_and, rant, stages). Word association has none and stays 0.
   readExtraMs: 500,
   betweenRoundsMs: 900,
+  // 2026-09-30: read prompts aloud (for use while driving). Mic input is ignored while it speaks.
+  tts: {
+    rate: 1.0,             // speech rate for the Hebrew voice
+    guardMs: 200,          // extra quiet time after the voice ends, before the mic counts again
+    safetyBaseMs: 1500,    // if onend never fires: give up after base + length * perChar
+    safetyPerCharMs: 90,
+    safetyMaxMs: 8000,
+    switchText: 'שנה כיוון' // spoken on the new_choice signal
+  },
   statsWindow: 10,
   sparkPoints: 20,
   modes: {
@@ -960,6 +988,46 @@ const CONFIG = {
       speakMs: 30000,
       endOnSilenceMs: null,
       trackHesitations: true
+    },
+    // 2026-09-30: new mode. Like the rant, plus random "change direction" signals.
+    new_choice: {
+      label: "שנה כיוון!",
+      desc: "מקבלים נושא ומדברים עליו ברצף. מדי פעם מופיע \"שנה כיוון!\": עבור מיד לרעיון חדש, בלי לעצור.",
+      short: "מדברים ברצף ומחליפים כיוון",
+      readLabel: "קרא את הנושא",
+      lead: "הנושא:",
+      liveSub: "דבר על הנושא, וחכה ל\"שנה כיוון!\"",
+      speakSub: "כשמופיע \"שנה כיוון!\" עבור לרעיון חדש",
+      rounds: 1,
+      readMs: 3000,
+      responseWindowMs: 6000,
+      speakMs: 30000,
+      endOnSilenceMs: null,
+      trackHesitations: true,
+      switchFirstMs: [6000, 10000], // first signal, random in this range after speech starts
+      switchEveryMs: [7000, 12000], // then every (random in range)
+      switchTailMs: 4000,           // no new signal when less than this is left
+      flashMs: 1400,                // how long the big flash stays on the card
+      vibrateMs: 150
+    },
+    // 2026-09-30: new mode. One session = one story, one round per fixed beat.
+    story_spine: {
+      label: "שלד סיפור",
+      desc: "מקבלים גיבור לסיפור ומספרים אותו בשישה קטעים קבועים, מ\"פעם היה...\" ועד \"עד שלבסוף...\". כל קטע מתחיל ב\"דבר עכשיו!\" ונגמר כשאתה שותק.",
+      short: "סיפור בשישה קטעים קבועים",
+      readLabel: "קרא את הגיבור",
+      lead: "הסיפור:",
+      liveSub: "המשך את הקטע במשפט או שניים",
+      speakSub: "המשך. כשתסיים את הקטע, פשוט תשתוק",
+      roundWords: ["קטע", "קטעים"],
+      rounds: 6,
+      readMs: 0,          // beats 2-6 start right away
+      firstReadMs: 3000,  // beat 1 gets time to read the hero (plus readExtraMs)
+      responseWindowMs: 5000,
+      speakMs: 12000,     // max time per beat
+      endOnSilenceMs: 1500,
+      trackHesitations: true,
+      beats: ["פעם היה...", "כל יום...", "עד שיום אחד...", "ובגלל זה...", "ובגלל זה...", "עד שלבסוף..."]
     }
   }
 };
@@ -1263,6 +1331,70 @@ const PROMPTS = {
     "האם ארוחת בוקר היא הארוחה הכי חשובה",
     "דבר אחד שהיית מלמד כל ילד",
     "למה תמיד שוכחים משהו כשיוצאים מהבית"
+  ],
+  // 2026-09-30: topics for the new_choice mode
+  new_choice: [
+    "הבית הכי מוזר שאפשר לגור בו",
+    "יום בחיים של דוור",
+    "איך מתכננים מסיבת יום הולדת",
+    "המסעדה החדשה בשכונה",
+    "טיול משפחתי לצפון",
+    "החיה שהייתי רוצה להיות",
+    "מה לוקחים לאי בודד",
+    "היום הראשון בעבודה חדשה",
+    "איך מאלפים כלב",
+    "העיר שלנו בעוד מאה שנה",
+    "שבוע של חופשה בלי טלפון",
+    "המתכון לעוגה מושלמת",
+    "השיעור הראשון בנהיגה",
+    "הסופרמרקט ביום שישי בבוקר",
+    "בית הספר של החלומות",
+    "טיסה ארוכה מאוד",
+    "מה עושים ביום גשום",
+    "המשחק הכי טוב מהילדות",
+    "חתונה על חוף הים",
+    "גינה קטנה על המרפסת",
+    "המצאה שתשנה את המטבח",
+    "ראיון עבודה שהשתבש",
+    "לילה באוהל",
+    "איך מסדרים ארון",
+    "יום שלם במוזיאון",
+    "השכן החדש בבניין",
+    "ארוחת שישי אצל סבתא",
+    "הרפתקה בחלל",
+    "איך בוחרים מתנה",
+    "יום ספורט בבית הספר"
+  ],
+  // 2026-09-30: heroes for the story_spine mode
+  story_spine: [
+    "דג שפוחד ממים",
+    "דרקון שאוהב לאפות עוגות",
+    "רובוט שרוצה להיות שף",
+    "ילדה שמדברת עם עצים",
+    "פינגווין שגר במדבר",
+    "מכונית שלא אוהבת לנסוע",
+    "ענן שרוצה לראות את הים",
+    "סבתא שהיא אלופת כדורסל",
+    "חתול שפוחד מעכברים",
+    "מלך שאיבד את הכתר",
+    "נמלה שרוצה להיות ענקית",
+    "שעון שתמיד מאחר",
+    "ילד שמצא מפה סודית",
+    "פיל שרוצה לרקוד בלט",
+    "מטרייה שאוהבת שמש",
+    "ינשוף שנרדם בלילה",
+    "כוכב שנפל לחצר",
+    "טבח שלא יודע לטעום",
+    "מכשפה שפוחדת מחושך",
+    "צב שרוצה לנצח במרוץ",
+    "כדור שלא רוצה לקפוץ",
+    "נהג אוטובוס ששכח את הדרך",
+    "גמד שגר בתוך נעל",
+    "קוסם ששכח את הקסמים",
+    "תוכי שמספר סודות",
+    "עץ שרוצה לטייל",
+    "ליצן שלא מצליח לצחוק",
+    "חללית שנתקעה על הירח"
   ]
 };
 
@@ -1298,7 +1430,9 @@ const Util = {
   readMsFor(cfg, prompt) {
     const base = cfg.readMs !== 'auto' ? cfg.readMs : Math.min(3500, Math.max(1200, prompt.length * 45));
     return base > 0 ? base + CONFIG.readExtraMs : 0;
-  }
+  },
+  // 2026-09-30: random ms in a [min, max] range (new_choice signal timing)
+  randIn(range) { return range[0] + Math.random() * (range[1] - range[0]); }
 };
 
 /* ============================================================
@@ -1349,6 +1483,11 @@ class VadTracker {
     }
     return events;
   }
+  // 2026-09-30: pause support. Frames were skipped for d ms (TTS spoke), so move the timers on.
+  shift(d) {
+    if (this.aboveSince !== null) this.aboveSince += d;
+    if (this.belowSince !== null) this.belowSince += d;
+  }
 }
 
 /* ============================================================
@@ -1389,6 +1528,11 @@ class RoundMetrics {
     }
     this.lastOffset = null;
   }
+  // 2026-09-30: pause the clock for d ms (TTS spoke). That time counts as neither voice nor gap.
+  shift(d) {
+    if (this.curOnset !== null) this.curOnset += d;
+    if (this.lastOffset !== null) this.lastOffset += d;
+  }
 }
 
 /* ============================================================
@@ -1399,7 +1543,7 @@ function buildSessionRecord(mode, cfg, rounds, startedAtWall, durationMs, thresh
   const lats = answered.map(r => r.latencyMs);
   const voiced = rounds.reduce((a, r) => a + r.voicedMs, 0);
   const windowMs = rounds.reduce((a, r) => a + r.windowMs, 0);
-  return {
+  const rec = {
     sessionId: Util.uuid(),
     timestamp: startedAtWall,
     gameMode: mode,
@@ -1414,6 +1558,13 @@ function buildSessionRecord(mode, cfg, rounds, startedAtWall, durationMs, thresh
     totalSessionDurationMs: Math.round(durationMs),
     threshold: Number(threshold.toFixed(4))
   };
+  // 2026-09-30: extra fields, only for the new_choice mode. Old code ignores unknown fields.
+  if (cfg.switchEveryMs) {
+    const sw = [].concat(...rounds.map(r => Array.isArray(r.switches) ? r.switches : []));
+    rec.switchCount = sw.length;
+    rec.avgSwitchLatencyMs = sw.length ? Math.round(Util.mean(sw)) : null;
+  }
+  return rec;
 }
 
 /* ============================================================
@@ -1438,7 +1589,9 @@ const Storage = {
       && Object.prototype.hasOwnProperty.call(CONFIG.modes, r.gameMode)
       && typeof r.totalRounds === 'number'
       && this.isNumOrNull(r.avgLatencyMs)
-      && this.isNumOrNull(r.hesitationsCount);
+      && this.isNumOrNull(r.hesitationsCount)
+      // 2026-09-30: optional new_choice field. Absent on every older record, so they still pass.
+      && (r.avgSwitchLatencyMs === undefined || this.isNumOrNull(r.avgSwitchLatencyMs));
   },
 
   migrate(data) {
@@ -1641,13 +1794,19 @@ const Icons = {
   trash: svgI('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'),
   list: svgI('<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', ' stroke-width="2.8"'),
   redo: svgI('<path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/>'),
+  speaker: svgI('<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/>'),
   modes: {
     word_association: { bg: '#3E7B35',
       svg: svgI('<circle cx="8" cy="12" r="4"/><circle cx="16" cy="12" r="4"/>') },
     yes_and: { bg: '#D27F22',
       svg: svgI('<path d="M12 5v14M5 12h14"/>', ' stroke-width="3"') },
     thirty_sec_rant: { bg: '#C73A34',
-      svg: svgI('<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>') }
+      svg: svgI('<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>') },
+    // 2026-09-30: new modes. Colors from :root (--green-d, --brown-2).
+    new_choice: { bg: '#25501F',
+      svg: svgI('<path d="M5 20v-7a5 5 0 0 1 5-5h9"/><path d="M15 4l4 4-4 4"/>') },
+    story_spine: { bg: '#7A3E1C',
+      svg: svgI('<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6M9 11h4"/>') }
   }
 };
 const STAR_PATH = 'M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z';
@@ -1658,10 +1817,12 @@ const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 /* ============================================================
  * Stages: 14 steps that mix the 3 modes with rising difficulty.
+ * 2026-09-30: plus chapter 2 (15-18) with new_choice and story_spine.
  * Only the per-round config changes. The measurement code is shared.
  * Star rules (cumulative):
- *   rounds modes: 1 = answered >= min, 2 = + median <= t2, 3 = + all answered and median <= t3
+ *   rounds modes (incl. story_spine beats): 1 = answered >= min, 2 = + median <= t2, 3 = + all answered and median <= t3
  *   rant: 1 = started speaking in time, 2 = + reaction <= t2, 3 = + hesitations <= maxHes
+ *   new_choice: 1 = started speaking in time, 2 = + avg switch latency <= t2, 3 = + hesitations <= maxHes
  * ============================================================ */
 const STAGES = [
   { id: 1, mode: 'word_association', name: 'חימום', tier: 'easy', rounds: 6, responseWindowMs: 3500, min: 4, t2: 1800, t3: 1300,
@@ -1691,18 +1852,38 @@ const STAGES = [
   { id: 13, mode: 'thirty_sec_rant', name: 'דקה שלמה', rounds: 1, readMs: 2000, responseWindowMs: 4000, speakMs: 60000, t2: 1500, maxHes: 4,
     tip: 'דבר כאילו אתה מספר לחבר. לא צריך להיות מושלם.' },
   { id: 14, mode: 'yes_and', name: 'הגמר', tier: 'all', rounds: 8, responseWindowMs: 3000, min: 6, t2: 1500, t3: 1100,
-    tip: 'שלב אחרון! היה נועז, והוסף רעיון חדש בכל פעם.' }
+    tip: 'שלב אחרון! היה נועז, והוסף רעיון חדש בכל פעם.' },
+  // 2026-09-30: chapter 2, two new modes. Stage 15 opens with a star on 14, like every stage.
+  { id: 15, mode: 'story_spine', name: 'שלד סיפור', responseWindowMs: 5000, speakMs: 12000, min: 4, t2: 2500, t3: 1800,
+    tip: 'משפט אחד לכל קטע מספיק. תמשיך מהקטע הקודם.' },
+  { id: 16, mode: 'new_choice', name: 'שנה כיוון', rounds: 1, readMs: 3000, responseWindowMs: 6000, speakMs: 30000, t2: 2000, maxHes: 3,
+    tip: 'ב"שנה כיוון!" אמור "או ש..." ועבור לרעיון חדש.' },
+  { id: 17, mode: 'story_spine', name: 'סיפור בקצב', responseWindowMs: 4000, speakMs: 10000, min: 4, t2: 1800, t3: 1300,
+    tip: 'אל תתכנן את הסוף. כל קטע רק צריך לנבוע מהקודם.' },
+  { id: 18, mode: 'new_choice', name: 'שנה כיוון 45', rounds: 1, readMs: 3000, responseWindowMs: 5000, speakMs: 45000,
+    switchEveryMs: [5000, 8000], t2: 1500, maxHes: 3,
+    tip: 'אל תסיים את המשפט הקודם. פשוט קפוץ לכיוון החדש.' }
 ];
 
 const Stages = {
   byId(id) { return STAGES.find(s => s.id === id) || null; },
   cfg(st) {
     const cfg = Object.assign({}, CONFIG.modes[st.mode]);
-    ['rounds', 'readMs', 'responseWindowMs', 'speakMs'].forEach(k => { if (st[k] !== undefined) cfg[k] = st[k]; });
+    // 2026-09-30: switch timing added to the override list (stage 18). Old stages do not set it.
+    ['rounds', 'readMs', 'responseWindowMs', 'speakMs', 'switchFirstMs', 'switchEveryMs'].forEach(k => { if (st[k] !== undefined) cfg[k] = st[k]; });
     return cfg;
   },
   isRant(st) { return st.mode === 'thirty_sec_rant'; },
+  isChoice(st) { return st.mode === 'new_choice'; },
   goals(st) {
+    // 2026-09-30: new_choice stars: 1 = started in time, 2 = + average switch time <= t2, 3 = + hesitations <= maxHes
+    if (this.isChoice(st)) {
+      return [
+        'התחלת לדבר תוך ' + secs(st.responseWindowMs),
+        'וגם חזרת לדבר אחרי "שנה כיוון!" תוך ' + secs(st.t2) + ' בממוצע',
+        'וגם עד ' + st.maxHes + ' היסוסים'
+      ];
+    }
     if (this.isRant(st)) {
       return [
         'התחלת לדבר תוך ' + secs(st.responseWindowMs),
@@ -1718,6 +1899,13 @@ const Stages = {
   },
   checks(st, rec) {
     const med = rec.medianLatencyMs;
+    if (this.isChoice(st)) {
+      const sw = rec.avgSwitchLatencyMs;
+      const a = rec.answeredRounds >= 1;
+      const b = a && typeof sw === 'number' && sw <= st.t2;
+      const c = b && rec.hesitationsCount !== null && rec.hesitationsCount <= st.maxHes;
+      return [a, b, c];
+    }
     if (this.isRant(st)) {
       const a = rec.answeredRounds >= 1;
       const b = a && med !== null && med <= st.t2;
@@ -2054,6 +2242,84 @@ const Sound = {
 };
 
 /* ============================================================
+ * Speech (2026-09-30): read prompts aloud with a Hebrew voice
+ * (speechSynthesis). Separate from Sound: Sound.guard() only touches
+ * its own WebAudio context, never speechSynthesis.
+ * SAFETY: the mic must not hear this voice as an answer. While a
+ * job speaks, the session sits in the 'announcing' phase (or a new_choice
+ * freeze) and ignores mic input, until onend + CONFIG.tts.guardMs.
+ * ============================================================ */
+const Speech = {
+  key: 'quickflow_tts',
+  on: true,       // user setting
+  voice: null,    // Hebrew voice, null = feature unavailable
+  current: null,  // keep a reference: Chrome may garbage collect the utterance and skip onend
+
+  init() {
+    try { this.on = localStorage.getItem(this.key) !== 'off'; } catch (e) { /* default on */ }
+    if (!this.supported()) return;
+    this.pickVoice();
+    // Voices load async. Re-pick and refresh the toggle when they arrive.
+    const onVoices = () => { this.pickVoice(); if (typeof App !== 'undefined') App.renderSoundUi(); };
+    try { speechSynthesis.addEventListener('voiceschanged', onVoices); }
+    catch (e) { speechSynthesis.onvoiceschanged = onVoices; } // old engines
+  },
+  supported() { return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined'; },
+  pickVoice() {
+    let list = [];
+    try { list = speechSynthesis.getVoices() || []; } catch (e) { /* none */ }
+    const norm = v => String(v.lang || '').toLowerCase().replace('_', '-');
+    const he = list.filter(v => /^(he|iw)(-|$)/.test(norm(v)));
+    this.voice = he.find(v => norm(v) === 'he-il' && v.localService) || he.find(v => norm(v) === 'he-il') || he[0] || null;
+  },
+  available() { return !!this.voice; },
+  enabled() { return this.on && this.available(); },
+  toggle() {
+    if (!this.available()) return;
+    this.on = !this.on;
+    try { localStorage.setItem(this.key, this.on ? 'on' : 'off'); } catch (e) { /* ignore */ }
+  },
+  /* iOS speaks only after a first speak() inside a user gesture. Call synchronously in the click. */
+  prime() {
+    if (!this.enabled()) return;
+    try {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      u.lang = this.voice.lang;
+      this.cancel();
+      this.current = u;
+      speechSynthesis.speak(u);
+    } catch (e) { /* ignore */ }
+  },
+  /* Returns a job the RAF loop polls: { done, endedAt, deadline }. Never throws. */
+  say(text) {
+    const now = performance.now();
+    const t = CONFIG.tts;
+    const job = { done: false, endedAt: null, deadline: now + Math.min(t.safetyMaxMs, t.safetyBaseMs + String(text).length * t.safetyPerCharMs) };
+    const end = () => { if (!job.done) { job.done = true; job.endedAt = performance.now(); } };
+    if (!this.enabled()) { end(); return job; }
+    try {
+      this.cancel(); // Chrome: a stuck queue blocks new speech. Short utterances only.
+      const u = new SpeechSynthesisUtterance(text);
+      u.voice = this.voice;
+      u.lang = this.voice.lang;
+      u.rate = t.rate;
+      u.onend = end;
+      u.onerror = end;
+      this.current = u;
+      speechSynthesis.resume(); // Chrome can stay paused after a hidden tab
+      speechSynthesis.speak(u);
+    } catch (e) { end(); }
+    return job;
+  },
+  cancel() {
+    this.current = null;
+    if (!this.supported()) return;
+    try { if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  }
+};
+
+/* ============================================================
  * Drawing helpers
  * ============================================================ */
 const Draw = {
@@ -2187,6 +2453,17 @@ const Steps = {
       ['דבר עכשיו!', 'אמור בקול את המילה הראשונה שעולה לך. יש ' + w + ' להתחיל.'],
       ['שתוק כשסיימת', 'הסבב נגמר לבד, ועוברים למילה הבאה.']
     ];
+    // 2026-09-30: intro rows for the new modes
+    if (mode === 'new_choice') return [
+      ['קרא את הנושא', 'יש ' + secs(Util.readMsFor(cfg, '')) + ' לחשוב, עם ספירה לאחור.'],
+      ['דבר עכשיו!', 'דבר על הנושא ' + secs(cfg.speakMs) + ' ברצף. יש ' + secs(cfg.responseWindowMs) + ' להתחיל.'],
+      ['שנה כיוון!', 'כשהמסך מהבהב, עבור מיד לרעיון חדש, בלי לעצור. נמדד כמה מהר חזרת לדבר.']
+    ];
+    if (mode === 'story_spine') return [
+      ['קרא את הגיבור', 'יש ' + secs(cfg.firstReadMs + CONFIG.readExtraMs) + ' להכיר את הגיבור של הסיפור.'],
+      ['דבר עכשיו!', 'בכל קטע מופיעה פתיחה, כמו "פעם היה...". המשך אותה בקול. יש ' + secs(cfg.responseWindowMs) + ' להתחיל.'],
+      ['שתוק כשסיימת', 'אחרי ' + secs(cfg.endOnSilenceMs) + ' של שקט עוברים לקטע הבא. עד ' + secs(cfg.speakMs) + ' לכל קטע.']
+    ];
     if (mode === 'yes_and') return [
       ['קרא את המשפט', 'יש כמה שניות, עם ספירה לאחור.'],
       ['דבר עכשיו!', 'התחל ב"כן, ו..." והוסף רעיון משלך. יש ' + w + ' להתחיל.'],
@@ -2202,7 +2479,14 @@ const Steps = {
 const FREE_TIPS = {
   word_association: 'אמור את המילה הראשונה שעולה, גם אם היא מוזרה.',
   yes_and: 'התחל ב"כן, ו..." ואז הוסף פרט אחד. זה מספיק.',
-  thirty_sec_rant: 'נתקעת? תאר מה אתה רואה, או תן דוגמה מהחיים.'
+  thirty_sec_rant: 'נתקעת? תאר מה אתה רואה, או תן דוגמה מהחיים.',
+  new_choice: 'ב"שנה כיוון!" אמור "או ש..." ועבור לרעיון חדש.',
+  story_spine: 'משפט אחד לכל קטע מספיק. תמשיך מהקטע הקודם.'
+};
+// 2026-09-30: "6 סבבים" reads wrong for story beats. Modes may set roundWords [one, many].
+const roundsText = cfg => {
+  const w = cfg.roundWords || ['סבב', 'סבבים'];
+  return cfg.rounds + ' ' + (cfg.rounds === 1 ? w[0] : w[1]);
 };
 const Seen = {
   key: 'quickflow_seen_modes',
@@ -2274,6 +2558,7 @@ const App = {
     Storage.load();
     Progress.load();
     Sound.init();
+    Speech.init();
     ScreenAwake.init();
     document.querySelectorAll('[data-icon]').forEach(el => {
       const ic = Icons[el.dataset.icon];
@@ -2321,15 +2606,17 @@ const App = {
     dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
     $('tgl-sfx').addEventListener('click', () => Sound.toggleSfx());
     $('tgl-music').addEventListener('click', () => Sound.toggleMusic());
+    $('tgl-tts').addEventListener('click', () => { Speech.toggle(); this.renderSoundUi(); });
     $('set-help').addEventListener('click', () => { dlg.close(); this.go('welcome'); });
     $('set-export').addEventListener('click', () => this.exportData());
     $('set-reset').addEventListener('click', () => this.resetData());
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.s) this.abort(); });
     document.addEventListener('visibilitychange', () => {
+      if (document.hidden) Speech.cancel(); // 2026-09-30: never keep talking in a hidden tab
       if (document.hidden && this.s) this.abort('הסשן בוטל כי הלשונית הוסתרה. ברקע הדפדפן מאט את המדידה.');
     });
-    window.addEventListener('pagehide', () => this.audio.stop());
+    window.addEventListener('pagehide', () => { Speech.cancel(); this.audio.stop(); });
 
     this.renderSoundUi();
     this.go('welcome');
@@ -2349,6 +2636,8 @@ const App = {
     Sound.setScene(view !== 'session');
     // Screen stays on only on the live session view.
     if (view === 'session') ScreenAwake.acquire(); else ScreenAwake.release();
+    // 2026-09-30: read-aloud belongs to the session only.
+    if (view !== 'session') Speech.cancel();
     window.scrollTo(0, 0);
   },
 
@@ -2394,6 +2683,13 @@ const App = {
       t.setAttribute('aria-checked', String(on));
       t.querySelector('span').textContent = on ? 'פועל' : 'כבוי';
     });
+    // 2026-09-30: read-aloud toggle. Disabled with a note when there is no Hebrew voice.
+    const tts = $('tgl-tts');
+    const has = Speech.available();
+    tts.disabled = !has;
+    tts.setAttribute('aria-checked', String(Speech.enabled()));
+    tts.querySelector('span').textContent = Speech.enabled() ? 'פועל' : 'כבוי';
+    $('tts-note').hidden = has;
   },
 
   /* ---------- stats ---------- */
@@ -2457,10 +2753,15 @@ const App = {
   },
 
   /* The level map is one SVG picture (viewBox scales to fit the board, no scroll).
-   * The road winds from stage 1 (bottom right) up to stage 14 (top). */
+   * The road winds from stage 1 (bottom right) up to the last stage (top left).
+   * 2026-09-30: 18 stages. Old rows moved down by MAP_DY, chapter 2 is a new top row.
+   * Was: viewBox 340x440, 14 points, trophy top right. */
   renderMap() {
+    const MAP_DY = 96, MAP_H = 440 + MAP_DY;
     const P = [[285, 392], [210, 398], [135, 392], [60, 380], [82, 292], [170, 300], [262, 288],
-      [286, 196], [210, 188], [133, 196], [58, 186], [86, 96], [172, 104], [258, 88]];
+      [286, 196], [210, 188], [133, 196], [58, 186], [86, 96], [172, 104], [258, 88]]
+      .map(([x, y]) => [x, y + MAP_DY])
+      .concat([[286, 100], [210, 92], [133, 100], [66, 98]]);
     const f = Progress.frontier();
     // Smooth road: quadratic curves through the midpoints between stages.
     const curve = pts => {
@@ -2478,14 +2779,15 @@ const App = {
     const tree = (x, y, k) => '<g transform="translate(' + x + ',' + y + ') scale(' + (k || 1) + ')"><rect class="deco-trunk" x="-3" y="4" width="6" height="12" rx="2"/>' +
       '<circle class="deco-leaf" cx="0" cy="-2" r="12"/><circle class="deco-leaf2" cx="-4" cy="-6" r="5"/></g>';
     const bush = (x, y) => '<g transform="translate(' + x + ',' + y + ')"><ellipse class="deco-bush" cx="0" cy="0" rx="14" ry="8"/><circle class="deco-flower" cx="-5" cy="-2" r="2"/><circle class="deco-flower" cx="5" cy="1" r="2"/></g>';
+    const Y = y => y + MAP_DY;
     const deco =
-      tree(22, 330) + tree(320, 250, .9) + tree(22, 140, .8) + tree(318, 150, 1.1) + tree(26, 50, .9) + tree(120, 40, .7) +
-      bush(172, 350) + bush(172, 246) + bush(250, 142) + bush(104, 150) + bush(214, 50) +
+      tree(22, Y(330)) + tree(320, Y(250), .9) + tree(22, Y(140), .8) + tree(318, Y(150), 1.1) + tree(320, 150, .8) +
+      bush(172, Y(350)) + bush(172, Y(246)) + bush(250, Y(142)) + bush(104, Y(150)) +
       // start flag
-      '<g transform="translate(326,398)"><title>התחלה</title><rect class="deco-trunk" x="-2" y="-30" width="4" height="34"/><path d="M2 -30 L-14 -23 L2 -16 Z" fill="#C73A34" stroke="#5A2A12" stroke-width="2"/></g>' +
-      // goal trophy
-      '<g transform="translate(314,58)"><circle r="20" fill="#FFC83D" stroke="#5A2A12" stroke-width="3.5"/>' +
-      Icons.trophy.replace('<svg ', '<svg x="-12" y="-12" width="24" height="24" style="color:#5A2A12" ') + '</g>';
+      '<g transform="translate(326,' + Y(398) + ')"><title>התחלה</title><rect class="deco-trunk" x="-2" y="-30" width="4" height="34"/><path d="M2 -30 L-14 -23 L2 -16 Z" fill="#C73A34" stroke="#5A2A12" stroke-width="2"/></g>' +
+      // goal trophy (2026-09-30: moved top left, next to the last stage)
+      '<g transform="translate(22,44)"><circle r="18" fill="#FFC83D" stroke="#5A2A12" stroke-width="3.5"/>' +
+      Icons.trophy.replace('<svg ', '<svg x="-11" y="-11" width="22" height="22" style="color:#5A2A12" ') + '</g>';
     const star = (x, y, on) => '<path class="mstar ' + (on ? 'on' : 'off') + '" transform="translate(' + (x - 7) + ',' + (y - 7) + ') scale(.58)" d="' + STAR_PATH + '"/>';
     let nodes = '';
     STAGES.forEach((st, i) => {
@@ -2513,7 +2815,7 @@ const App = {
         (cur ? '<g class="here-tag"><rect x="' + (x - 20) + '" y="' + (y - 52) + '" width="40" height="20" rx="10"/><text x="' + x + '" y="' + (y - 42) + '">כאן</text></g>' : '') +
         '</g>';
     });
-    $('map').innerHTML = '<svg viewBox="0 0 340 440" preserveAspectRatio="xMidYMid meet" role="group" aria-label="מפת 14 השלבים">' +
+    $('map').innerHTML = '<svg viewBox="0 0 340 ' + MAP_H + '" preserveAspectRatio="xMidYMid meet" role="group" aria-label="מפת ' + STAGES.length + ' השלבים">' +
       deco + '<path class="mp-edge" d="' + d + '"/><path class="mp-road" d="' + d + '"/><path class="mp-dash" d="' + d + '"/>' + done + nodes + '</svg>';
   },
 
@@ -2571,7 +2873,7 @@ const App = {
     const cfg = CONFIG.modes[key];
     const st = this.modeStats(key);
     $('mode-ribbon').innerHTML = cfg.label;
-    $('mode-desc').textContent = cfg.desc + ' ' + cfg.rounds + (cfg.rounds === 1 ? ' סבב.' : ' סבבים.');
+    $('mode-desc').textContent = cfg.desc + ' ' + roundsText(cfg) + '.';
     const tiles = [
       ['חציון זמן תגובה', Util.sec(st.median), true],
       ['שיא אישי', Util.sec(st.best), false],
@@ -2602,7 +2904,7 @@ const App = {
     $('intro-ribbon').textContent = st ? 'שלב ' + st.id : 'אימון חופשי';
     $('intro-icon').innerHTML = Draw.modeIcon(mode);
     $('intro-name').textContent = st ? st.name : mcfg.label;
-    $('intro-meta').textContent = (st ? 'מצב: ' + mcfg.label + ' | ' : '') + cfg.rounds + (cfg.rounds === 1 ? ' סבב' : ' סבבים') +
+    $('intro-meta').textContent = (st ? 'מצב: ' + mcfg.label + ' | ' : '') + roundsText(cfg) +
       (st ? '' : ' | ' + mcfg.short);
     $('intro-steps').innerHTML = Steps.for(mode, cfg).map((s, i) =>
       '<li class="step' + (i === 1 ? ' go' : '') + '"><span class="step-n">' + (i + 1) + '</span><span><b>' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></span></li>').join('');
@@ -2659,8 +2961,9 @@ const App = {
       p.className = 'prompt' + (prompt.length <= 10 ? ' word' : '');
       const showLead = !!(this.s && phase !== 'calib' && this.s.cfg.lead);
       lead.hidden = !showLead;
-      if (showLead) lead.textContent = this.s.cfg.lead;
+      if (showLead) lead.textContent = this.s.lead || this.s.cfg.lead; // 2026-09-30: story_spine shows its hero
     }
+    $('c-flash').hidden = true; // 2026-09-30: any card change ends a "שנה כיוון!" flash
     const c = $('c-cue');
     c.hidden = !cue;
     if (cue) {
@@ -2712,14 +3015,16 @@ const App = {
       '<span><i style="background:var(--green-l)"></i>ענית <b class="num">' + hit + '</b></span>' +
       '<span><i style="background:#F07068"></i>פספסת <b class="num">' + miss + '</b></span>' +
       '<span><i style="background:#9B6A45"></i>נשארו <b class="num">' + left + '</b></span>';
-    $('c-round').textContent = s.roundIdx >= 0 ? 'סבב ' + (s.roundIdx + 1) + '/' + s.cfg.rounds : '';
+    $('c-round').textContent = s.roundIdx >= 0 ? (s.cfg.roundWords ? s.cfg.roundWords[0] : 'סבב') + ' ' + (s.roundIdx + 1) + '/' + s.cfg.rounds : '';
   },
 
   setChips(html) { $('s-chips').innerHTML = html || ''; },
 
   goalStrip(st) {
     const on = n => '<span class="stars-mini">' + starsRow(n, n) + '</span>';
-    const parts = Stages.isRant(st)
+    const parts = Stages.isChoice(st)
+      ? [on(1) + 'מתחיל לדבר', on(2) + 'חוזר תוך ' + secs(st.t2), on(3) + 'עד ' + st.maxHes + ' היסוסים']
+      : Stages.isRant(st)
       ? [on(1) + 'מתחיל לדבר', on(2) + 'תוך ' + secs(st.t2), on(3) + 'עד ' + st.maxHes + ' היסוסים']
       : [on(1) + st.min + '/' + st.rounds + ' תשובות', on(2) + 'חציון עד ' + secs(st.t2), on(3) + 'הכול, עד ' + secs(st.t3)];
     return '<b>יעד:</b>' + parts.map(p => '<span>' + p + '</span>').join('');
@@ -2743,6 +3048,8 @@ const App = {
     this.modeKey = mode;
     this.starting = true;
 
+    // 2026-09-30: iOS needs the first speak() inside the user gesture. Before any await.
+    Speech.prime();
     // Echo cancellation is on since 2026-09-30, but it is not perfect. Music and
     // effects still fade out and the sound context is suspended BEFORE calibration.
     const quiet = Sound.silence();
@@ -2767,9 +3074,16 @@ const App = {
     Seen.add(mode);
     this.last = opts;
 
+    // 2026-09-30: story_spine picks one hero; its rounds are the fixed beats.
+    const seed = cfg.beats ? Recent.pick(mode, Pools.get(mode, 'mix'), 1)[0] : null;
     this.s = {
       mode, cfg, stage: st,
-      prompts: Recent.pick(mode, Pools.get(mode, st ? st.tier : 'mix'), cfg.rounds),
+      prompts: cfg.beats ? cfg.beats.slice(0, cfg.rounds) : Recent.pick(mode, Pools.get(mode, st ? st.tier : 'mix'), cfg.rounds),
+      seed,
+      lead: seed ? cfg.lead + ' ' + seed : null,
+      job: null,     // current TTS job while announcing
+      freeze: null,  // new_choice: TTS says "שנה כיוון", mic input ignored
+      choice: null,  // new_choice: switch signal state
       roundIdx: -1,
       rounds: [],
       phase: 'calibrating',
@@ -2787,6 +3101,7 @@ const App = {
 
     this.go('session');
     this.cardKey = null;
+    $('c-flash').hidden = true;
     $('s-title').textContent = st ? 'שלב ' + st.id + ': ' + st.name : CONFIG.modes[mode].label;
     $('s-goals').hidden = !st;
     if (st) $('s-goals').innerHTML = this.goalStrip(st);
@@ -2813,12 +3128,13 @@ const App = {
   },
 
   /* 2026-09-30: follow a changing noise floor (car speed, window, A/C).
-   * Median, not mean, so a short cough or "yes!" in the sample does not lift it. */
+   * Low percentile, not mean, so talking during the sample does not lift it. */
   adaptThreshold() {
     const s = this.s;
     const v = CONFIG.vad;
     if (!s.adapt || s.adapt.length < v.adaptMinSamples) return;
-    const floor = Util.median(s.adapt);
+    const sorted = s.adapt.slice().sort((a, b) => a - b);
+    const floor = sorted[Math.floor((sorted.length - 1) * v.adaptPercentile)];
     const est = Math.max(v.minThreshold, floor * v.calibFloorMult);
     s.threshold = s.threshold * (1 - v.adaptBlend) + est * v.adaptBlend;
     s.vad.setThreshold(s.threshold);
@@ -2842,17 +3158,109 @@ const App = {
     s.roundIdx++;
     const prompt = s.prompts[s.roundIdx];
     s.readMs = Util.readMsFor(s.cfg, prompt);
+    // 2026-09-30: story_spine: only beat 1 has reading time (for the hero)
+    if (s.cfg.firstReadMs && s.roundIdx === 0) s.readMs = s.cfg.firstReadMs + CONFIG.readExtraMs;
     s.phaseStart = performance.now();
     this.renderProgress();
     this.setChips(this.baseChips());
+    // 2026-09-30: with read-aloud on, speak first (mic ignored), then the old flow.
+    if (Speech.enabled()) {
+      this.announce(s.phaseStart);
+    } else {
+      this.afterAnnounce(s.phaseStart);
+    }
+  },
+
+  /* 2026-09-30: 'announcing' phase. The prompt is spoken, mic samples are ignored
+   * (no VAD, no noise sample). The reading countdown and the cue start only after
+   * the voice ends + guardMs, so no read time is lost and latency counts from the cue. */
+  announce(t) {
+    const s = this.s;
+    const prompt = s.prompts[s.roundIdx];
+    const text = s.seed && s.roundIdx === 0 ? s.cfg.lead + ' ' + s.seed + '. ' + prompt : prompt;
+    s.phase = 'announcing';
+    s.phaseStart = t;
+    this.setCard('read', Icons.speaker + 'הקראה', prompt, null,
+      { icon: Icons.speaker, title: 'מקריא...', sub: 'הקשב. המיקרופון לא מודד עכשיו' });
+    this.setTimer(1);
+    s.job = Speech.say(text);
+  },
+
+  afterAnnounce(t) {
+    const s = this.s;
+    s.job = null;
     if (s.readMs > 0) {
       s.phase = 'reading';
-      this.setCard('read', Icons.eye + s.cfg.readLabel, prompt, null,
+      s.phaseStart = t;
+      this.setCard('read', Icons.eye + s.cfg.readLabel, s.prompts[s.roundIdx], null,
         { icon: Icons.eye, title: 'עוד רגע תורך', sub: 'קרא בשקט, וחכה ל"דבר עכשיו!"', count: Math.ceil(s.readMs / 1000) });
       this.setTimer(1);
     } else {
-      this.cue(s.phaseStart);
+      this.cue(t);
     }
+  },
+
+  /* 2026-09-30: true when a TTS job is over (onend or safety timeout) and guardMs has passed. */
+  jobDone(job, t) {
+    if (!job.done && t >= job.deadline) { Speech.cancel(); job.done = true; job.endedAt = t; }
+    return job.done && t - job.endedAt >= CONFIG.tts.guardMs;
+  },
+
+  /* ---------- new_choice: "שנה כיוון!" signals (2026-09-30) ----------
+   * Switch latency per signal = time from the signal (or from TTS end + guard)
+   * until the voice is back. 0 if the voice never dropped.
+   * While TTS says "שנה כיוון" the metrics clock is paused: frames are skipped and
+   * VadTracker/RoundMetrics timers move on by the frozen time, so that time counts
+   * as neither voice nor hesitation gap. The round length is not extended. */
+  switchStart(t) {
+    const s = this.s;
+    s.choice = { nextAt: t + Util.randIn(s.cfg.switchFirstMs), pending: null, lats: [], fired: 0 };
+  },
+  switchFire(t) {
+    const s = this.s, c = s.choice, cfg = s.cfg;
+    if (c.pending) { c.lats.push(Math.round(t - c.pending.at)); c.pending = null; } // never came back
+    c.fired++;
+    c.nextAt = t + Util.randIn(cfg.switchEveryMs);
+    const fl = $('c-flash');
+    fl.hidden = true; void fl.offsetWidth; fl.hidden = false; // restart the animation
+    s.flashUntil = t + cfg.flashMs;
+    try { if (navigator.vibrate) navigator.vibrate(cfg.vibrateMs); } catch (e) { /* ignore */ }
+    if (Speech.enabled()) s.freeze = { at: t, job: Speech.say(CONFIG.tts.switchText) };
+    else c.pending = { at: t, sawOffset: false };
+  },
+  switchEvent(ev) {
+    const c = this.s.choice;
+    if (!c || !c.pending) return;
+    if (ev.type === 'offset') c.pending.sawOffset = true;
+    else if (ev.type === 'onset') { c.lats.push(Math.max(0, Math.round(ev.t - c.pending.at))); c.pending = null; }
+  },
+  switchTick(t) {
+    const s = this.s, c = s.choice, cfg = s.cfg;
+    if (!c) return;
+    if (s.flashUntil && t >= s.flashUntil) { $('c-flash').hidden = true; s.flashUntil = 0; }
+    if (s.freeze) {
+      if (!this.jobDone(s.freeze.job, t)) return;
+      const d = t - s.freeze.at;
+      s.rm.shift(d);
+      s.vad.shift(d);
+      s.freeze = null;
+      c.pending = { at: t, sawOffset: false };
+      return;
+    }
+    // Kept talking through the signal: still voiced after releaseMs, and no release
+    // countdown running (belowSince null), means latency 0.
+    const p = c.pending;
+    if (p && !p.sawOffset && s.vad.speaking && s.vad.belowSince === null && t - p.at >= CONFIG.vad.releaseMs) { c.lats.push(0); c.pending = null; }
+    if (t >= c.nextAt && s.speakStart + cfg.speakMs - t >= cfg.switchTailMs) this.switchFire(t);
+  },
+  switchEnd(t) {
+    const s = this.s, c = s.choice;
+    if (!c) return [];
+    if (s.freeze) { Speech.cancel(); s.freeze = null; } // signal at the very end: not counted
+    else if (c.pending) c.lats.push(s.vad.speaking && !c.pending.sawOffset ? 0 : Math.round(t - c.pending.at));
+    c.pending = null;
+    $('c-flash').hidden = true;
+    return c.lats.slice();
   },
 
   cue(t) {
@@ -2879,6 +3287,12 @@ const App = {
       windowMs: missed ? 0 : Math.round(t - s.speakStart),
       hesitations: cfg.trackHesitations && !missed ? s.rm.hesitations : 0
     };
+    // 2026-09-30: new_choice extra fields (old readers ignore them)
+    if (cfg.switchEveryMs) {
+      r.switches = missed ? [] : this.switchEnd(t);
+      r.switchLatencyMs = r.switches.length ? Math.round(Util.mean(r.switches)) : null;
+      s.choice = null;
+    }
     s.rounds.push(r);
     s.phase = 'between';
     s.phaseStart = t;
@@ -2913,6 +3327,11 @@ const App = {
         }
         break;
       }
+      case 'announcing': {
+        // 2026-09-30: TTS speaks the prompt. Mic input ignored: no VAD, no noise sample.
+        if (this.jobDone(s.job, t)) this.afterAnnounce(t);
+        break;
+      }
       case 'reading': {
         this.collectQuiet(rms);
         const el = t - s.phaseStart;
@@ -2929,6 +3348,7 @@ const App = {
           if (ev.type === 'onset') {
             s.phase = 'speaking';
             s.speakStart = ev.t;
+            if (cfg.switchEveryMs) this.switchStart(ev.t);
             this.setCard('speak', Icons.mic + 'שומע אותך', s.prompts[s.roundIdx], null,
               { icon: Icons.mic, title: 'שומע אותך!', sub: cfg.speakSub });
           }
@@ -2937,12 +3357,17 @@ const App = {
         break;
       }
       case 'speaking': {
-        for (const ev of s.vad.update(rms, t)) s.rm.onEvent(ev);
+        // 2026-09-30: new_choice skips mic frames while TTS says "שנה כיוון" (s.freeze)
+        if (!s.freeze) {
+          for (const ev of s.vad.update(rms, t)) { s.rm.onEvent(ev); if (s.choice) this.switchEvent(ev); }
+        }
+        if (s.choice) this.switchTick(t);
         const el = t - s.speakStart;
         this.setTimer(1 - el / cfg.speakMs);
-        const gap = s.rm.currentGap(t);
+        const gap = s.freeze ? 0 : s.rm.currentGap(t); // 2026-09-30: TTS time is not silence
         if (cfg.trackHesitations) {
           let chips = this.baseChips() + '<span class="chip">היסוסים <b class="num">' + s.rm.hesitations + '</b></span>';
+          if (s.choice) chips += '<span class="chip">שינויי כיוון <b class="num">' + s.choice.fired + '</b></span>';
           if (gap >= CONFIG.hesitationMs) {
             chips += '<span class="chip warn">שקט ' + (gap / 1000).toFixed(1) + 's' + (cfg.endOnSilenceMs ? '' : ', המשך לדבר') + '</span>';
           }
@@ -2974,9 +3399,11 @@ const App = {
     const s = this.s;
     this.s = null;
     cancelAnimationFrame(this.rafId);
+    Speech.cancel();
     await this.audio.stop();
     const before = this.modeStats(s.mode);
     const rec = buildSessionRecord(s.mode, s.cfg, s.rounds, s.startedAtWall, performance.now() - s.startedAt, s.threshold);
+    if (s.seed) rec.seed = s.seed; // 2026-09-30: story_spine hero, extra field
     Storage.appendSession(rec);
     let result = null;
     if (s.stage) {
@@ -2995,6 +3422,7 @@ const App = {
     if (!s) return;
     this.s = null;
     cancelAnimationFrame(this.rafId);
+    Speech.cancel(); // 2026-09-30
     await this.audio.stop();
     this.go(msg || s.stage ? 'home' : 'mode');
     if (msg) this.showAlert(msg);
@@ -3093,6 +3521,10 @@ const App = {
       tiles.push(['היסוסים', String(rec.hesitationsCount)]);
       tiles.push(['זמן דיבור בפועל', rec.speakingWindowMs ? Math.round(rec.totalSpeakingDurationMs / rec.speakingWindowMs * 100) + '%' : 'אין']);
     }
+    if (cfg.switchEveryMs) { // 2026-09-30
+      tiles.push(['שינויי כיוון', String(rec.switchCount || 0)]);
+      tiles.push(['חזרה לדיבור, ממוצע', Util.sec(rec.avgSwitchLatencyMs)]);
+    }
     $('sum-tiles').innerHTML = tiles.map(t =>
       '<div class="tile"><div class="tile-l">' + t[0] + '</div><div class="tile-v num">' + t[1] + '</div></div>').join('');
 
@@ -3112,11 +3544,13 @@ const App = {
       main.append(p, v);
       const meta = document.createElement('div');
       meta.className = 'rcard-meta';
-      const left = cfg.trackHesitations && !r.missed ? r.hesitations + ' היסוסים | דיבור ' + Util.sec(r.voicedMs) : '';
+      let left = cfg.trackHesitations && !r.missed ? r.hesitations + ' היסוסים | דיבור ' + Util.sec(r.voicedMs) : '';
+      if (cfg.switchEveryMs && !r.missed) left += ' | החלפה ' + Util.sec(r.switchLatencyMs); // 2026-09-30
       meta.innerHTML = '<span class="num">' + (i + 1) + '.</span><span class="num">' + left + '</span>';
       card.append(main, meta);
       wrap.appendChild(card);
     });
+    if (s.seed) wrap.insertAdjacentHTML('afterbegin', '<div class="banner neutral">' + esc(s.lead) + '</div>'); // 2026-09-30
   },
 
   /* Stars fly in one by one, with a chime each (only if sound is on). */
