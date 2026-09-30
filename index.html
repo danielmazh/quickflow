@@ -702,6 +702,72 @@
   }
   .fx-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
 
+  /* ---------- 2026-09-30: owner panel. Hidden: 10 fast taps on the home logo. ---------- */
+  /* No visual change on the logo. These only stop double-tap zoom and text select on fast taps. */
+  .brand { touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+  .adm-pass-row { display: flex; gap: 8px; align-items: center; }
+  .adm-input { flex: 1; min-width: 0; font: inherit; font-size: 1rem; color: var(--ink); background: #fff; border: 3px solid var(--brown); border-radius: 14px; padding: 8px 12px; }
+  .adm-input:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; box-shadow: none; }
+  .adm-check { display: flex; align-items: center; gap: 8px; margin: 10px 2px 0; font-weight: 600; font-size: .95rem; }
+  .adm-check input { width: 20px; height: 20px; accent-color: var(--green); }
+  dialog.adm { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--cream); color: var(--ink); overflow-y: auto; overscroll-behavior: contain; }
+  dialog.adm::backdrop { background: var(--brown); }
+  .adm-top { position: sticky; top: 0; z-index: 2; background: var(--brown-2); color: var(--cream); padding: calc(8px + env(safe-area-inset-top)) 12px 6px; box-shadow: 0 3px 0 var(--brown); }
+  .adm-top-row { display: flex; align-items: center; gap: 8px; max-width: 760px; margin: 0 auto; }
+  .adm-title { flex: 1; min-width: 0; margin: 0; font-family: var(--font-display); font-size: 1.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adm-top .ibtn { width: 40px; height: 40px; }
+  .adm-top .ibtn svg { width: 18px; height: 18px; }
+  .adm-status { max-width: 760px; margin: 4px auto 0; font-size: .8rem; min-height: 1.2em; }
+  .adm-status.bad { color: var(--orange-l); font-weight: 700; }
+  .adm-body { max-width: 760px; margin: 0 auto; padding: 12px 12px calc(28px + env(safe-area-inset-bottom)); }
+  .adm-sec { background: #FFF8EA; border: 2.5px solid var(--cream-3); border-radius: 16px; padding: 10px 12px; margin-bottom: 14px; }
+  .adm-h { font-family: var(--font-display); font-size: 1.1rem; margin: 0 0 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .adm-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  @media (min-width: 560px) { .adm-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .adm-kpi { background: var(--cream-2); border-radius: 12px; padding: 7px 10px; }
+  .adm-kpi span { display: block; font-size: .78rem; color: var(--ink-2); font-weight: 600; }
+  .adm-kpi b { display: block; font-family: var(--font-display); font-size: 1.45rem; line-height: 1.15; }
+  .adm-kpi small { display: block; font-size: .74rem; color: var(--ink-2); }
+  .adm-kpi.warn { background: #FBDCCF; }
+  .adm-seg { display: inline-flex; gap: 4px; }
+  .adm-seg button { padding: 3px 10px; border-radius: 999px; border: 2px solid var(--brown); background: var(--cream); font-weight: 700; font-size: .82rem; }
+  .adm-seg button[aria-pressed="true"] { background: var(--orange); }
+  .adm-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .78rem; margin-bottom: 6px; }
+  .adm-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-inline-end: 4px; }
+  .adm-legend i.ln { height: 3px; vertical-align: 3px; background: var(--green-d); }
+  .adm-legend i.dot { border-radius: 50%; background: var(--red); }
+  .adm-chart { display: block; width: 100%; touch-action: pan-y; }
+  .adm-chart .bar { fill: var(--orange); }
+  .adm-chart .bar.sel { fill: var(--orange-d); }
+  .adm-chart .grid { stroke: var(--cream-3); stroke-width: 1; }
+  .adm-chart .ln { fill: none; stroke: var(--green-d); stroke-width: 2; stroke-linejoin: round; }
+  .adm-chart .dot { fill: var(--red); stroke: #fff; stroke-width: 1; }
+  .adm-chart .hit { fill: transparent; }
+  .adm-chart text { direction: ltr; font-size: 10px; font-weight: 700; fill: var(--ink-2); paint-order: stroke; stroke: #FFF8EA; stroke-width: 3px; }
+  .adm-axis { display: flex; justify-content: space-between; font-size: .75rem; color: var(--ink-2); margin-top: 2px; }
+  .adm-read { font-size: .82rem; background: var(--cream-2); border-radius: 10px; padding: 6px 8px; margin-top: 6px; min-height: 2.6em; }
+  .adm-tbl-wrap { overflow-x: auto; margin: 0 -4px; }
+  .adm-tbl { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  .adm-tbl th, .adm-tbl td { padding: 5px 6px; text-align: start; border-bottom: 1px solid var(--cream-3); white-space: nowrap; }
+  .adm-tbl th { font-weight: 700; color: var(--ink-2); font-size: .74rem; }
+  .adm-tbl tr.low td { background: #FBDCCF; color: var(--red-d); font-weight: 700; }
+  .adm-note { font-size: .75rem; color: var(--ink-2); margin: 6px 0 0; }
+  .adm-list { list-style: none; margin: 0; padding: 0; }
+  .adm-ses { border-bottom: 1px solid var(--cream-3); padding: 6px 2px; font-size: .82rem; }
+  .adm-ses-top { display: flex; justify-content: space-between; gap: 8px; }
+  .adm-ses-top b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .adm-ses-sub { display: flex; flex-wrap: wrap; gap: 2px 10px; color: var(--ink-2); }
+  .adm-sec .star { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; }
+  .adm-yes { color: var(--green-d); font-weight: 700; }
+  .adm-no { color: var(--red); font-weight: 700; }
+  .adm-fb { border: 2px solid var(--cream-3); border-radius: 12px; padding: 8px 10px; margin-bottom: 8px; background: #fff; }
+  .adm-fb.done { background: var(--cream-2); opacity: .75; }
+  .adm-fb-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: .78rem; color: var(--ink-2); }
+  .adm-fb-cat { background: var(--orange); color: var(--ink); border-radius: 999px; padding: 0 8px; font-weight: 700; }
+  .adm-fb-msg { margin: 6px 0; white-space: pre-wrap; word-break: break-word; }
+  .adm-fb-ctx { font-size: .74rem; color: var(--ink-2); word-break: break-all; margin: 0 0 6px; }
+  .adm-empty { color: var(--ink-2); font-size: .85rem; margin: 0; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .big-stars .slot.pop .star.on { transform: none; opacity: 1; }
@@ -772,7 +838,8 @@
   <!-- ================= HOME (map + free play) ================= -->
   <section id="view-home" class="view" hidden>
     <div class="home-head">
-      <div class="brand">
+      <!-- 2026-09-30: id for the owner panel door (10 fast taps). No visual change. -->
+      <div id="brand" class="brand">
         <svg viewBox="0 0 32 32" aria-hidden="true">
           <rect x="11" y="5" width="15" height="21" rx="4" transform="rotate(12 18 15)" fill="#FDEBC8" stroke="#5A2A12" stroke-width="2"/>
           <rect x="5" y="4" width="15" height="21" rx="4" fill="#F3A33A" stroke="#5A2A12" stroke-width="2"/>
@@ -1037,6 +1104,35 @@
   </div>
 </dialog>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- ================= OWNER PANEL (2026-09-30) =================
+     Hidden. Opens after 10 fast taps on the home logo. No network call until then. -->
+<dialog id="adm-login" class="panel dlg" aria-labelledby="adm-login-title">
+  <span id="adm-login-title" class="ribbon">כניסת בעלים</span>
+  <button id="adm-login-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
+  <form id="adm-form" novalidate>
+    <label for="adm-pass" class="fb-lbl">סיסמה</label>
+    <div class="adm-pass-row">
+      <input id="adm-pass" class="adm-input" type="password" name="password" autocomplete="current-password" dir="ltr" spellcheck="false">
+      <button id="adm-eye" class="btn btn-cream btn-sm" type="button" aria-pressed="false" aria-controls="adm-pass">הצג</button>
+    </div>
+    <label class="adm-check"><input id="adm-remember" type="checkbox">זכור במכשיר הזה</label>
+    <p id="adm-login-msg" class="fb-msg" aria-live="polite"></p>
+    <button id="adm-login-go" class="btn btn-green btn-block" type="submit">כניסה</button>
+  </form>
+</dialog>
+<dialog id="adm" class="adm" aria-labelledby="adm-title">
+  <div class="adm-top">
+    <div class="adm-top-row">
+      <h1 id="adm-title" class="adm-title">לוח בקרה</h1>
+      <button id="adm-refresh" class="btn btn-cream btn-sm" type="button">רענון</button>
+      <button id="adm-logout" class="btn btn-cream btn-sm" type="button">יציאה</button>
+      <button id="adm-close" class="ibtn red" type="button" aria-label="סגירה" data-icon="close"></button>
+    </div>
+    <p id="adm-status" class="adm-status" aria-live="polite"></p>
+  </div>
+  <div id="adm-body" class="adm-body"></div>
+</dialog>
 <script>
 'use strict';
 
@@ -1103,6 +1199,20 @@ const CONFIG = {
     feedbackMinMs: 3000,                // anti-bot: time between opening the form and sending
     feedbackMin: 5,
     feedbackMax: 500
+  },
+  // 2026-09-30: hidden owner panel. Opens after `taps` taps on the home logo within
+  // `tapWindowMs`. The password is never stored in this file; the server checks it
+  // and locks an IP for 1 hour after 5 wrong tries.
+  admin: {
+    taps: 10,
+    tapWindowMs: 4000,
+    timeoutMs: 15000,          // panel calls return more data than game calls
+    rememberKey: 'quickflow_admin_pass', // sessionStorage only, cleared by "יציאה"
+    defaultDays: 30,
+    ranges: [7, 30, 90],       // chart range buttons (server allows 7-365)
+    chartHeight: 150,
+    timeZone: 'Asia/Jerusalem',
+    categories: { bug: 'באג', idea: 'רעיון', praise: 'מחמאה', other: 'אחר' }
   },
   // 2026-09-30: online name + champions board (Supabase project "quickflow").
   // The publishable key is public by design. The server checks the secret on every write.
@@ -2735,10 +2845,11 @@ const Online = {
   // POST {url}/rest/v1/rpc/<fn>. Returns the data or throws Error(<server code>).
   // err.network = true for no connection, timeout or a 5xx reply.
   // 2026-09-30: optional opts.keepalive (usage data sent while the tab hides). Was rpc(fn, body).
+  // 2026-09-30: optional opts.timeoutMs (owner panel). Default stays CONFIG.online.timeoutMs.
   async rpc(fn, body, opts) {
     const c = CONFIG.online;
     const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    const timer = ctl ? setTimeout(() => ctl.abort(), c.timeoutMs) : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), (opts && opts.timeoutMs) || c.timeoutMs) : null;
     try {
       let res;
       try {
@@ -3160,6 +3271,7 @@ const App = {
     Online.resendPending(); // 2026-09-30: a session that failed to send last time (network). Silent.
     Telemetry.start(); // 2026-09-30: anonymous start ping. Silent, never blocks.
     this.initFeedback(); // 2026-09-30
+    Admin.init(); // 2026-09-30: hidden owner panel. Listeners only, no network.
   },
 
   /* ---------- navigation ---------- */
@@ -3572,6 +3684,7 @@ const App = {
   /* ---------- session lifecycle ---------- */
   async begin(opts) {
     if (this.s || this.starting || !opts) return;
+    if (typeof Admin !== 'undefined' && Admin.isOpen()) return; // 2026-09-30: no session under the owner panel
     this.setAlert('');
     if (!Origin.ok()) {
       this.showAlert(Origin.msg());
@@ -4442,6 +4555,410 @@ const App = {
     $('dlg-settings').close();
     this.go('home');
     this.toast('ההיסטוריה וההתקדמות נמחקו');
+  }
+};
+
+/* ============================================================
+ * Owner panel (2026-09-30). Hidden door: CONFIG.admin.taps fast taps on the
+ * home logo. Full-screen modal over the game, so game state is not touched.
+ * No network call until the door opens. The password lives only in memory
+ * (and in sessionStorage if "remember" is on). Every server string goes
+ * through esc(): names and feedback come from strangers.
+ * ============================================================ */
+const Admin = {
+  pass: null,
+  data: null,
+  days: CONFIG.admin.defaultDays,
+  sortBy: 'seen',
+  sel: null,
+  seq: 0,
+  busy: false,
+  taps: [],
+
+  init() {
+    const brand = $('brand');
+    if (brand) brand.addEventListener('pointerdown', e => this.tap(e));
+    $('adm-form').addEventListener('submit', e => { e.preventDefault(); this.login(); });
+    $('adm-eye').addEventListener('click', () => {
+      const inp = $('adm-pass');
+      const show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      $('adm-eye').textContent = show ? 'הסתר' : 'הצג';
+      $('adm-eye').setAttribute('aria-pressed', String(show));
+    });
+    $('adm-login-close').addEventListener('click', () => $('adm-login').close());
+    $('adm-login').addEventListener('close', () => this.resetLoginForm());
+    $('adm-close').addEventListener('click', () => $('adm').close());
+    $('adm-refresh').addEventListener('click', () => this.load());
+    $('adm-logout').addEventListener('click', () => this.logout());
+    $('adm-body').addEventListener('click', e => this.onBodyClick(e));
+    $('adm-body').addEventListener('pointerover', e => this.onChart(e));
+  },
+
+  isOpen() {
+    return !!(($('adm') && $('adm').open) || ($('adm-login') && $('adm-login').open));
+  },
+
+  // Door: count taps in a sliding window. Nothing else happens on a tap.
+  tap(e) {
+    if (e && e.isPrimary === false) return;
+    const c = CONFIG.admin;
+    const now = Date.now();
+    this.taps = this.taps.filter(t => now - t < c.tapWindowMs);
+    this.taps.push(now);
+    if (this.taps.length >= c.taps) {
+      this.taps = [];
+      this.open();
+    }
+  },
+
+  stored() {
+    try { return sessionStorage.getItem(CONFIG.admin.rememberKey); } catch (e) { return null; }
+  },
+
+  open() {
+    if (this.isOpen()) return;
+    if (!this.pass) this.pass = this.stored();
+    if (this.pass) this.showPanel(); else this.showLogin('');
+  },
+
+  showLogin(msg) {
+    const m = $('adm-login-msg');
+    m.textContent = msg || '';
+    m.className = 'fb-msg' + (msg ? ' bad' : '');
+    $('adm-remember').checked = !!this.stored();
+    if (!$('adm-login').open) $('adm-login').showModal();
+    $('adm-pass').focus();
+  },
+
+  resetLoginForm() {
+    $('adm-pass').value = '';
+    $('adm-pass').type = 'password';
+    $('adm-eye').textContent = 'הצג';
+    $('adm-eye').setAttribute('aria-pressed', 'false');
+    $('adm-login-go').disabled = false;
+  },
+
+  // Error code from a thrown rpc error or an {error} reply.
+  code(e) {
+    if (e && e.network) return 'network';
+    return (e && e.message) || 'error';
+  },
+  errText(code) {
+    if (code === 'unauthorized') return 'סיסמה שגויה.';
+    if (code === 'locked') return 'יותר מדי ניסיונות. הכניסה נעולה לשעה.';
+    if (code === 'network' || code === 'Failed to fetch') return 'אין חיבור לשרת. בדוק את הרשת ונסה שוב.';
+    return 'משהו השתבש (' + code + '). נסה שוב.';
+  },
+
+  async fetchData(pass) {
+    const r = await Online.rpc('qf_admin', { p_pass: pass, p_days: this.days }, { timeoutMs: CONFIG.admin.timeoutMs });
+    if (!r || typeof r !== 'object') throw new Error('bad_reply');
+    if (r.error) throw new Error(String(r.error));
+    return r;
+  },
+
+  async login() {
+    const pass = $('adm-pass').value;
+    const m = $('adm-login-msg');
+    if (!pass) { m.textContent = 'הקלד סיסמה.'; m.className = 'fb-msg bad'; return; }
+    $('adm-login-go').disabled = true;
+    m.textContent = 'בודק...';
+    m.className = 'fb-msg';
+    try {
+      const data = await this.fetchData(pass);
+      this.pass = pass;
+      try {
+        if ($('adm-remember').checked) sessionStorage.setItem(CONFIG.admin.rememberKey, pass);
+        else sessionStorage.removeItem(CONFIG.admin.rememberKey);
+      } catch (e) { /* no storage: memory only */ }
+      $('adm-login').close();
+      this.data = data;
+      this.showPanel(true);
+    } catch (e) {
+      const code = this.code(e);
+      m.textContent = this.errText(code);
+      m.className = 'fb-msg bad';
+      $('adm-login-go').disabled = false;
+    }
+  },
+
+  showPanel(haveData) {
+    const dlg = $('adm');
+    if (!dlg.open) dlg.showModal();
+    dlg.scrollTop = 0;
+    if (haveData && this.data) this.render(); else this.load();
+  },
+
+  // Session dropped: wrong or changed password, or locked.
+  kick(code) {
+    this.forget();
+    if ($('adm').open) $('adm').close();
+    this.showLogin(this.errText(code));
+  },
+
+  forget() {
+    this.pass = null;
+    this.data = null;
+    try { sessionStorage.removeItem(CONFIG.admin.rememberKey); } catch (e) { /* ignore */ }
+  },
+
+  logout() {
+    this.forget();
+    $('adm-body').innerHTML = '';
+    $('adm-status').textContent = '';
+    $('adm').close();
+  },
+
+  setStatus(msg, bad) {
+    const el = $('adm-status');
+    el.textContent = msg;
+    el.className = 'adm-status' + (bad ? ' bad' : '');
+  },
+
+  async load() {
+    if (!this.pass) { this.kick('unauthorized'); return; }
+    const my = ++this.seq;
+    this.busy = true;
+    $('adm-refresh').disabled = true;
+    this.setStatus('טוען...');
+    try {
+      const data = await this.fetchData(this.pass);
+      if (my !== this.seq) return;
+      this.data = data;
+      this.render();
+    } catch (e) {
+      if (my !== this.seq) return;
+      const code = this.code(e);
+      if (code === 'unauthorized' || code === 'locked') { this.kick(code); return; }
+      this.setStatus(this.errText(code), true);
+    } finally {
+      if (my === this.seq) { this.busy = false; $('adm-refresh').disabled = false; }
+    }
+  },
+
+  /* ---------- formatting ---------- */
+  v(x) { return x === null || x === undefined || x === '' ? '-' : esc(x); },
+  time(iso) {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    if (isNaN(d)) return esc(iso);
+    return esc(d.toLocaleString('he-IL', { timeZone: CONFIG.admin.timeZone, day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
+  },
+  day(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || ''));
+    return m ? m[3] + '/' + m[2] : esc(s);
+  },
+  sec(ms) { return typeof ms === 'number' && isFinite(ms) ? (ms / 1000).toFixed(2) : '-'; },
+  num(x, d) { return typeof x === 'number' && isFinite(x) ? (d ? x.toFixed(d) : String(x)) : '-'; },
+  pct(x) { return typeof x === 'number' && isFinite(x) ? x.toFixed(1).replace(/\.0$/, '') + '%' : '-'; },
+  modeLabel(m) { return CONFIG.modes[m] ? CONFIG.modes[m].label : esc(m || '-'); },
+  stageLabel(s) {
+    const t = String(s === null || s === undefined ? '' : s);
+    const f = /^free:\s*(.+)$/.exec(t);
+    if (f) return 'חופשי: ' + this.modeLabel(f[1].trim());
+    return /^\d+$/.test(t) ? 'שלב ' + t : this.v(t);
+  },
+  name(n) { return n ? esc(n) : 'אנונימי'; },
+
+  /* ---------- render ---------- */
+  render() {
+    const d = this.data || {};
+    const sec = (title, body, extra) => '<section class="adm-sec"><h2 class="adm-h"><span>' + title + '</span>' + (extra || '') + '</h2>' + body + '</section>';
+    const nFb = (d.feedback || []).filter(f => !f.handled).length;
+    $('adm-body').innerHTML =
+      sec('מדדים', this.kpis(d.kpi || {})) +
+      sec('פעילות יומית', '<div id="adm-chart-box"></div>', this.rangeBtns()) +
+      sec('שלבים', this.stagesHtml(d.stages || [])) +
+      sec('שחקנים (' + (d.players || []).length + ')', '<div id="adm-players"></div>',
+        '<span class="adm-seg"><button type="button" data-sort="seen" aria-pressed="' + (this.sortBy === 'seen') + '">נראו לאחרונה</button><button type="button" data-sort="stars" aria-pressed="' + (this.sortBy === 'stars') + '">כוכבים</button></span>') +
+      sec('סשנים אחרונים', this.sessionsHtml(d.recent_sessions || [])) +
+      sec('מכשירים', this.devicesHtml(d.devices || [])) +
+      sec('משובים (' + nFb + ' פתוחים)', this.feedbackHtml(d.feedback || []));
+    this.renderChart();
+    this.renderPlayers();
+    this.setStatus('עודכן ב-' + this.time(d.generated_at || new Date().toISOString()) + ' (שעון ישראל)');
+  },
+
+  kpis(k) {
+    const tile = (label, val, sub, warn) => '<div class="adm-kpi' + (warn ? ' warn' : '') + '"><span>' + label + '</span><b class="num">' + val + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>';
+    return '<div class="adm-kpis">' +
+      tile('שחקנים רשומים', this.num(k.players), 'היום: +' + this.num(k.players_today)) +
+      tile('מכשירים', this.num(k.installs)) +
+      tile('פתחו היום', this.num(k.opened_today)) +
+      tile('פתחו ב-7 ימים', this.num(k.opened_7d)) +
+      tile('פתחו ב-30 ימים', this.num(k.opened_30d)) +
+      tile('חזרו יותר מיום אחד', this.num(k.came_back)) +
+      tile('סשנים', this.num(k.sessions), 'היום: ' + this.num(k.sessions_today)) +
+      tile('אחוז סיום', this.pct(k.completed_pct)) +
+      tile('משובים פתוחים', this.num(k.feedback_open), '', k.feedback_open > 0) +
+      tile('דירוג ממוצע', this.num(k.avg_rating, 1), 'מתוך 5') +
+      '</div>';
+  },
+
+  rangeBtns() {
+    return '<span class="adm-seg">' + CONFIG.admin.ranges.map(n =>
+      '<button type="button" data-days="' + n + '" aria-pressed="' + (n === this.days) + '">' + n + ' ימים</button>').join('') + '</span>';
+  },
+
+  // Bars = opens, line = sessions, dots = new players. RTL: oldest day on the right.
+  renderChart() {
+    const box = $('adm-chart-box');
+    if (!box) return;
+    const rows = (this.data && this.data.daily) || [];
+    const n = rows.length;
+    if (!n) { box.innerHTML = '<p class="adm-empty">אין נתונים.</p>'; return; }
+    const W = Math.max(240, Math.round(box.clientWidth || 320));
+    const H = CONFIG.admin.chartHeight;
+    const top = 14, bot = 2;
+    const nz = x => (typeof x === 'number' && isFinite(x) ? x : 0);
+    const max = Math.max(1, ...rows.map(r => Math.max(nz(r.opens), nz(r.sessions), nz(r.new_players))));
+    const y = val => top + (H - top - bot) * (1 - nz(val) / max);
+    const step = W / n;
+    const bw = Math.max(1, step * 0.62);
+    const cx = i => W - (i + 0.5) * step;
+    if (this.sel === null || this.sel >= n) this.sel = n - 1;
+    let s = '<svg class="adm-chart" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="גרף פעילות יומית">';
+    [max, max / 2].forEach(g => {
+      const gy = y(g).toFixed(1);
+      s += '<line class="grid" x1="0" x2="' + W + '" y1="' + gy + '" y2="' + gy + '"/><text x="' + (W - 2) + '" y="' + (gy - 2) + '" text-anchor="end">' + (Math.round(g * 10) / 10) + '</text>';
+    });
+    rows.forEach((r, i) => {
+      const by = y(r.opens);
+      s += '<rect class="bar' + (i === this.sel ? ' sel' : '') + '" data-bar="' + i + '" x="' + (cx(i) - bw / 2).toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0, H - bot - by).toFixed(1) + '"/>';
+    });
+    s += '<polyline class="ln" points="' + rows.map((r, i) => cx(i).toFixed(1) + ',' + y(r.sessions).toFixed(1)).join(' ') + '"/>';
+    rows.forEach((r, i) => { if (nz(r.new_players) > 0) s += '<circle class="dot" cx="' + cx(i).toFixed(1) + '" cy="' + y(r.new_players).toFixed(1) + '" r="3.5"/>'; });
+    rows.forEach((r, i) => { s += '<rect class="hit" data-i="' + i + '" x="' + (W - (i + 1) * step).toFixed(1) + '" y="0" width="' + step.toFixed(1) + '" height="' + H + '"/>'; });
+    s += '</svg>';
+    box.innerHTML =
+      '<div class="adm-legend"><span><i style="background:var(--orange)"></i>פתיחות</span><span><i class="ln"></i>סשנים</span><span><i class="dot"></i>שחקנים חדשים</span></div>' +
+      s + '<div class="adm-axis"><span>' + this.day(rows[0].day) + '</span><span>' + this.day(rows[n - 1].day) + '</span></div>' +
+      '<div id="adm-read" class="adm-read" aria-live="polite"></div>';
+    this.readout();
+  },
+
+  readout() {
+    const rows = (this.data && this.data.daily) || [];
+    const r = rows[this.sel];
+    const el = $('adm-read');
+    if (!r || !el) return;
+    el.innerHTML = '<b>' + this.day(r.day) + '</b>: פתיחות ' + this.num(r.opens) + ', סשנים ' + this.num(r.sessions) +
+      ' (הושלמו ' + this.num(r.completed) + '), שחקנים חדשים ' + this.num(r.new_players) + ', מכשירים חדשים ' + this.num(r.new_installs);
+    document.querySelectorAll('#adm-chart-box .bar').forEach(b => b.classList.toggle('sel', Number(b.dataset.bar) === this.sel));
+  },
+
+  onChart(e) {
+    const h = e.target.closest && e.target.closest('#adm-chart-box [data-i]');
+    if (!h) return;
+    const i = Number(h.dataset.i);
+    if (i !== this.sel) { this.sel = i; this.readout(); }
+  },
+
+  stagesHtml(rows) {
+    if (!rows.length) return '<p class="adm-empty">אין עדיין משחקים.</p>';
+    const key = r => { const t = String(r.stage); return /^\d+$/.test(t) ? [0, Number(t), ''] : [1, 0, t]; };
+    const list = rows.slice().sort((a, b) => { const x = key(a), z = key(b); return x[0] - z[0] || x[1] - z[1] || (x[2] < z[2] ? -1 : x[2] > z[2] ? 1 : 0); });
+    const vals = list.filter(r => r.plays > 0 && typeof r.completed_pct === 'number').map(r => r.completed_pct);
+    const low = vals.length > 1 ? Math.min(...vals) : null;
+    return '<div class="adm-tbl-wrap"><table class="adm-tbl"><thead><tr><th>שלב</th><th>משחקים</th><th>סיום</th><th>כוכבים</th><th>תגובה (ש)</th><th>משך (ש)</th></tr></thead><tbody>' +
+      list.map(r => '<tr' + (low !== null && r.completed_pct === low ? ' class="low"' : '') + '><td>' + this.stageLabel(r.stage) + '</td><td class="num">' + this.num(r.plays) +
+        '</td><td class="num">' + this.pct(r.completed_pct) + '</td><td class="num">' + this.num(r.avg_stars, 1) + '</td><td class="num">' + this.sec(r.median_latency_ms) +
+        '</td><td class="num">' + this.num(r.avg_duration_s, 1) + '</td></tr>').join('') +
+      '</tbody></table></div>' + (low !== null ? '<p class="adm-note">מסומן: אחוז הסיום הנמוך ביותר.</p>' : '');
+  },
+
+  renderPlayers() {
+    const box = $('adm-players');
+    if (!box) return;
+    const rows = ((this.data && this.data.players) || []).slice();
+    if (!rows.length) { box.innerHTML = '<p class="adm-empty">אין עדיין שחקנים רשומים.</p>'; return; }
+    const t = s => (s ? Date.parse(s) || 0 : 0);
+    if (this.sortBy === 'stars') rows.sort((a, b) => (b.total_stars || 0) - (a.total_stars || 0) || t(b.last_seen) - t(a.last_seen));
+    else rows.sort((a, b) => t(b.last_seen) - t(a.last_seen));
+    box.innerHTML = '<div class="adm-tbl-wrap"><table class="adm-tbl"><thead><tr><th>שם</th><th>כוכבים</th><th>שלב</th><th>סשנים</th><th>רצף (שיא)</th><th>הצטרף</th><th>נראה לאחרונה</th></tr></thead><tbody>' +
+      rows.map(p => '<tr><td>' + this.name(p.username) + '</td><td class="num">' + this.num(p.total_stars) + '</td><td class="num">' + this.num(p.top_stage) +
+        '</td><td class="num">' + this.num(p.sessions) + '</td><td class="num">' + this.num(p.streak) + ' (' + this.num(p.best_streak) + ')</td><td>' + this.time(p.created_at) +
+        '</td><td>' + this.time(p.last_seen) + '</td></tr>').join('') +
+      '</tbody></table></div>';
+  },
+
+  sessionsHtml(rows) {
+    if (!rows.length) return '<p class="adm-empty">אין עדיין סשנים.</p>';
+    return '<ul class="adm-list">' + rows.map(r => {
+      const stage = r.stage_id !== null && r.stage_id !== undefined ? 'שלב ' + this.num(r.stage_id) : 'חופשי';
+      return '<li class="adm-ses"><div class="adm-ses-top"><b>' + this.name(r.username) + '</b><span>' + this.time(r.created_at) + '</span></div>' +
+        '<div class="adm-ses-sub"><span>' + this.modeLabel(r.mode) + ', ' + stage + '</span>' +
+        '<span class="' + (r.completed ? 'adm-yes">הושלם' : 'adm-no">לא הושלם') + '</span>' +
+        '<span>' + starsRow(Number(r.stars) || 0, 3) + '</span>' +
+        '<span class="num">תשובות ' + this.num(r.rounds_answered) + '/' + this.num(r.rounds_total) + '</span>' +
+        '<span class="num">תגובה ' + this.sec(r.median_latency_ms) + ' ש</span>' +
+        '<span>' + this.v(r.platform) + (r.tts_on ? ', הקראה' : '') + '</span></div></li>';
+    }).join('') + '</ul>';
+  },
+
+  devicesHtml(rows) {
+    if (!rows.length) return '<p class="adm-empty">אין נתונים.</p>';
+    return '<div class="adm-tbl-wrap"><table class="adm-tbl"><thead><tr><th>סוג</th><th>מערכת</th><th>דפדפן</th><th>מכשירים</th></tr></thead><tbody>' +
+      rows.map(r => '<tr><td>' + this.v(r.platform) + '</td><td>' + this.v(r.os) + '</td><td>' + this.v(r.browser) + '</td><td class="num">' + this.num(r.installs) + '</td></tr>').join('') +
+      '</tbody></table></div>';
+  },
+
+  feedbackHtml(rows) {
+    if (!rows.length) return '<p class="adm-empty">אין משובים.</p>';
+    const t = s => (s ? Date.parse(s) || 0 : 0);
+    const list = rows.slice().sort((a, b) => (a.handled ? 1 : 0) - (b.handled ? 1 : 0) || t(b.created_at) - t(a.created_at));
+    return list.map(f => {
+      const cat = CONFIG.admin.categories[f.category] || this.v(f.category);
+      const rate = typeof f.rating === 'number' && f.rating > 0 ? '<span>' + starsRow(f.rating, 5) + '</span>' : '';
+      const ctx = f.context === null || f.context === undefined || f.context === '' ? '' :
+        (typeof f.context === 'object' ? JSON.stringify(f.context) : String(f.context));
+      return '<article class="adm-fb' + (f.handled ? ' done' : '') + '">' +
+        '<div class="adm-fb-meta"><span class="adm-fb-cat">' + cat + '</span>' + rate + '<b>' + this.name(f.username) + '</b><span>' + this.time(f.created_at) + '</span>' +
+        (f.handled ? '<span class="adm-yes">טופל</span>' : '') + '</div>' +
+        '<p class="adm-fb-msg" dir="auto">' + this.v(f.message) + '</p>' +
+        (ctx || f.app_version ? '<p class="adm-fb-ctx" dir="ltr">' + esc(ctx) + (f.app_version ? ' | v' + esc(f.app_version) : '') + '</p>' : '') +
+        '<button class="btn btn-sm ' + (f.handled ? 'btn-cream' : 'btn-green') + '" type="button" data-fb-id="' + esc(f.id) + '" data-fb-handled="' + (f.handled ? '1' : '0') + '">' +
+        (f.handled ? 'פתח מחדש' : 'טופל') + '</button></article>';
+    }).join('');
+  },
+
+  onBodyClick(e) {
+    const d = e.target.closest('[data-days]');
+    if (d) {
+      const n = Number(d.dataset.days);
+      if (n !== this.days) { this.days = n; this.sel = null; this.load(); }
+      return;
+    }
+    const s = e.target.closest('[data-sort]');
+    if (s) {
+      this.sortBy = s.dataset.sort;
+      s.parentNode.querySelectorAll('[data-sort]').forEach(b => b.setAttribute('aria-pressed', String(b === s)));
+      this.renderPlayers();
+      return;
+    }
+    const f = e.target.closest('[data-fb-id]');
+    if (f) { this.toggleFeedback(f); return; }
+    const h = e.target.closest('#adm-chart-box [data-i]');
+    if (h) { this.sel = Number(h.dataset.i); this.readout(); }
+  },
+
+  async toggleFeedback(btn) {
+    if (!this.pass || btn.disabled) return;
+    btn.disabled = true;
+    const id = Number(btn.dataset.fbId);
+    const handled = btn.dataset.fbHandled !== '1';
+    try {
+      const r = await Online.rpc('qf_admin_feedback', { p_pass: this.pass, p_id: id, p_handled: handled }, { timeoutMs: CONFIG.admin.timeoutMs });
+      if (r && r.error) throw new Error(String(r.error));
+      if (!r || r.ok !== true) throw new Error('not_found');
+      await this.load();
+    } catch (e) {
+      const code = this.code(e);
+      if (code === 'unauthorized' || code === 'locked') { this.kick(code); return; }
+      this.setStatus(this.errText(code), true);
+      btn.disabled = false;
+    }
   }
 };
 
