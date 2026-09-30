@@ -768,6 +768,80 @@
   .adm-fb-ctx { font-size: .74rem; color: var(--ink-2); word-break: break-all; margin: 0 0 6px; }
   .adm-empty { color: var(--ink-2); font-size: .85rem; margin: 0; }
 
+  /* ---------- 2026-10-01: social track ("ערב אימפרו") ---------- */
+  .soc-card { margin-bottom: 10px; background: #fff6e2; border: 2.5px solid var(--orange); }
+  .soc-card .row-title { color: var(--red-d); }
+  .soc-card .ibtn { width: 42px; height: 42px; }
+  .soc-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .soc-mode {
+    display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+    background: var(--cream-2); border: 2.5px solid var(--cream-3); border-radius: 16px; padding: 8px 6px;
+    font-family: var(--font-display); font-weight: 700; font-size: 1rem; line-height: 1.15;
+  }
+  .soc-mode .row-icon { width: 36px; height: 36px; }
+  .soc-mode small { font-family: var(--font); font-weight: 500; font-size: .76rem; color: var(--ink-2); }
+  .soc-mode[aria-checked="true"] { background: #fff6e2; border-color: var(--orange); box-shadow: inset 0 -3px 0 var(--orange-d); }
+  .soc-desc { font-size: .86rem; margin: 8px 2px 8px; }
+  .soc-names { display: flex; flex-direction: column; gap: 6px; }
+  .soc-name-row { display: flex; align-items: center; gap: 8px; }
+  .soc-dot { width: 26px; height: 26px; flex: none; border-radius: 50%; border: 2.5px solid var(--brown); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: .85rem; }
+  .soc-name-row .name-input { flex: 1; min-width: 0; padding: 6px 12px; font-size: 1rem; }
+  .soc-x { width: 34px; height: 34px; flex: none; border-radius: 50%; border: 2.5px solid var(--brown); background: var(--cream); display: grid; place-items: center; }
+  .soc-x svg { width: 14px; height: 14px; }
+  .soc-add { margin: 8px 0 4px; }
+  .soc-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0 4px; }
+  .soc-lbl { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+  .soc-seg { display: inline-flex; gap: 4px; }
+  .soc-seg button { min-width: 40px; padding: 4px 10px; border-radius: 999px; border: 2.5px solid var(--brown); background: var(--cream-2); font-family: var(--font-display); font-weight: 700; }
+  .soc-seg button[aria-checked="true"] { background: var(--orange); box-shadow: inset 0 -3px 0 var(--orange-d); }
+  .soc-note { display: flex; gap: 8px; align-items: flex-start; font-size: .82rem; color: var(--green-d); background: var(--green-bg); border-radius: 12px; padding: 7px 10px; margin: 8px 0 0; }
+  .soc-note svg { width: 18px; height: 18px; flex: none; color: var(--green); }
+  .soc-hist { font-size: .8rem; }
+  .soc-hist .hist-row b { font-family: var(--font-display); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
+  .soc-sit { background: #fff6e2; border: 2.5px dashed var(--orange); border-radius: 14px; padding: 8px 10px; margin-bottom: 10px; }
+  .soc-sit-l { font-size: .78rem; color: var(--ink-2); font-weight: 600; }
+  .soc-sit-text { margin: 2px 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; line-height: 1.25; }
+  .soc-roll { font-size: .82rem; padding: 4px 10px; }
+  .soc-roll svg { width: 15px; height: 15px; }
+  .soc-chars { display: flex; flex-direction: column; gap: 8px; }
+  .soc-char { background: var(--cream-2); border-radius: 14px; padding: 8px 10px; border-inline-start: 7px solid var(--pc, var(--orange)); }
+  .soc-char-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .soc-char-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .soc-char-role { font-family: var(--font-display); font-weight: 700; color: var(--red-d); font-size: 1rem; }
+  .soc-char ul { list-style: none; margin: 2px 0 0; padding: 0; font-size: .82rem; }
+  .soc-char li b { font-weight: 600; color: var(--ink-2); }
+  .soc-cast-row { margin-top: 4px; }
+  .soc-cast-row .btn { padding: 10px 8px; font-size: 1rem; }
+  .turn-banner {
+    flex: none; margin: 0 3px 6px; padding: 4px 12px; border-radius: 14px; border: 3px solid var(--brown);
+    background: var(--pc, var(--orange)); color: var(--ink); text-align: center; box-shadow: 0 3px 0 var(--brown);
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.2rem, min(6vw, 4dvh), 1.6rem); line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .turn-banner.bump { animation: tick .45s var(--bounce); }
+  .cast-strip { flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin: 0 3px 6px; }
+  .cast-c { min-width: 0; background: var(--cream); border: 2px solid var(--brown); border-inline-start: 6px solid var(--pc, var(--orange)); border-radius: 10px; padding: 1px 8px; opacity: .5; font-size: .76rem; line-height: 1.25; transition: opacity .2s, transform .2s var(--bounce); }
+  .cast-c b { display: block; font-family: var(--font-display); font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cast-c span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); }
+  .cast-c.on { opacity: 1; background: #fff6e2; box-shadow: 0 0 0 2px var(--pc, var(--orange)); transform: scale(1.02); }
+  .card.ph-pass { border-color: var(--pc, var(--orange)); }
+  .ph-pass .prompt { text-align: center; }
+  .card.soc .prompt-lead { font-size: .82rem; line-height: 1.3; }
+  .soc-rank { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .soc-rank-row { display: flex; align-items: center; gap: 10px; background: var(--cream-2); border-radius: 14px; padding: 6px 10px; border-inline-start: 7px solid var(--pc, var(--orange)); }
+  .soc-rank-row.win { background: #fff6e2; box-shadow: 0 0 0 2.5px var(--gold); }
+  .soc-rank-n { width: 30px; height: 30px; flex: none; border-radius: 50%; border: 2.5px solid var(--brown); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; background: var(--cream); }
+  .soc-rank-row.win .soc-rank-n { background: var(--gold); }
+  .soc-rank-main { flex: 1; min-width: 0; }
+  .soc-rank-main b { display: block; font-family: var(--font-display); font-size: 1.05rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .soc-rank-main span { display: block; font-size: .78rem; color: var(--ink-2); }
+  .soc-rank-pts { flex: none; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; color: var(--green-d); text-align: center; line-height: 1; }
+  .soc-rank-pts small { display: block; font-family: var(--font); font-size: .68rem; font-weight: 600; color: var(--ink-2); }
+  @media (max-height: 720px) {
+    .cast-c { font-size: .7rem; }
+    .cast-c b { font-size: .84rem; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .big-stars .slot.pop .star.on { transform: none; opacity: 1; }
@@ -873,6 +947,12 @@
         <span class="ribbon orange">אימון חופשי</span>
         <div class="scroll">
           <p class="muted" style="margin:0 0 10px">בלי יעדים ובלי כוכבים. מתאמנים במצב שבוחרים.</p>
+          <!-- 2026-10-01: social track entry (2-4 players, one phone) -->
+          <div id="social-card" class="row soc-card" role="button" tabindex="0" aria-label="ערב אימפרו, משחק קבוצתי לטלפון אחד">
+            <span class="row-icon" style="background:var(--red-d)" data-icon="users"></span>
+            <span class="row-main"><span class="row-title">ערב אימפרו</span><span class="row-sub">2 עד 4 משתתפים, טלפון אחד. אסוציאציות וסצנות</span></span>
+            <span class="ibtn play" aria-hidden="true" data-icon="play"></span>
+          </div>
           <div id="home-modes" class="rows"></div>
           <p class="section-label">השבוע שלך</p>
           <p id="week-title" class="week-title"></p>
@@ -969,6 +1049,43 @@
     <button id="intro-go" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
   </section>
 
+  <!-- ================= SOCIAL (2026-10-01): setup + cast sheet ================= -->
+  <section id="view-social" class="view" hidden>
+    <div class="topbar">
+      <button id="soc-back" class="btn btn-cream btn-sm" type="button"></button>
+      <span class="topbar-title on-bg">ערב אימפרו</span>
+    </div>
+    <div id="soc-setup" class="panel has-ribbon fill">
+      <span class="ribbon orange"><span data-icon="users"></span>מי משחקים?</span>
+      <div class="scroll">
+        <div id="soc-modes" class="soc-modes" role="radiogroup" aria-label="בחירת משחק"></div>
+        <p id="soc-desc" class="soc-desc muted"></p>
+        <div id="soc-names" class="soc-names"></div>
+        <button id="soc-add" class="btn btn-cream btn-sm soc-add" type="button"></button>
+        <div class="soc-line"><span class="soc-lbl">תורות לכל משתתף</span><div id="soc-rounds" class="soc-seg" role="radiogroup" aria-label="תורות לכל משתתף"></div></div>
+        <p class="soc-note"><span data-icon="hush"></span><span>בזמן תור, כל השאר בשקט. הטלפון מקשיב רק למי שהתור שלו.</span></p>
+        <p id="soc-msg" class="name-msg bad" aria-live="polite"></p>
+        <div id="soc-hist"></div>
+      </div>
+    </div>
+    <div id="soc-cast" class="panel has-ribbon fill" hidden>
+      <span class="ribbon">דף הליהוק</span>
+      <div class="scroll">
+        <div class="soc-sit">
+          <span class="soc-sit-l">הסיטואציה</span>
+          <p id="soc-sit-text" class="soc-sit-text"></p>
+          <button id="soc-sit-roll" class="btn btn-cream btn-sm soc-roll" type="button"></button>
+        </div>
+        <div id="soc-chars" class="soc-chars"></div>
+      </div>
+    </div>
+    <button id="soc-go" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
+    <div id="soc-cast-row" class="btn-row soc-cast-row" hidden>
+      <button id="soc-roll-all" class="btn btn-cream" type="button"></button>
+      <button id="soc-cast-back" class="btn btn-cream" type="button"></button>
+    </div>
+  </section>
+
   <!-- ================= SESSION ================= -->
   <section id="view-session" class="view" hidden>
     <div class="topbar">
@@ -978,6 +1095,9 @@
     <div id="s-goals" class="goal-strip" hidden></div>
     <div id="s-progress" class="progress" aria-hidden="true"></div>
     <div id="s-legend" class="legend"></div>
+    <!-- 2026-10-01: social track: whose turn, and the players / cast strip -->
+    <div id="s-turn" class="turn-banner" aria-live="polite" hidden></div>
+    <div id="s-cast" class="cast-strip" hidden></div>
     <div id="card" class="panel card">
       <div class="card-top">
         <span id="c-label" class="card-label"></span>
@@ -1022,7 +1142,8 @@
         <div id="sum-goals-wrap" hidden>
           <div id="sum-goals" class="goals"></div>
         </div>
-        <div class="donut-wrap">
+        <div id="sum-social" class="soc-rank" hidden></div><!-- 2026-10-01: social ranking -->
+        <div id="sum-donut-wrap" class="donut-wrap">
           <div id="sum-donut"></div>
           <div class="donut-center">
             <div id="sum-val" class="donut-val num"></div>
@@ -1186,7 +1307,8 @@ const CONFIG = {
   statsWindow: 10,
   sparkPoints: 20,
   // 2026-09-30: build tag sent with usage data and feedback. Bump on every release.
-  appVersion: '2026-09-30.1',
+  // 2026-10-01: was '2026-09-30.1'. Social track (ערב אימפרו).
+  appVersion: '2026-10-01.1',
   // 2026-09-30: anonymous usage data + feedback form. Same server as `online`.
   // Fire-and-forget: every call may fail and the game never waits for it.
   telemetry: {
@@ -1320,7 +1442,63 @@ const CONFIG = {
       endOnSilenceMs: 1500,
       trackHesitations: true,
       beats: ["פעם היה...", "כל יום...", "עד שיום אחד...", "ובגלל זה...", "ובגלל זה...", "עד שלבסוף..."]
+    },
+    // 2026-10-01: social pass-and-play modes ("ערב אימפרו"). `social: true` keeps them out of
+    // the free play list (they open from the social card) and out of the champions board stats.
+    // `rounds` here = turns PER PLAYER. App.begin turns it into the flat total (perPlayer x players).
+    social_assoc: {
+      label: "אסוציאציות בתורות",
+      social: true,
+      desc: "משחקים בתורות. בכל תור מופיעים שם ומילה, ואומרים בקול את האסוציאציה הראשונה. תגובה מהירה שווה יותר נקודות.",
+      short: "מילה, תור, תגובה מהירה",
+      readLabel: "המילה",
+      lead: "המילה:",
+      liveSub: "לומר את המילה הראשונה שעולה",
+      speakSub: "מעולה! אפשר לשתוק כשמסיימים",
+      roundWords: ["תור", "תורות"],
+      rounds: 4,
+      readMs: 0,
+      responseWindowMs: 4000, // a bit longer than solo (3 s): the phone may still be moving
+      speakMs: 3000,
+      endOnSilenceMs: 500,
+      trackHesitations: false
+    },
+    social_scene: {
+      label: "סצנה מאולתרת",
+      social: true,
+      desc: "מגרילים סיטואציה ודמויות, ומשחקים סצנה אחת בתורות. בכל תור מדברים בדמות, בלי לעצור.",
+      short: "דמויות, סיטואציה ותורות",
+      readLabel: "ההוראה לתור",
+      lead: "הדמות:",
+      liveSub: "לדבר בדמות, בלי לעצור",
+      speakSub: "ממשיכים בדמות עד שהפס נגמר",
+      roundWords: ["תור", "תורות"],
+      rounds: 3,
+      readMs: 3000,           // time to read the turn cue (plus readExtraMs)
+      responseWindowMs: 6000, // like the rant
+      speakMs: 15000,
+      endOnSilenceMs: null,   // fixed time, like the rant: silence counts as hesitation
+      trackHesitations: true
     }
+  },
+  // 2026-10-01: social track settings.
+  social: {
+    minPlayers: 2,
+    maxPlayers: 4,
+    nameMax: 16,
+    namesKey: 'quickflow_social_names', // last names used, JSON array of strings
+    roundOptions: [3, 4, 6],             // turns per player
+    passMs: 2500,                        // "העבירו את הטלפון ל-..." pause, after the result shows
+    histRows: 5,                         // last social games shown on the setup screen
+    // Player colors, from the :root palette (--orange, --green-l, miss red, --gold).
+    colors: ['#F3A33A', '#7BC06B', '#F07068', '#FFC83D'],
+    // Score per player. Simple and fair, in this order of weight:
+    //   answered * perAnswer              -> one answered turn (100) beats any speed or hesitation gap
+    //   + round(speedMax * (1 - medianLatency / responseWindow))   -> 0..50, faster start = more
+    //   - min(hesCap, hesitations * perHes)   -> 0..30, scene only (assoc has no hesitations)
+    // speedMax (50) + hesCap (30) < perAnswer (100), so answering always weighs most,
+    // and speedMax > hesCap, so speed weighs more than fewer hesitations. Equal score = shared place.
+    score: { perAnswer: 100, speedMax: 50, perHes: 3, hesCap: 30 }
   }
 };
 
@@ -1687,7 +1865,104 @@ const PROMPTS = {
     "עץ שרוצה לטייל",
     "ליצן שלא מצליח לצחוק",
     "חללית שנתקעה על הירח"
-  ]
+  ],
+  // 2026-10-01: social scene content ("סצנה מאולתרת"). Original, family friendly.
+  // Situations are written to work for 2, 3 or 4 characters. Characters are built by
+  // combining the lists (Social.rollCast), never two equal roles in one scene.
+  // Speaking styles are playful and generic, never a real community.
+  social: {
+    situations: [
+      "ישיבת ועד בית דחופה, רק שהבניין הוא חללית בדרך למאדים",
+      "כולם נתקעו במעלית בדרך לחתונה, והחופה מתחילה בעוד עשר דקות",
+      "חדר המתנה אצל רופא השיניים, והתור נמשך כבר שלושה ימים",
+      "תוכנית בישול בשידור חי, ורק עכשיו מתברר שהמקרר ריק",
+      "ועדת קבלה לבית ספר לקוסמים, והקוסם הראשי שכח את כל הקסמים",
+      "משמרת לילה במוזיאון, ואחד הפסלים התחיל לזוז",
+      "טיול שנתי, והאוטובוס נסע בטעות לקוטב הצפוני",
+      "פגישת משפחה חירום: מישהו אכל את העוגה שהייתה לאירוע של מחר",
+      "צוות צוללת שצריך להחליט מה לשים על הפיצה האחרונה",
+      "ישיבת הנהלה בחברת צעצועים, והצעצוע החדש מסרב להימכר",
+      "תור בסניף הדואר ביום האחרון לפני סוף העולם",
+      "חקירה משטרתית: מישהו גנב את כל הכפיות בעיר",
+      "חזרה אחרונה של להקת רוק, וכל החברים שכחו על מה הם מנגנים",
+      "טיסה לאילת, והטייס מודיע שהוא עוצר לפיקניק על ענן",
+      "אסיפת הורים בגן, והגננת החדשה היא דרקון",
+      "שבט במערה מנסה להמציא את הגלגל, ואף אחד לא מסכים על הצורה",
+      "משא ומתן בין חייזרים לוועד השכונה על מקום חניה אחד",
+      "ספינת פיראטים שמתכוננת לביקורת של משרד הבריאות",
+      "מסיבת הפתעה, וכולם שכחו בשביל מי היא",
+      "צילומי פרסומת ליוגורט, והיוגורט מסרב לשתף פעולה",
+      "חדר בריחה שבו המפתח נבלע בטעות",
+      "בית משפט לבעלי חיים: החתול נאשם בהפלת כוס מהשולחן",
+      "תחנת רדיו בשידור חי, והסוללה של המשדר נגמרת בעוד דקה",
+      "צוות חילוץ בהר, שמגלה שההר הוא בעצם גבעה קטנה בפארק",
+      "שיעור יוגה ראשון בבית אבות לרובוטים",
+      "משפחה בקרוואן שמנסה להחליט לאן נוסעים, כבר שש שעות",
+      "חנות עתיקות שבה כל חפץ שנוגעים בו מתחיל לדבר",
+      "ארוחת ערב רשמית בארמון, ואף אחד לא יודע באיזה מזלג להשתמש",
+      "מפגש מחזור של גיבורי על שיצאו לפנסיה",
+      "מעבדה שבה ההמצאה החדשה הפכה בטעות את כל העוגיות לענקיות",
+      "שיעור בישול בתחנת חלל, בלי כוח משיכה",
+      "תחרות הכלב החכם בעולם, והכלבים הם השופטים",
+      "אודישן להצגה של בית הספר, והבמאי מתעקש שכולם ישחקו עצים"
+    ],
+    roles: [
+      "סבתא שמגדלת קקטוסים", "שף צרפתי עם שפם מסולסל", "רובוט שואב אבק", "פיראט בפנסיה",
+      "מלך בלי ממלכה", "קוסם מתחיל", "נהג מונית שיודע הכול", "בלש פרטי",
+      "אסטרונאוטית", "גננת קשוחה", "זמר אופרה", "מאמנת כושר",
+      "חייזר בחופשה", "רופאת שיניים", "סוכן דירות", "דרקון צמחוני",
+      "מתורגמנית לשפת חתולים", "מדריך טיולים", "קריינית חדשות", "שומר לילה במוזיאון",
+      "תינוק גאון", "ערפד שפוחד מהחושך", "מלצר שמתעלם מהזמנות", "חוקרת ג'ונגלים",
+      "מנהל בנק", "כוכבת רשת", "דוור מהעתיד", "מכשפת מזג אוויר",
+      "יועץ זוגי לדינוזאורים", "תוכי שיודע לדבר", "רוח רפאים נחמדה", "שוער כדורגל עייף",
+      "ממציאה של מכונות מיותרות", "ליצן בחופשת מחלה"
+    ],
+    ages: [
+      "גיל 7 וחצי, והחצי חשוב", "גיל 13 וחצי, עם דעה על הכול", "גיל 19, עם ביטחון עצמי מופרז",
+      "גיל 27, באמצע משבר רבע החיים", "גיל 35, עם נשמה של פנסיונר", "גיל 42, עם אנרגיה של גיל 20",
+      "גיל 55, בשיא הכושר", "גיל 67, עם זיכרון של פיל", "גיל 88, עם אוזניות גיימינג",
+      "גיל 102, עם תוכניות לעשור הבא", "גיל 300 בערך, אף אחד כבר לא סופר", "גיל לא ידוע, סוד מדינה",
+      "גיל 4 בשנות אדם, 28 בשנות כלב"
+    ],
+    tones: [
+      "דרמטי כמו בטלנובלה", "רגוע מדי, גם כשהכול בוער", "נלהב מכל דבר קטן", "חשדן כלפי כולם",
+      "רשמי כמו מכתב מהבנק", "מתנצל על הכול", "מלא ביטחון, בלי שום סיבה", "לוחש כאילו זה סוד",
+      "עליז כמו פרסומת לדגני בוקר", "פילוסופי ועמוק", "רעב ועצבני", "מתלונן על הכול",
+      "מתרגש עד דמעות", "מסתורי ומלא רמזים", "מעודד כמו מאמן בחצי הגמר", "מנומס בצורה מוגזמת"
+    ],
+    accents: [
+      "כמו קריין רדיו משנות ה-80", "כל משפט נגמר בשאלה", "מבטא של פיראט", "כמו רובוט עם סוללה חלשה",
+      "כמו שדרן כדורגל בדקה ה-90", "בחרוזים, כל הזמן", "כמו מדריך מדיטציה", "לאט... מאוד... עם הפסקות... דרמטיות",
+      "מהר מאוד ובלי לנשום", "כמו מגיש חדשות בשידור חי", "כמו אביר מימי הביניים", "כמו קוסם שמכריז על טריק",
+      "כמו הודעה ברמקול של תחנת רכבת", "כמו אפליקציית ניווט", "בלחישה של ספרייה", "כמו זמר אופרה, בשירה",
+      "כמו מספר סיפורים לפני השינה"
+    ],
+    quirks: [
+      "מטרה סודית: לגרום לכולם לשיר ביחד", "מטרה סודית: למכור לכולם ביטוח", "מטרה סודית: להכניס את המילה \"אבטיח\" לכל משפט",
+      "מטרה סודית: להפוך לבוס של כולם", "מטרה סודית: לצאת מכאן לפני כולם", "מטרה סודית: לקבל חיבוק מכל אחד",
+      "מטרה סודית: לשכנע את כולם שהיום יום ההולדת שלך", "מטרה סודית: להפוך כל רגע להפסקת קפה", "מטרה סודית: למצוא את השלט של הטלוויזיה",
+      "מטרה סודית: לגייס את כולם ללהקה", "מטרה סודית: להצחיק מישהו בלי לצחוק בעצמך", "סוד: פחד מוות מכפתורים",
+      "סוד: בעצם חתול בתחפושת", "סוד: זכייה בלוטו אתמול", "סוד: אלרגיה למילה \"לא\"",
+      "סוד: המפתח לכל הבעיות נמצא בכיס", "סוד: מרגל של הצד השני", "סוד: הגעה מהעתיד, עם אזהרה חשובה",
+      "סוד: אין שום מושג מה קורה פה", "סוד: חשד שכל השאר רובוטים", "הרגל: לספור הכול בקול",
+      "הרגל: לתת שם לכל חפץ", "הרגל: לצטט פתגמים שלא קיימים", "הרגל: לסיים משפטים בתנועת ריקוד",
+      "הרגל: לדבר על עצמך בגוף שלישי", "הרגל: לענות על כל שאלה בשאלה", "הרגל: להתרגש מכל מספר זוגי"
+    ],
+    // First turn of the scene, the rest of the first round, and the very last turn.
+    opener: "פתחו את הסצנה: איפה אנחנו ומה קרה?",
+    enter: "היכנסו לסצנה: הציגו את הדמות והגיבו למה שנאמר",
+    closer: "סגרו את הסצנה: סוף מפתיע או משפט מחץ",
+    cues: [
+      "תגיבו למה שהדמות הקודמת אמרה", "חשפו את הסוד שלכם", "סיבוב בעלילה: נגמר החשמל",
+      "סיבוב בעלילה: מישהו דופק בדלת", "סיבוב בעלילה: מתחיל לרדת שלג, בפנים", "הציעו תוכנית מבריקה (וקצת מטופשת)",
+      "האשימו דמות אחרת במה שקרה", "סיבוב בעלילה: שיחת טלפון דחופה מראש הממשלה של הירח", "הגיבו בהתלהבות מוגזמת לכל מה שנאמר",
+      "סיבוב בעלילה: כולם איבדו את הקול, חוץ מכם", "גלו שהדמות הקודמת היא בעצם קרובת משפחה", "נסו להשיג את המטרה הסודית שלכם, בגלוי",
+      "סיבוב בעלילה: חיה נכנסה לחדר", "סיבוב בעלילה: מתברר שכל זה שידור חי", "שירו את מה שאתם רוצים להגיד",
+      "סיבוב בעלילה: הזמן קפץ עשר שנים קדימה", "נאום מרגש לכל הנוכחים", "הסכימו עם הכול, ואז הוסיפו רעיון מטורף",
+      "סיבוב בעלילה: מישהו מצא מפת אוצר", "קחו פיקוד והכריזו על חוק חדש", "התנצלו על משהו שלא עשיתם",
+      "סיבוב בעלילה: הכול מתחיל לרעוד", "ספרו זיכרון ילדות שקשור למה שקורה עכשיו"
+    ]
+  }
 };
 
 /* ============================================================
@@ -1883,7 +2158,12 @@ const Storage = {
       && this.isNumOrNull(r.avgLatencyMs)
       && this.isNumOrNull(r.hesitationsCount)
       // 2026-09-30: optional new_choice field. Absent on every older record, so they still pass.
-      && (r.avgSwitchLatencyMs === undefined || this.isNumOrNull(r.avgSwitchLatencyMs));
+      && (r.avgSwitchLatencyMs === undefined || this.isNumOrNull(r.avgSwitchLatencyMs))
+      // 2026-10-01: optional social fields. Absent on every older record, so they still pass.
+      && (r.players === undefined || (typeof r.players === 'number' && isFinite(r.players)))
+      && (r.winner === undefined || r.winner === null || typeof r.winner === 'string')
+      && (r.perPlayer === undefined || (Array.isArray(r.perPlayer) && r.perPlayer.every(p =>
+        p && typeof p === 'object' && typeof p.name === 'string' && typeof p.score === 'number' && isFinite(p.score))));
   },
 
   migrate(data) {
@@ -2101,7 +2381,12 @@ const Icons = {
     new_choice: { bg: '#25501F',
       svg: svgI('<path d="M5 20v-7a5 5 0 0 1 5-5h9"/><path d="M15 4l4 4-4 4"/>') },
     story_spine: { bg: '#7A3E1C',
-      svg: svgI('<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6M9 11h4"/>') }
+      svg: svgI('<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6M9 11h4"/>') },
+    // 2026-10-01: social modes. Colors from :root (--red-d, --ink-2).
+    social_assoc: { bg: '#8C221E',
+      svg: svgI('<circle cx="7" cy="12" r="3.2"/><circle cx="17" cy="12" r="3.2"/><path d="M10.2 12h3.6"/>') },
+    social_scene: { bg: '#74431F',
+      svg: svgI('<path d="M4 5h16l-2 9a6 6 0 0 1-12 0z"/><path d="M9 10h.01M15 10h.01M9.5 14c1.5 1.3 3.5 1.3 5 0"/>') }
   }
 };
 const STAR_PATH = 'M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z';
@@ -2882,7 +3167,9 @@ const Online = {
   // Values the server gets. See CONFIG.online for the windows.
   stats() {
     const c = CONFIG.online;
-    const sessions = Storage.store ? Storage.store.sessions : [];
+    // 2026-10-01: social games (several voices, one phone) are not the owner's results.
+    // Was: every session. They stay out of the board totals and reaction time.
+    const sessions = (Storage.store ? Storage.store.sessions : []).filter(r => !(CONFIG.modes[r.gameMode] && CONFIG.modes[r.gameMode].social));
     const top = STAGES.reduce((m, st) => (Progress.stars(st.id) >= 1 ? Math.max(m, st.id) : m), 0);
     const lat = sessions.map(r => r.medianLatencyMs).filter(v => typeof v === 'number' && isFinite(v)).slice(-c.latencyWindow);
     const med = Util.median(lat);
@@ -3159,6 +3446,97 @@ const ScreenAwake = {
 };
 
 /* ============================================================
+ * Social (2026-10-01): "ערב אימפרו", pass-and-play for 2-4 players on
+ * one phone. Pure helpers only: names storage, cast rolls, turn cues, score.
+ * The session runs on the normal App phase machine (no second engine):
+ * the rounds are one flat list and turn i belongs to player i % N.
+ * ============================================================ */
+const Social = {
+  pick(arr, avoid) {
+    const pool = avoid && avoid.length ? arr.filter(x => !avoid.includes(x)) : arr;
+    const src = pool.length ? pool : arr;
+    return src[Math.floor(Math.random() * src.length)];
+  },
+  loadNames() {
+    try {
+      const a = JSON.parse(localStorage.getItem(CONFIG.social.namesKey));
+      if (Array.isArray(a)) return a.filter(x => typeof x === 'string').map(x => x.slice(0, CONFIG.social.nameMax)).slice(0, CONFIG.social.maxPlayers);
+    } catch (e) { /* default */ }
+    return [];
+  },
+  saveNames(names) { try { localStorage.setItem(CONFIG.social.namesKey, JSON.stringify(names)); } catch (e) { /* memory only */ } },
+  cleanName(v) { return String(v || '').replace(/\s+/g, ' ').trim().slice(0, CONFIG.social.nameMax); },
+  defaultName(i) { return 'שחקן ' + (i + 1); },
+  // Empty field = its placeholder name. Returns { names } or { error, name }.
+  validate(raw) {
+    const c = CONFIG.social;
+    if (raw.length < c.minPlayers || raw.length > c.maxPlayers) return { error: 'count' };
+    const names = raw.map((v, i) => this.cleanName(v) || this.defaultName(i));
+    const seen = new Set();
+    for (const n of names) {
+      const k = n.toLowerCase();
+      if (seen.has(k)) return { error: 'dup', name: n };
+      seen.add(k);
+    }
+    return { names };
+  },
+  // One character. `others` = characters already in the scene: never the same role,
+  // and other traits differ too while the lists allow it.
+  rollChar(others) {
+    const P = PROMPTS.social;
+    const used = k => others.map(o => o[k]);
+    return {
+      role: this.pick(P.roles, used('role')),
+      age: this.pick(P.ages, used('age')),
+      tone: this.pick(P.tones, used('tone')),
+      accent: this.pick(P.accents, used('accent')),
+      quirk: this.pick(P.quirks, used('quirk'))
+    };
+  },
+  rollCast(n) {
+    const chars = [];
+    for (let i = 0; i < n; i++) chars.push(this.rollChar(chars));
+    return { situation: this.pick(PROMPTS.social.situations), chars };
+  },
+  // Re-roll one character: differs from the other players and from the old one.
+  rerollChar(cast, i) { cast.chars[i] = this.rollChar(cast.chars); },
+  rerollSituation(cast) { cast.situation = this.pick(PROMPTS.social.situations, [cast.situation]); },
+  charLine(c) { return c.role + ' | ' + c.age + ' | טון: ' + c.tone + ' | דיבור: ' + c.accent + ' | ' + c.quirk; },
+  // Turn cues for the whole scene: opener, then everyone enters, random cues, closer.
+  sceneCues(total, n) {
+    const P = PROMPTS.social;
+    const pool = Util.shuffle(P.cues);
+    let k = 0;
+    return Array.from({ length: total }, (_, i) => {
+      if (i === 0) return P.opener;
+      if (i === total - 1) return P.closer;
+      if (i < n) return P.enter;
+      if (k >= pool.length) k = 0;
+      return pool[k++];
+    });
+  },
+  // Per-player stats, score (formula in CONFIG.social.score) and rank. Equal score = same rank.
+  results(names, rounds, cfg) {
+    const sc = CONFIG.social.score;
+    const rows = names.map((name, i) => {
+      const mine = rounds.filter(r => r.player === i);
+      const ans = mine.filter(r => !r.missed);
+      const lats = ans.map(r => r.latencyMs).filter(v => typeof v === 'number');
+      const med = lats.length ? Math.round(Util.median(lats)) : null;
+      const hes = cfg.trackHesitations ? ans.reduce((a, r) => a + (r.hesitations || 0), 0) : null;
+      const speed = med === null ? 0 : Math.round(sc.speedMax * Math.max(0, 1 - med / cfg.responseWindowMs));
+      const pen = hes ? Math.min(sc.hesCap, hes * sc.perHes) : 0;
+      return { name, idx: i, turns: mine.length, answered: ans.length, medianLatencyMs: med, hesitations: hes,
+        score: Math.max(0, ans.length * sc.perAnswer + speed - pen) };
+    });
+    const ranked = rows.slice().sort((a, b) => b.score - a.score || a.idx - b.idx);
+    ranked.forEach((r, i) => { r.rank = i && r.score === ranked[i - 1].score ? ranked[i - 1].rank : i + 1; });
+    const top = ranked[0] && ranked[0].score > 0 ? ranked.filter(r => r.rank === 1) : [];
+    return { ranked, winners: top.map(r => r.name), tie: top.length > 1 };
+  }
+};
+
+/* ============================================================
  * App controller: views + RAF loop + explicit phase machine
  * calibrating -> reading -> awaiting -> speaking -> between -> ...
  * ============================================================ */
@@ -3174,6 +3552,8 @@ const App = {
   homeTab: 'map',
   cardKey: null,
   sumActions: {},
+  // 2026-10-01: social track state (setup screen, cast sheet). Names are free text: always esc().
+  soc: { mode: 'social_assoc', names: null, rounds: {}, step: 'setup', players: null, cast: null },
 
   init() {
     Storage.load();
@@ -3189,6 +3569,7 @@ const App = {
     $('intro-back').innerHTML = Icons.back + 'חזרה';
     $('btn-abort').innerHTML = Icons.back + 'יציאה';
     $('mode-start').innerHTML = Icons.play + 'התחל';
+    this.initSocial(); // 2026-10-01
 
     // 2026-09-30: ask for an online name once, unless saved or skipped. Was: always go('home').
     $('btn-welcome-go').addEventListener('click', () => {
@@ -3276,9 +3657,11 @@ const App = {
 
   /* ---------- navigation ---------- */
   go(view) {
-    ['welcome', 'home', 'mode', 'intro', 'session', 'summary', 'name'].forEach(v => { $('view-' + v).hidden = v !== view; });
+    // 2026-10-01: + 'social' (setup and cast sheet)
+    ['welcome', 'home', 'mode', 'intro', 'session', 'summary', 'name', 'social'].forEach(v => { $('view-' + v).hidden = v !== view; });
     this.view = view;
     if (view === 'home') this.renderHome();
+    if (view === 'social') this.socialStep(this.soc.step);
     if (view === 'mode') this.renderMode();
     $('btn-settings').hidden = view === 'session';
     // Music and effects may play only on screens where the mic is off.
@@ -3483,6 +3866,7 @@ const App = {
     list.innerHTML = '';
     Object.keys(CONFIG.modes).forEach(key => {
       const cfg = CONFIG.modes[key];
+      if (cfg.social) return; // 2026-10-01: social modes open from the "ערב אימפרו" card above
       const st = this.modeStats(key);
       const row = document.createElement('div');
       row.className = 'row';
@@ -3583,10 +3967,219 @@ const App = {
     $('dlg-settings').showModal();
   },
 
+  /* ---------- 2026-10-01: social track ("ערב אימפרו"): setup + cast sheet ---------- */
+  initSocial() {
+    const c = CONFIG.social;
+    $('soc-back').innerHTML = Icons.back + 'חזרה';
+    $('soc-add').innerHTML = '+ הוספת משתתף';
+    $('soc-sit-roll').innerHTML = Icons.redo + 'סיטואציה אחרת';
+    $('soc-roll-all').innerHTML = Icons.redo + 'הגרל מחדש';
+    $('soc-cast-back').innerHTML = Icons.back + 'חזרה';
+    const card = $('social-card');
+    card.addEventListener('click', () => this.openSocial());
+    card.addEventListener('keydown', e => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target === card) { e.preventDefault(); this.openSocial(); }
+    });
+    $('soc-modes').addEventListener('click', e => {
+      const b = e.target.closest('[data-soc-mode]');
+      if (b) { this.soc.mode = b.dataset.socMode; this.renderSocialSetup(); }
+    });
+    $('soc-rounds').addEventListener('click', e => {
+      const b = e.target.closest('[data-rounds]');
+      if (b) { this.soc.rounds[this.soc.mode] = Number(b.dataset.rounds); this.renderSocialSetup(); }
+    });
+    $('soc-names').addEventListener('input', e => {
+      const inp = e.target.closest('[data-name-i]');
+      if (inp) { this.soc.names[Number(inp.dataset.nameI)] = inp.value; $('soc-msg').textContent = ''; }
+    });
+    $('soc-names').addEventListener('keydown', e => {
+      const inp = e.target.closest('[data-name-i]');
+      if (!inp || e.key !== 'Enter') return;
+      e.preventDefault();
+      const next = $('soc-names').querySelector('[data-name-i="' + (Number(inp.dataset.nameI) + 1) + '"]');
+      if (next) next.focus(); else inp.blur();
+    });
+    $('soc-names').addEventListener('click', e => {
+      const b = e.target.closest('[data-remove]');
+      if (b && this.soc.names.length > c.minPlayers) { this.soc.names.splice(Number(b.dataset.remove), 1); this.renderSocialSetup(); }
+    });
+    $('soc-add').addEventListener('click', () => {
+      if (this.soc.names.length >= c.maxPlayers) return;
+      this.soc.names.push('');
+      this.renderSocialSetup();
+      const ins = $('soc-names').querySelectorAll('input');
+      ins[ins.length - 1].focus();
+    });
+    $('soc-back').addEventListener('click', () => {
+      if (this.soc.step === 'cast') this.socialStep('setup');
+      else { this.homeTab = 'free'; this.go('home'); }
+    });
+    $('soc-cast-back').addEventListener('click', () => this.socialStep('setup'));
+    $('soc-go').addEventListener('click', () => this.socialGo());
+    $('soc-sit-roll').addEventListener('click', () => { Social.rerollSituation(this.soc.cast); this.renderCast(); });
+    $('soc-roll-all').addEventListener('click', () => { this.soc.cast = Social.rollCast(this.soc.players.length); this.renderCast(); });
+    $('soc-chars').addEventListener('click', e => {
+      const b = e.target.closest('[data-reroll]');
+      if (b) { Social.rerollChar(this.soc.cast, Number(b.dataset.reroll)); this.renderCast(); }
+    });
+  },
+
+  openSocial() {
+    const soc = this.soc;
+    if (!soc.names) {
+      const saved = Social.loadNames();
+      soc.names = saved.length >= CONFIG.social.minPlayers ? saved : ['', ''];
+    }
+    soc.step = 'setup';
+    this.go('social');
+  },
+
+  socialStep(step) {
+    const soc = this.soc;
+    if (step === 'cast' && !soc.cast) step = 'setup';
+    soc.step = step;
+    $('soc-setup').hidden = step !== 'setup';
+    $('soc-cast').hidden = step !== 'cast';
+    $('soc-cast-row').hidden = step !== 'cast';
+    $('soc-go').innerHTML = Icons.play + (step === 'cast' ? 'יאללה, לבמה!' : 'מתחילים');
+    if (step === 'cast') this.renderCast(); else this.renderSocialSetup();
+  },
+
+  socRounds(mode) { return this.soc.rounds[mode] || CONFIG.modes[mode].rounds; },
+
+  renderSocialSetup() {
+    const c = CONFIG.social;
+    const soc = this.soc;
+    $('soc-modes').innerHTML = ['social_assoc', 'social_scene'].map(k =>
+      '<button type="button" class="soc-mode" role="radio" aria-checked="' + (k === soc.mode) + '" data-soc-mode="' + k + '">' +
+      Draw.modeIcon(k) + CONFIG.modes[k].label + '<small>' + CONFIG.modes[k].short + '</small></button>').join('');
+    $('soc-desc').textContent = CONFIG.modes[soc.mode].desc;
+    $('soc-names').innerHTML = soc.names.map((v, i) =>
+      '<div class="soc-name-row"><span class="soc-dot" style="background:' + c.colors[i] + '">' + (i + 1) + '</span>' +
+      '<input class="name-input" type="text" maxlength="' + c.nameMax + '" dir="auto" autocomplete="off" spellcheck="false" enterkeyhint="next"' +
+      ' aria-label="שם משתתף ' + (i + 1) + '" placeholder="' + esc(Social.defaultName(i)) + '" data-name-i="' + i + '" value="' + esc(v) + '">' +
+      (soc.names.length > c.minPlayers ? '<button class="soc-x" type="button" aria-label="הסרת משתתף ' + (i + 1) + '" data-remove="' + i + '">' + Icons.close + '</button>' : '') +
+      '</div>').join('');
+    $('soc-add').hidden = soc.names.length >= c.maxPlayers;
+    const r = this.socRounds(soc.mode);
+    $('soc-rounds').innerHTML = c.roundOptions.map(n =>
+      '<button type="button" role="radio" aria-checked="' + (n === r) + '" data-rounds="' + n + '">' + n + '</button>').join('');
+    this.renderSocialHist();
+  },
+
+  // Last social games. Names come from free text: every one goes through esc().
+  renderSocialHist() {
+    const list = Storage.store.sessions.filter(r => CONFIG.modes[r.gameMode] && CONFIG.modes[r.gameMode].social).slice(-CONFIG.social.histRows).reverse();
+    $('soc-hist').innerHTML = list.length ? '<p class="section-label">משחקים אחרונים</p><div class="rows soc-hist">' + list.map(r =>
+      '<div class="hist-row"><span>' + (r.winner ? '🏆 <b>' + esc(r.winner) + '</b>' : '<span class="m">בלי מנצח</span>') + '</span>' +
+      '<span class="m">' + CONFIG.modes[r.gameMode].label + (typeof r.players === 'number' ? ' | ' + r.players + ' משתתפים' : '') + '</span>' +
+      '<span class="m num">' + Dates.short(r.timestamp) + '</span></div>').join('') + '</div>' : '';
+  },
+
+  renderCast() {
+    const soc = this.soc;
+    const c = CONFIG.social;
+    $('soc-sit-text').textContent = soc.cast.situation;
+    $('soc-chars').innerHTML = soc.players.map((name, i) => {
+      const ch = soc.cast.chars[i];
+      return '<div class="soc-char" style="--pc:' + c.colors[i] + '"><div class="soc-char-top"><span class="soc-char-name">' + esc(name) + '</span>' +
+        '<button class="btn btn-cream btn-sm soc-roll" type="button" data-reroll="' + i + '" aria-label="דמות אחרת ל' + esc(name) + '">' + Icons.redo + 'דמות אחרת</button></div>' +
+        '<div class="soc-char-role">' + esc(ch.role) + '</div><ul>' +
+        '<li><b>גיל:</b> ' + esc(ch.age) + '</li><li><b>טון:</b> ' + esc(ch.tone) + '</li>' +
+        '<li><b>דיבור:</b> ' + esc(ch.accent) + '</li><li>' + esc(ch.quirk) + '</li></ul></div>';
+    }).join('');
+  },
+
+  socialGo() {
+    const soc = this.soc;
+    if (soc.step === 'cast') { this.socialBegin(); return; }
+    const v = Social.validate(soc.names);
+    if (v.error) {
+      $('soc-msg').textContent = v.error === 'dup'
+        ? 'השם "' + v.name + '" מופיע פעמיים. אפשר להוסיף אות או מספר.'
+        : 'צריך 2 עד 4 משתתפים.';
+      return;
+    }
+    soc.players = v.names;
+    Social.saveNames(v.names);
+    if (soc.mode === 'social_scene') {
+      soc.cast = Social.rollCast(v.names.length);
+      this.socialStep('cast');
+      return;
+    }
+    this.socialBegin();
+  },
+
+  // Runs inside the click (mic needs the user gesture).
+  socialBegin() {
+    const soc = this.soc;
+    this.begin({ mode: soc.mode, social: {
+      players: soc.players.slice(),
+      perPlayer: this.socRounds(soc.mode),
+      cast: soc.mode === 'social_scene' && soc.cast ? { situation: soc.cast.situation, chars: soc.cast.chars.slice() } : null
+    } });
+  },
+
+  // "עוד סיבוב": same players, new content. Scene: a fresh cast sheet first (players must see it).
+  socialAgain(s) {
+    const soc = this.soc;
+    soc.mode = s.mode;
+    soc.players = s.social.players.slice();
+    if (s.mode === 'social_scene') {
+      soc.cast = Social.rollCast(soc.players.length);
+      soc.step = 'cast';
+      this.go('social');
+      return;
+    }
+    this.socialBegin();
+  },
+
+  // Session: whose turn (banner) and the players / cast strip. Names via textContent or esc().
+  renderTurn(idx) {
+    const s = this.s;
+    const soc = s.social;
+    const n = soc.players.length;
+    const p = idx % n;
+    const col = CONFIG.social.colors[p];
+    const tb = $('s-turn');
+    const text = 'התור של ' + soc.players[p];
+    if (tb.textContent !== text) {
+      tb.textContent = text;
+      tb.classList.remove('bump'); void tb.offsetWidth; tb.classList.add('bump');
+    }
+    tb.style.setProperty('--pc', col);
+    $('card').style.setProperty('--pc', col);
+    $('s-cast').innerHTML = soc.players.map((nm, i) => {
+      let sub;
+      if (soc.cast) sub = soc.cast.chars[i].role;
+      else {
+        const mine = s.rounds.filter(r => r.player === i);
+        sub = 'תשובות ' + mine.filter(r => !r.missed).length + '/' + mine.length;
+      }
+      return '<div class="cast-c' + (i === p ? ' on' : '') + '" style="--pc:' + CONFIG.social.colors[i] + '"><b>' + esc(nm) + '</b><span>' + esc(sub) + '</span></div>';
+    }).join('');
+  },
+
+  socName(idx) { const soc = this.s.social; return soc.players[idx % soc.players.length]; },
+
+  // 'between' in the social track: after the result, "העבירו את הטלפון ל-<name>".
+  showPass(t) {
+    const s = this.s;
+    s.passShown = true;
+    s.passAt = t;
+    const next = s.roundIdx + 1;
+    const name = this.socName(next);
+    this.renderTurn(next);
+    this.setCard('pass', Icons.users + 'מעבירים', 'העבירו את הטלפון ל-' + name, null,
+      { icon: Icons.users, title: 'התור של ' + name, sub: 'כל השאר בשקט' });
+    this.setTimer(1);
+  },
+
   /* ---------- session rendering ---------- */
   setCard(phase, label, prompt, result, cue) {
     const card = $('card');
-    card.className = 'panel card ph-' + phase;
+    // 2026-10-01: + ' soc' in the social track (smaller character line). Was: 'panel card ph-' + phase.
+    card.className = 'panel card ph-' + phase + (this.s && this.s.social ? ' soc' : '');
     $('c-label').innerHTML = label || '';
     const p = $('c-prompt');
     const r = $('c-result');
@@ -3610,7 +4203,8 @@ const App = {
       p.hidden = false;
       p.textContent = prompt;
       p.className = 'prompt' + (prompt.length <= 10 ? ' word' : '');
-      const showLead = !!(this.s && phase !== 'calib' && this.s.cfg.lead);
+      // 2026-10-01: + no lead on the social 'pass' card. Was: phase !== 'calib' only.
+      const showLead = !!(this.s && phase !== 'calib' && phase !== 'pass' && this.s.cfg.lead);
       lead.hidden = !showLead;
       if (showLead) lead.textContent = this.s.lead || this.s.cfg.lead; // 2026-09-30: story_spine shows its hero
     }
@@ -3696,8 +4290,12 @@ const App = {
     }
     const st = opts.stage || null;
     const mode = st ? st.mode : opts.mode;
-    const cfg = st ? Stages.cfg(st) : CONFIG.modes[mode];
-    this.modeKey = mode;
+    // 2026-10-01: was const. Social: one flat list of turns, turn i = player i % N,
+    // so `rounds` becomes perPlayer x players and the phase machine runs unchanged.
+    let cfg = st ? Stages.cfg(st) : CONFIG.modes[mode];
+    const soc = opts.social || null;
+    if (soc) cfg = Object.assign({}, cfg, { rounds: soc.perPlayer * soc.players.length });
+    if (!soc) this.modeKey = mode; // 2026-10-01: social modes have no free play mode screen
     this.starting = true;
 
     // 2026-09-30: iOS needs the first speak() inside the user gesture. Before any await.
@@ -3728,9 +4326,16 @@ const App = {
 
     // 2026-09-30: story_spine picks one hero; its rounds are the fixed beats.
     const seed = cfg.beats ? Recent.pick(mode, Pools.get(mode, 'mix'), 1)[0] : null;
+    // 2026-10-01: social prompts: assoc words come from the solo word pool (concrete words,
+    // shared recent list), scene prompts are the turn cues.
+    let socPrompts = null;
+    if (soc) socPrompts = soc.cast ? Social.sceneCues(cfg.rounds, soc.players.length)
+      : Recent.pick('word_association', Pools.get('word_association', 'easy'), cfg.rounds);
     this.s = {
       mode, cfg, stage: st,
-      prompts: cfg.beats ? cfg.beats.slice(0, cfg.rounds) : Recent.pick(mode, Pools.get(mode, st ? st.tier : 'mix'), cfg.rounds),
+      prompts: socPrompts || (cfg.beats ? cfg.beats.slice(0, cfg.rounds) : Recent.pick(mode, Pools.get(mode, st ? st.tier : 'mix'), cfg.rounds)),
+      social: soc,   // 2026-10-01: { players, perPlayer, cast } or null
+      passShown: false,
       seed,
       lead: seed ? cfg.lead + ' ' + seed : null,
       job: null,     // current TTS job while announcing
@@ -3755,8 +4360,14 @@ const App = {
     this.cardKey = null;
     $('c-flash').hidden = true;
     $('s-title').textContent = st ? 'שלב ' + st.id + ': ' + st.name : CONFIG.modes[mode].label;
+    if (soc) $('s-title').textContent = 'ערב אימפרו'; // 2026-10-01: the mode label wraps at 375 px
     $('s-goals').hidden = !st;
     if (st) $('s-goals').innerHTML = this.goalStrip(st);
+    // 2026-10-01: social: turn banner + players strip instead of the hit/miss legend
+    $('s-legend').hidden = !!soc;
+    $('s-turn').hidden = !soc;
+    $('s-cast').hidden = !soc;
+    if (soc) this.renderTurn(0);
     this.renderProgress();
     this.setCard('calib', Icons.hush + 'כיול', 'מיד מתחילים', null,
       { icon: Icons.hush, title: 'שקט לרגע', sub: 'בודק את רעש החדר. שום דבר לא מוקלט.' });
@@ -3814,6 +4425,13 @@ const App = {
     if (s.cfg.firstReadMs && s.roundIdx === 0) s.readMs = s.cfg.firstReadMs + CONFIG.readExtraMs;
     s.phaseStart = performance.now();
     this.renderProgress();
+    // 2026-10-01: social: active player, and in the scene the active character on the lead line
+    if (s.social) {
+      s.passShown = false;
+      const p = s.roundIdx % s.social.players.length;
+      s.lead = s.social.cast ? s.social.players[p] + ': ' + Social.charLine(s.social.cast.chars[p]) : null;
+      this.renderTurn(s.roundIdx);
+    }
     this.setChips(this.baseChips());
     // 2026-09-30: with read-aloud on, speak first (mic ignored), then the old flow.
     if (Speech.enabled()) {
@@ -3829,11 +4447,12 @@ const App = {
   announce(t) {
     const s = this.s;
     const prompt = s.prompts[s.roundIdx];
-    const text = s.seed && s.roundIdx === 0 ? s.cfg.lead + ' ' + s.seed + '. ' + prompt : prompt;
+    let text = s.seed && s.roundIdx === 0 ? s.cfg.lead + ' ' + s.seed + '. ' + prompt : prompt;
+    if (s.social) text = this.socName(s.roundIdx) + '. ' + prompt; // 2026-10-01: name first, then word or cue
     s.phase = 'announcing';
     s.phaseStart = t;
     this.setCard('read', Icons.speaker + 'הקראה', prompt, null,
-      { icon: Icons.speaker, title: 'מקריא...', sub: 'הקשב. המיקרופון לא מודד עכשיו' });
+      { icon: Icons.speaker, title: 'מקריא...', sub: s.social ? 'להקשיב. המיקרופון לא מודד עכשיו' : 'הקשב. המיקרופון לא מודד עכשיו' });
     this.setTimer(1);
     s.job = Speech.say(text);
   },
@@ -3844,8 +4463,10 @@ const App = {
     if (s.readMs > 0) {
       s.phase = 'reading';
       s.phaseStart = t;
-      this.setCard('read', Icons.eye + s.cfg.readLabel, s.prompts[s.roundIdx], null,
-        { icon: Icons.eye, title: 'עוד רגע תורך', sub: 'קרא בשקט, וחכה ל"דבר עכשיו!"', count: Math.ceil(s.readMs / 1000) });
+      // 2026-10-01: social variant names the player (gender-neutral text)
+      this.setCard('read', Icons.eye + s.cfg.readLabel, s.prompts[s.roundIdx], null, s.social
+        ? { icon: Icons.eye, title: 'התור של ' + this.socName(s.roundIdx), sub: 'לקרוא בשקט ולחכות ל"דברו עכשיו!"', count: Math.ceil(s.readMs / 1000) }
+        : { icon: Icons.eye, title: 'עוד רגע תורך', sub: 'קרא בשקט, וחכה ל"דבר עכשיו!"', count: Math.ceil(s.readMs / 1000) });
       this.setTimer(1);
     } else {
       this.cue(t);
@@ -3923,6 +4544,11 @@ const App = {
     this.adaptThreshold();
     s.vad.reset();
     s.rm = new RoundMetrics(t, CONFIG.hesitationMs);
+    if (s.social) { // 2026-10-01
+      this.setCard('live', Icons.mic + esc(this.socName(s.roundIdx)), s.prompts[s.roundIdx], null,
+        { icon: Icons.mic, title: 'דברו עכשיו!', sub: s.cfg.liveSub });
+      return;
+    }
     this.setCard('live', Icons.mic + 'תורך', s.prompts[s.roundIdx], null,
       { icon: Icons.mic, title: 'דבר עכשיו!', sub: s.cfg.liveSub });
   },
@@ -3939,6 +4565,7 @@ const App = {
       windowMs: missed ? 0 : Math.round(t - s.speakStart),
       hesitations: cfg.trackHesitations && !missed ? s.rm.hesitations : 0
     };
+    if (s.social) r.player = s.roundIdx % s.social.players.length; // 2026-10-01: turn owner
     // 2026-09-30: new_choice extra fields (old readers ignore them)
     if (cfg.switchEveryMs) {
       r.switches = missed ? [] : this.switchEnd(t);
@@ -3949,6 +4576,19 @@ const App = {
     s.phase = 'between';
     s.phaseStart = t;
     this.renderProgress();
+    if (s.social) { // 2026-10-01: social result card, gender-neutral, with the player's name
+      const nm = esc(this.socName(s.roundIdx));
+      if (missed) {
+        this.setCard('miss', Icons.x + 'לא נשמע קול', null, { val: 'פספוס', sub: 'לא זוהה דיבור בזמן. התור לא נכנס לחישוב זמן התגובה.' });
+      } else {
+        this.setCard('hit', Icons.check + 'יפה, ' + nm + '!', null, { val: Util.sec(r.latencyMs), sub: cfg.trackHesitations
+          ? 'עד תחילת הדיבור | ' + r.hesitations + ' היסוסים | דיבור ' + Util.sec(r.voicedMs)
+          : 'הזמן עד תחילת הדיבור' });
+      }
+      this.renderTurn(s.roundIdx);
+      this.setTimer(0);
+      return;
+    }
     if (missed) {
       this.setCard('miss', Icons.x + 'לא נשמע קול', null, { val: 'פספוס', sub: 'לא זוהה דיבור בזמן. הסבב לא נכנס לחישוב זמן התגובה.' });
     } else {
@@ -4001,8 +4641,13 @@ const App = {
             s.phase = 'speaking';
             s.speakStart = ev.t;
             if (cfg.switchEveryMs) this.switchStart(ev.t);
-            this.setCard('speak', Icons.mic + 'שומע אותך', s.prompts[s.roundIdx], null,
-              { icon: Icons.mic, title: 'שומע אותך!', sub: cfg.speakSub });
+            if (s.social) { // 2026-10-01
+              this.setCard('speak', Icons.mic + esc(this.socName(s.roundIdx)), s.prompts[s.roundIdx], null,
+                { icon: Icons.mic, title: 'שומעים!', sub: cfg.speakSub });
+            } else {
+              this.setCard('speak', Icons.mic + 'שומע אותך', s.prompts[s.roundIdx], null,
+                { icon: Icons.mic, title: 'שומע אותך!', sub: cfg.speakSub });
+            }
           }
         }
         if (s.phase === 'awaiting' && el >= cfg.responseWindowMs) this.endRound(t, true, false);
@@ -4021,7 +4666,8 @@ const App = {
           let chips = this.baseChips() + '<span class="chip">היסוסים <b class="num">' + s.rm.hesitations + '</b></span>';
           if (s.choice) chips += '<span class="chip">שינויי כיוון <b class="num">' + s.choice.fired + '</b></span>';
           if (gap >= CONFIG.hesitationMs) {
-            chips += '<span class="chip warn">שקט ' + (gap / 1000).toFixed(1) + 's' + (cfg.endOnSilenceMs ? '' : ', המשך לדבר') + '</span>';
+            // 2026-10-01: social variant is gender-neutral
+            chips += '<span class="chip warn">שקט ' + (gap / 1000).toFixed(1) + 's' + (cfg.endOnSilenceMs ? '' : (s.social ? ', ממשיכים לדבר' : ', המשך לדבר')) + '</span>';
           }
           this.setChips(chips);
         }
@@ -4034,7 +4680,11 @@ const App = {
       }
       case 'between': {
         if (t - s.phaseStart >= CONFIG.vad.adaptTailMs) this.collectQuiet(rms);
-        if (t - s.phaseStart >= CONFIG.betweenRoundsMs) {
+        // 2026-10-01: social: after the result, a timed "pass the phone" pause. Was: betweenRoundsMs only.
+        const passing = !!s.social && s.roundIdx + 1 < cfg.rounds;
+        if (passing && !s.passShown && t - s.phaseStart >= CONFIG.betweenRoundsMs) this.showPass(t);
+        if (passing && s.passShown) this.setTimer(1 - (t - s.passAt) / CONFIG.social.passMs);
+        if (t - s.phaseStart >= CONFIG.betweenRoundsMs + (passing ? CONFIG.social.passMs : 0)) {
           if (s.roundIdx + 1 >= cfg.rounds) {
             this.finish();
             return;
@@ -4056,6 +4706,23 @@ const App = {
     const before = this.modeStats(s.mode);
     const rec = buildSessionRecord(s.mode, s.cfg, s.rounds, s.startedAtWall, performance.now() - s.startedAt, s.threshold);
     if (s.seed) rec.seed = s.seed; // 2026-09-30: story_spine hero, extra field
+    // 2026-10-01: social game: extra optional fields, local history + usage log only.
+    // No stars and no qf_record_session (the champions board is for solo results).
+    if (s.social) {
+      const res = Social.results(s.social.players, s.rounds, s.cfg);
+      rec.players = s.social.players.length;
+      rec.winner = res.winners.length ? res.winners.join(', ') : null;
+      rec.tie = res.tie;
+      rec.perPlayer = res.ranked.map(r => ({ name: r.name, turns: r.turns, answered: r.answered,
+        medianLatencyMs: r.medianLatencyMs, hesitations: r.hesitations, score: r.score, rank: r.rank }));
+      if (s.social.cast) rec.situation = s.social.cast.situation;
+      Storage.appendSession(rec);
+      Telemetry.logSession(this.sessionLog(s, true, rec, null));
+      this.renderSocialSummary(s, rec, res);
+      this.go('summary');
+      this.celebrate(s, rec, before, null);
+      return;
+    }
     Storage.appendSession(rec);
     let result = null;
     if (s.stage) {
@@ -4085,6 +4752,8 @@ const App = {
     // Sent before the await, so it still leaves while the tab hides.
     Telemetry.logSession(this.sessionLog(s, false, null, null));
     await this.audio.stop();
+    // 2026-10-01: a social game goes back to its setup (names kept). Was: home or mode only.
+    if (s.social && !msg) { this.soc.step = 'setup'; this.go('social'); return; }
     this.go(msg || s.stage ? 'home' : 'mode');
     if (msg) this.showAlert(msg);
   },
@@ -4260,6 +4929,11 @@ const App = {
   renderSummary(s, rec, before, result) {
     const cfg = s.cfg;
     const st = s.stage;
+    // 2026-10-01: undo what the social summary hides
+    $('sum-social').hidden = true;
+    $('sum-donut-wrap').hidden = false;
+    $('sum-tiles').hidden = false;
+    $('btn-to-map').hidden = false;
     $('sum-back').innerHTML = Icons.back + 'למפה';
     const rate = rec.totalRounds ? rec.answeredRounds / rec.totalRounds : 0;
     $('sum-donut').innerHTML = Draw.ring(rate, 190, 14, 'var(--green)', '');
@@ -4379,6 +5053,75 @@ const App = {
       wrap.appendChild(card);
     });
     if (s.seed) wrap.insertAdjacentHTML('afterbegin', '<div class="banner neutral">' + esc(s.lead) + '</div>'); // 2026-09-30
+  },
+
+  /* 2026-10-01: social summary: ranked players, winner, per-turn list. Names: textContent or esc(). */
+  renderSocialSummary(s, rec, res) {
+    const cfg = s.cfg;
+    const soc = s.social;
+    const c = CONFIG.social;
+    $('sum-back').innerHTML = Icons.back + 'למפה';
+    $('sum-panel').classList.remove('with-stars');
+    $('sum-stars').hidden = true;
+    $('sum-goals-wrap').hidden = true;
+    $('sum-unlock').hidden = true;
+    $('sum-donut-wrap').hidden = true;
+    $('sum-tiles').hidden = true;
+    $('sum-tiles').innerHTML = '';
+    const ribbon = $('sum-ribbon');
+    ribbon.textContent = 'ערב אימפרו | ' + cfg.label;
+    ribbon.className = 'ribbon orange';
+    const w = res.winners;
+    $('sum-head').textContent = !w.length ? 'לא זוהו תשובות'
+      : res.tie ? '🏆 תיקו בפסגה: ' + w.join(' ו-') : '🏆 המנצח/ת: ' + w[0];
+    $('sum-subline').textContent = !w.length ? 'לבדוק שהקו הצהוב במד נמוך מרמת הדיבור, ולנסות שוב.'
+      : 'ניקוד: תשובה 100, מהירות עד 50' + (cfg.trackHesitations ? ', כל היסוס מוריד 3' : '');
+    const box = $('sum-social');
+    box.hidden = false;
+    box.innerHTML = res.ranked.map(r => {
+      const stats = 'תשובות ' + r.answered + '/' + r.turns + ' | חציון ' + Util.sec(r.medianLatencyMs) +
+        (r.hesitations !== null ? ' | היסוסים ' + r.hesitations : '');
+      const role = soc.cast ? '<span>' + esc(soc.cast.chars[r.idx].role) + '</span>' : '';
+      return '<div class="soc-rank-row' + (w.length && r.rank === 1 ? ' win' : '') + '" style="--pc:' + c.colors[r.idx] + '">' +
+        '<span class="soc-rank-n num">' + r.rank + '</span>' +
+        '<span class="soc-rank-main"><b>' + esc(r.name) + '</b>' + role + '<span class="num">' + stats + '</span></span>' +
+        '<span class="soc-rank-pts num">' + r.score + '<small>נקודות</small></span></div>';
+    }).join('');
+    $('sum-banner').innerHTML = soc.cast ? '<div class="banner neutral">' + esc(soc.cast.situation) + '</div>' : '';
+    $('btn-next').innerHTML = Icons.play + 'עוד סיבוב';
+    this.sumActions.next = () => this.socialAgain(s);
+    $('btn-again').hidden = false;
+    $('btn-again').innerHTML = Icons.back + 'חזרה';
+    this.sumActions.again = () => { this.soc.step = 'setup'; this.go('social'); };
+    $('btn-to-map').hidden = true;
+    this.homeTab = 'free';
+    s.win = w.length > 0;
+    const wrap = $('sum-rounds');
+    wrap.innerHTML = '';
+    s.rounds.forEach((r, i) => {
+      const card = document.createElement('div');
+      card.className = 'rcard';
+      const main = document.createElement('div');
+      main.className = 'rcard-main';
+      const p = document.createElement('div');
+      p.className = 'rcard-p';
+      p.textContent = soc.players[r.player] + ': ' + r.prompt;
+      const v = document.createElement('div');
+      v.className = 'rcard-v num ' + (r.missed ? 'miss' : 'hit');
+      v.textContent = r.missed ? 'החמצה' : Util.sec(r.latencyMs);
+      main.append(p, v);
+      const meta = document.createElement('div');
+      meta.className = 'rcard-meta';
+      const a = document.createElement('span');
+      a.className = 'num';
+      a.textContent = (i + 1) + '.';
+      const b = document.createElement('span');
+      b.className = 'num';
+      b.textContent = cfg.trackHesitations && !r.missed ? r.hesitations + ' היסוסים | דיבור ' + Util.sec(r.voicedMs) : '';
+      meta.append(a, b);
+      card.append(main, meta);
+      wrap.appendChild(card);
+    });
   },
 
   /* Stars fly in one by one, with a chime each (only if sound is on). */
