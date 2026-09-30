@@ -4479,10 +4479,9 @@ const Move = {
     return data;
   },
   // Old address: send the player to the new one. Returns true when leaving.
-  // 2026-09-30: redirect switched off. Some DNS servers (8.8.8.8) sent the new
-  // address to Cloudflare IPs that did not answer, so players got a dead link.
-  // Set to true again only after quickflow-game.pages.dev works from every network.
-  enabled: false,
+  // 2026-09-30: was briefly false. The dead link was the operator's work VPN
+  // (FortiClient) blocking Cloudflare IPs, not the site. Works on a phone without VPN.
+  enabled: true,
   leave() {
     if (!this.enabled || location.hostname !== this.fromHost) return false;
     const data = this.collect();
