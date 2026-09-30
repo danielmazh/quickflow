@@ -661,6 +661,39 @@
   .dlg .btn-stack { margin: 12px 0 14px; }
   .dlg-status { font-size: .78rem; color: var(--ink-2); display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
   .dlg-status .bad { color: var(--red); }
+  /* ---------- 2026-09-30: feedback form ---------- */
+  dialog.dlg.fb { max-height: calc(var(--fb-vh, 100dvh) - 24px); }
+  dialog.dlg.fb .dlg-scroll { max-height: calc(var(--fb-vh, 100dvh) - 70px); }
+  dialog.dlg.fb.kb { margin-top: var(--fb-top, 8px); margin-bottom: auto; }
+  .fb-intro { margin: 8px 2px 8px; font-size: .9rem; color: var(--ink-2); }
+  .fb-lbl { display: block; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin: 8px 2px 6px; }
+  .fb-lbl small { font-family: var(--font); font-weight: 600; font-size: .78rem; color: var(--ink-2); }
+  .fb-cats { display: flex; gap: 6px; flex-wrap: wrap; }
+  .fb-cat {
+    flex: 1; min-width: 0; padding: 6px 4px; border-radius: 999px; white-space: nowrap;
+    background: var(--cream-2); border: 2.5px solid var(--brown); font-family: var(--font-display); font-weight: 700; font-size: .95rem; color: var(--ink);
+  }
+  .fb-cat[aria-checked="true"] { background: var(--orange); box-shadow: inset 0 -3px 0 var(--orange-d); }
+  .fb-rate { display: flex; gap: 4px; }
+  .fb-star { width: 40px; height: 40px; padding: 3px; background: none; border: 0; border-radius: 10px; }
+  .fb-star svg { width: 100%; height: 100%; }
+  .fb-star:focus-visible, .fb-cat:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .fb-text {
+    width: 100%; min-height: 96px; resize: vertical; font: inherit; font-size: 1rem; color: var(--ink);
+    background: #fff; border: 3px solid var(--brown); border-radius: 16px; padding: 8px 12px;
+    box-shadow: inset 0 3px 0 rgba(90,42,18,.12);
+  }
+  .fb-text:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; box-shadow: none; }
+  .fb-count { display: flex; justify-content: space-between; gap: 8px; font-size: .8rem; color: var(--ink-2); margin: 4px 2px 0; }
+  .fb-count.bad #fb-count { color: var(--red); }
+  /* honeypot: no offset (RTL would grow the scroll area), just clipped to nothing */
+  .fb-hp { position: absolute !important; inset-inline-start: 0; top: 0; width: 1px; height: 1px; padding: 0; border: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); opacity: 0; pointer-events: none; }
+  .fb-msg { min-height: 1.45em; margin: 8px 2px; font-size: .9rem; font-weight: 600; color: var(--ink-2); }
+  .fb-msg.ok { color: var(--green-d); }
+  .fb-msg.bad { color: var(--red); }
+  .fb-privacy { margin-top: 10px; }
+  .link-btn { display: block; margin: 12px auto 2px; background: none; border: 0; padding: 6px 8px; color: var(--ink-2); font: inherit; font-size: .9rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .link-btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; border-radius: 8px; }
   .toast {
     position: fixed; z-index: 70; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: var(--cream); color: var(--ink); border: 3px solid var(--brown); border-radius: 999px;
@@ -726,7 +759,8 @@
       <div class="w-sec privacy">
         <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
         <!-- 2026-09-30: was "שום הקלטה לא נשמרת ושום מידע לא נשלח". Not true once a player picks a name. -->
-        <p>החוויה אישית לגמרי. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. שום הקלטה לא נשמרת והקול לא נשלח. התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע. אם תבחר שם לטבלת האלופים, נשלח לשרת רק סיכום: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע.</p>
+        <!-- 2026-09-30: was "... התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע. אם תבחר שם לטבלת האלופים, נשלח לשרת רק סיכום: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע." Usage data is now sent too. -->
+        <p>החוויה אישית לגמרי. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. שום הקלטה לא נשמרת והקול לא נשלח. התוצאות שלך נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע. כדי לשפר את המשחק נשלחים לשרת נתוני שימוש אנונימיים: סוג מכשיר, מערכת הפעלה, דפדפן, גודל מסך, שפה ותוצאות הסשנים (מספרים). אם תבחר שם, נשלחים גם השם והניקוד. אם תשלח משוב, נשלח גם הטקסט שכתבת. לא נשלחים קול, מיקום או אנשי קשר.</p>
       </div>
       </div>
     </div>
@@ -782,7 +816,8 @@
             <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דבר עכשיו!" עם מיקרופון מהבהב, מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול שלך מזוהה.</p>
             <p>סבב בלי תגובה נספר כהחמצה ולא נכנס לחישוב זמן התגובה.</p>
             <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
-            <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה, והקול לא נשלח לשרת. התוצאות (מספרים) נשמרות בדפדפן הזה. אם בחרת שם, סיכום קצר נשלח לטבלת האלופים.</p>
+            <!-- 2026-09-30: was "... התוצאות (מספרים) נשמרות בדפדפן הזה. אם בחרת שם, סיכום קצר נשלח לטבלת האלופים." -->
+            <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה, והקול לא נשלח לשרת. התוצאות נשמרות בדפדפן הזה. לשרת נשלחים נתוני שימוש אנונימיים: סוג מכשיר, מערכת הפעלה, דפדפן, מסך, שפה ותוצאות הסשנים (מספרים). אם בחרת שם, גם השם והניקוד. בלי קול, מיקום או אנשי קשר.</p>
             <!-- 2026-09-30: was "אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה." -->
 
             <p>המוזיקה והצלילים נעצרים לפני הכיול ולא מתנגנים אף פעם בזמן שהמיקרופון מקשיב.</p>
@@ -815,7 +850,8 @@
         <input id="name-input" class="name-input" type="text" maxlength="16" dir="auto" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-describedby="name-msg name-rule">
         <p id="name-msg" class="name-msg" aria-live="polite"></p>
         <p id="name-rule" class="name-rule muted">2 עד 16 תווים: אותיות בעברית או באנגלית, ספרות, רווח, מקף או קו תחתון.</p>
-        <div class="privacy-line"><span data-icon="shield"></span><span>בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע. הקול לא נשמר ולא נשלח.</span></div>
+        <!-- 2026-09-30: was "בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע. הקול לא נשמר ולא נשלח." -->
+        <div class="privacy-line"><span data-icon="shield"></span><span>בשרת נשמרים: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע. נתוני השימוש (סוג מכשיר, מערכת, דפדפן, מסך, שפה ותוצאות סשנים) יקושרו לשם. לא נשלחים קול, מיקום או אנשי קשר.</span></div>
       </div>
     </div>
     <button id="name-save" class="btn btn-green btn-big foot-btn" type="button" disabled><span data-icon="check"></span>שמור</button>
@@ -933,6 +969,7 @@
           <summary>פירוט סבבים</summary>
           <div id="sum-rounds" class="rounds"></div>
         </details>
+        <button id="sum-feedback" class="link-btn" type="button">יש לך רעיון? ספר לנו</button><!-- 2026-09-30 -->
       </div>
     </div>
     <button id="btn-next" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
@@ -957,18 +994,46 @@
     <div class="set-row"><b><span data-icon="trophy"></span>שם בטבלה</b><span id="set-player" class="set-player"></span></div>
     <div class="btn-stack">
       <button id="set-help" class="btn btn-cream btn-block" type="button"><span data-icon="question"></span>איך משחקים</button>
+      <button id="set-feedback" class="btn btn-cream btn-block" type="button"><span data-icon="chat"></span>שלח משוב</button><!-- 2026-09-30 -->
       <button id="set-export" class="btn btn-cream btn-block" type="button"><span data-icon="download"></span>ייצוא היסטוריה</button>
       <button id="set-reset" class="btn btn-red btn-block" type="button"><span data-icon="trash"></span>מחיקת היסטוריה והתקדמות</button>
     </div>
     <div class="privacy">
       <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
       <!-- 2026-09-30: was "שום הקלטה לא נשמרת ושום מידע לא נשלח". Not true once a player picks a name. -->
-      <p>שום הקלטה לא נשמרת והקול לא נשלח. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה. אם בחרת שם, בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע.</p>
+      <!-- 2026-09-30: was "... התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה. אם בחרת שם, בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע." -->
+      <p>שום הקלטה לא נשמרת והקול לא נשלח. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. התוצאות שלך נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה. לשרת נשלחים נתוני שימוש אנונימיים: סוג מכשיר, מערכת הפעלה, דפדפן, גודל מסך, שפה ותוצאות הסשנים (מספרים). אם בחרת שם, נשלחים גם השם והניקוד. משוב נשלח רק אם כתבת אותו. לא נשלחים קול, מיקום או אנשי קשר.</p>
     </div>
     <div class="dlg-status" aria-live="polite">
       <span id="storage-status"></span>
       <span id="calib-status"></span>
     </div>
+  </div>
+</dialog>
+
+<!-- ================= FEEDBACK DIALOG (2026-09-30) ================= -->
+<dialog id="dlg-feedback" class="panel dlg fb" aria-labelledby="fb-title">
+  <span id="fb-title" class="ribbon">משוב</span>
+  <button id="fb-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
+  <div class="dlg-scroll">
+    <p class="fb-intro">מצאת באג? יש לך רעיון? נשמח לשמוע. כל הודעה נקראת.</p>
+    <span id="fb-cat-lbl" class="fb-lbl">על מה?</span>
+    <div id="fb-cats" class="fb-cats" role="radiogroup" aria-labelledby="fb-cat-lbl">
+      <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="bug">באג</button>
+      <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="idea">רעיון</button>
+      <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="praise">מחמאה</button>
+      <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="other">אחר</button>
+    </div>
+    <span id="fb-rate-lbl" class="fb-lbl">כמה אתה נהנה? <small>לא חובה</small></span>
+    <div id="fb-rate" class="fb-rate" role="group" aria-labelledby="fb-rate-lbl"></div>
+    <label for="fb-text" class="fb-lbl">ההודעה שלך</label>
+    <textarea id="fb-text" class="fb-text" rows="4" maxlength="500" dir="auto" aria-describedby="fb-count-row fb-msg"></textarea>
+    <div id="fb-count-row" class="fb-count"><span>לפחות 5 תווים</span><span id="fb-count" class="num">0/500</span></div>
+    <!-- anti-bot honeypot: people never see or fill this -->
+    <input id="fb-hp" class="fb-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <p id="fb-msg" class="fb-msg" aria-live="polite"></p>
+    <button id="fb-send" class="btn btn-green btn-block" type="button" disabled><span data-icon="send"></span>שלח</button>
+    <div class="privacy-line fb-privacy"><span data-icon="shield"></span><span>נשלחים הטקסט, הסוג, הדירוג, המסך הנוכחי וסוג המכשיר. אל תכתוב פרטים אישיים.</span></div>
   </div>
 </dialog>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
@@ -1024,6 +1089,21 @@ const CONFIG = {
   },
   statsWindow: 10,
   sparkPoints: 20,
+  // 2026-09-30: build tag sent with usage data and feedback. Bump on every release.
+  appVersion: '2026-09-30.1',
+  // 2026-09-30: anonymous usage data + feedback form. Same server as `online`.
+  // Fire-and-forget: every call may fail and the game never waits for it.
+  telemetry: {
+    enabled: true,
+    installKey: 'quickflow_install_id', // random UUID, created once per browser
+    repingAfterMs: 30 * 60 * 1000,      // ping again when the page comes back after this long hidden
+    logGapMs: 5500,                     // server allows 1 session log per 5 s per install
+    feedbackKey: 'quickflow_feedback_at',
+    feedbackCooldownMs: 10 * 60 * 1000, // client hint only, the server is the real guard
+    feedbackMinMs: 3000,                // anti-bot: time between opening the form and sending
+    feedbackMin: 5,
+    feedbackMax: 500
+  },
   // 2026-09-30: online name + champions board (Supabase project "quickflow").
   // The publishable key is public by design. The server checks the secret on every write.
   online: {
@@ -1897,6 +1977,9 @@ const Icons = {
   list: svgI('<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', ' stroke-width="2.8"'),
   redo: svgI('<path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/>'),
   speaker: svgI('<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/>'),
+  // 2026-09-30: feedback form
+  chat: svgI('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
+  send: svgI('<path d="M21 3L3 11l7 3 3 7z"/><path d="M10 14l11-11"/>'),
   modes: {
     word_association: { bg: '#3E7B35',
       svg: svgI('<circle cx="8" cy="12" r="4"/><circle cx="16" cy="12" r="4"/>') },
@@ -2651,7 +2734,8 @@ const Online = {
 
   // POST {url}/rest/v1/rpc/<fn>. Returns the data or throws Error(<server code>).
   // err.network = true for no connection, timeout or a 5xx reply.
-  async rpc(fn, body) {
+  // 2026-09-30: optional opts.keepalive (usage data sent while the tab hides). Was rpc(fn, body).
+  async rpc(fn, body, opts) {
     const c = CONFIG.online;
     const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const timer = ctl ? setTimeout(() => ctl.abort(), c.timeoutMs) : null;
@@ -2662,7 +2746,8 @@ const Online = {
           method: 'POST',
           headers: { apikey: c.key, 'Content-Type': 'application/json' },
           body: JSON.stringify(body || {}),
-          signal: ctl ? ctl.signal : undefined
+          signal: ctl ? ctl.signal : undefined,
+          keepalive: !!(opts && opts.keepalive)
         });
       } catch (e) {
         const err = new Error('network');
@@ -2754,6 +2839,170 @@ const Online = {
     const rows = await this.rpc('qf_leaderboard', { p_kind: kind, p_limit: CONFIG.online.boardLimit });
     return Array.isArray(rows) ? rows : [];
   }
+};
+
+/* ============================================================
+ * Telemetry (2026-09-30): anonymous usage data and the feedback form.
+ * Coarse device info only (type, OS, browser, screen, language). No voice,
+ * no location, no contacts. Linked to the player only when a name is saved.
+ * Fire-and-forget: never blocks the UI, never throws, never shows errors.
+ * ============================================================ */
+const Telemetry = {
+  pingOk: false,     // a ping got true in this page load
+  pinging: null,     // in-flight ping promise
+  hiddenAt: null,
+  logChain: Promise.resolve(),
+  lastLogAt: 0,
+
+  enabled() { return !!(CONFIG.telemetry && CONFIG.telemetry.enabled) && typeof fetch === 'function'; },
+
+  // Random v4 UUID, created once and kept in localStorage (memory fallback via Online).
+  installId() {
+    const k = CONFIG.telemetry.installKey;
+    const re = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    let id = Online.get(k);
+    if (re.test(id || '')) return id;
+    id = null;
+    try { if (typeof crypto !== 'undefined' && crypto.randomUUID) id = crypto.randomUUID(); } catch (e) { /* insecure origin */ }
+    if (!id) {
+      const b = new Uint8Array(16);
+      try { crypto.getRandomValues(b); } catch (e) { for (let i = 0; i < 16; i++) b[i] = Math.floor(Math.random() * 256); }
+      b[6] = (b[6] & 0x0f) | 0x40;
+      b[8] = (b[8] & 0x3f) | 0x80;
+      const h = Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+      id = h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+    }
+    Online.set(k, id);
+    return id;
+  },
+
+  // Coarse device info. Names + major versions only.
+  device() {
+    const nav = typeof navigator !== 'undefined' ? navigator : {};
+    const ua = String(nav.userAgent || '');
+    const touch = (nav.maxTouchPoints || 0) > 0;
+    const sw = (typeof screen !== 'undefined' && screen.width) || 0;
+    const sh = (typeof screen !== 'undefined' && screen.height) || 0;
+    const short = Math.min(sw, sh) || 0;
+    const m = re => { const r = re.exec(ua); return r ? r[1] : ''; };
+    const iPadDesk = /Macintosh/.test(ua) && touch; // iPadOS asks for the desktop site
+    let os = 'other';
+    if (/iPhone|iPad|iPod/.test(ua)) os = 'iOS ' + m(/OS (\d+)_/);
+    else if (iPadDesk) os = 'iOS ' + m(/Version\/(\d+)/);
+    else if (/Android/.test(ua)) os = 'Android ' + m(/Android (\d+)/);
+    else if (/Windows NT/.test(ua)) os = 'Windows ' + ({ '10.0': '10', '6.3': '8.1', '6.2': '8', '6.1': '7' }[m(/Windows NT (\d+\.\d+)/)] || '');
+    else if (/CrOS/.test(ua)) os = 'ChromeOS';
+    else if (/Mac OS X/.test(ua)) os = 'macOS ' + m(/Mac OS X (\d+)/);
+    else if (/Linux/.test(ua)) os = 'Linux';
+    let br = 'other';
+    if (/EdgiOS|EdgA|Edg\//.test(ua)) br = 'Edge ' + m(/(?:EdgiOS|EdgA|Edg)\/(\d+)/);
+    else if (/OPR\/|OPiOS/.test(ua)) br = 'Opera ' + m(/(?:OPR|OPiOS)\/(\d+)/);
+    else if (/SamsungBrowser/.test(ua)) br = 'Samsung ' + m(/SamsungBrowser\/(\d+)/);
+    else if (/Firefox|FxiOS/.test(ua)) br = 'Firefox ' + m(/(?:Firefox|FxiOS)\/(\d+)/);
+    else if (/CriOS/.test(ua)) br = 'Chrome ' + m(/CriOS\/(\d+)/);
+    else if (/Chrome\//.test(ua)) br = 'Chrome ' + m(/Chrome\/(\d+)/);
+    else if (/Safari/.test(ua) && /Version\//.test(ua)) br = 'Safari ' + m(/Version\/(\d+)/);
+    let platform = 'desktop';
+    if (/iPad/.test(ua) || iPadDesk || /Tablet/.test(ua)) platform = 'tablet';
+    else if (/iPhone|iPod/.test(ua) || (/Android/.test(ua) && /Mobile/.test(ua))) platform = 'mobile';
+    else if (/Android/.test(ua)) platform = 'tablet';
+    else if (touch && short > 0 && short < 600 && !/Windows|CrOS|Macintosh/.test(ua)) platform = 'mobile';
+    let standalone = false;
+    try { standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || nav.standalone === true; } catch (e) { /* no */ }
+    return {
+      platform,
+      os: os.trim().slice(0, 40),
+      browser: br.trim().slice(0, 40),
+      screen: sw && sh ? sw + 'x' + sh : null,
+      lang: String(nav.language || '').slice(0, 20) || null,
+      standalone: !!standalone
+    };
+  },
+
+  // p_player_id / p_secret only when a name is saved.
+  who() {
+    const p = Online.player();
+    return { p_player_id: p ? p.id : null, p_secret: p ? p.secret : null };
+  },
+
+  // Once per app start, and again after a long hidden spell. Resolves true|false, never rejects.
+  ping() {
+    if (!this.enabled()) return Promise.resolve(false);
+    if (this.pinging) return this.pinging;
+    const d = this.device();
+    const body = Object.assign({
+      p_install_id: this.installId(), p_platform: d.platform, p_os: d.os, p_browser: d.browser,
+      p_screen: d.screen, p_lang: d.lang, p_app_version: CONFIG.appVersion, p_standalone: d.standalone
+    }, this.who());
+    this.pinging = Online.rpc('qf_ping', body)
+      .then(r => { if (r === true) this.pingOk = true; return r === true; })
+      .catch(() => false)
+      .finally(() => { this.pinging = null; });
+    return this.pinging;
+  },
+
+  start() {
+    if (!this.enabled()) return;
+    this.ping();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { this.hiddenAt = Date.now(); return; }
+      if (this.hiddenAt && Date.now() - this.hiddenAt > CONFIG.telemetry.repingAfterMs) this.ping();
+      this.hiddenAt = null;
+    });
+  },
+
+  // One finished or left session. Queued so the server's 5 s gap per install is kept.
+  logSession(data) {
+    if (!this.enabled()) return Promise.resolve(false);
+    const run = async () => {
+      try {
+        const wait = this.lastLogAt + CONFIG.telemetry.logGapMs - Date.now();
+        if (wait > 0) await new Promise(r => setTimeout(r, wait));
+        if (!this.pingOk) await this.ping(); // server drops logs from unknown installs
+        this.lastLogAt = Date.now();
+        const body = Object.assign({
+          p_install_id: this.installId(), p_completed: !!data.completed, p_mode: data.mode, p_stage_id: data.stageId,
+          p_stars: data.stars, p_rounds_total: data.roundsTotal, p_rounds_answered: data.roundsAnswered,
+          p_median_latency_ms: data.medianLatencyMs, p_hesitations: data.hesitations, p_duration_ms: data.durationMs,
+          p_tts_on: !!data.ttsOn, p_noisy: !!data.noisy, p_app_version: CONFIG.appVersion
+        }, this.who());
+        return (await Online.rpc('qf_log_session', body, { keepalive: true })) === true;
+      } catch (e) {
+        return false;
+      }
+    };
+    const p = this.logChain.then(run);
+    this.logChain = p.catch(() => false);
+    return p;
+  },
+
+  // Returns a server code (ok, too_short, ..., busy) or 'network' / 'error'. Never rejects.
+  async feedback(message, category, rating, context) {
+    if (!this.enabled()) return 'error';
+    const send = () => Online.rpc('qf_feedback', Object.assign({
+      p_install_id: this.installId(), p_message: message, p_category: category,
+      p_rating: rating || null, p_context: context || null, p_app_version: CONFIG.appVersion
+    }, this.who()));
+    try {
+      if (!this.pingOk) await this.ping();
+      let r = await send();
+      if (r === 'unknown_install') { // server lost this install: register it again, then retry once
+        this.pingOk = false;
+        if (await this.ping()) r = await send();
+      }
+      return typeof r === 'string' ? r : 'error';
+    } catch (e) {
+      return e && e.network ? 'network' : 'error';
+    }
+  },
+
+  feedbackAt() { const v = Number(Online.get(CONFIG.telemetry.feedbackKey)); return isFinite(v) ? v : 0; },
+  // Minutes left in the client cooldown, 0 when free.
+  feedbackWaitMin() {
+    const left = this.feedbackAt() + CONFIG.telemetry.feedbackCooldownMs - Date.now();
+    return left > 0 ? Math.ceil(left / 60000) : 0;
+  },
+  markFeedback() { Online.set(CONFIG.telemetry.feedbackKey, String(Date.now())); }
 };
 
 
@@ -2880,6 +3129,7 @@ const App = {
     $('btn-next').addEventListener('click', () => this.sumActions.next && this.sumActions.next());
     $('btn-again').addEventListener('click', () => this.sumActions.again && this.sumActions.again());
     $('btn-to-map').addEventListener('click', () => this.go('home'));
+    $('sum-feedback').addEventListener('click', () => this.openFeedback('summary')); // 2026-09-30
 
     $('btn-music').addEventListener('click', () => Sound.toggleMusic());
     $('btn-settings').addEventListener('click', () => this.openSettings());
@@ -2892,6 +3142,7 @@ const App = {
     $('set-help').addEventListener('click', () => { dlg.close(); this.go('welcome'); });
     $('set-export').addEventListener('click', () => this.exportData());
     $('set-reset').addEventListener('click', () => this.resetData());
+    $('set-feedback').addEventListener('click', () => { dlg.close(); this.openFeedback('settings'); }); // 2026-09-30
     $('set-player').addEventListener('click', e => { if (e.target.closest('[data-pick-name]')) { dlg.close(); this.openName(); } });
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.s) this.abort(); });
@@ -2907,6 +3158,8 @@ const App = {
     if (!Origin.ok()) this.setAlert(Origin.msg());
     else if (!AudioEngine.supported()) this.setAlert('הדפדפן לא תומך בגישה למיקרופון. פתח ב-Chrome מכתובת https או localhost.');
     Online.resendPending(); // 2026-09-30: a session that failed to send last time (network). Silent.
+    Telemetry.start(); // 2026-09-30: anonymous start ping. Silent, never blocks.
+    this.initFeedback(); // 2026-09-30
   },
 
   /* ---------- navigation ---------- */
@@ -3698,6 +3951,8 @@ const App = {
       const prev = Progress.record(s.stage.id, stars);
       result = { stars, prev, checks };
     }
+    // 2026-09-30: anonymous usage log for a finished session. Fire-and-forget.
+    Telemetry.logSession(this.sessionLog(s, true, rec, result ? result.stars : null));
     // 2026-09-30: send the new totals to the champions board. Fire-and-forget, never blocks.
     Online.recordSession().then(r => {
       if (r && this.view === 'home' && this.homeTab === 'champs') this.renderChamps();
@@ -3713,9 +3968,179 @@ const App = {
     this.s = null;
     cancelAnimationFrame(this.rafId);
     Speech.cancel(); // 2026-09-30
+    // 2026-09-30: log the left session (partial numbers). this.s exists only after the mic started.
+    // Sent before the await, so it still leaves while the tab hides.
+    Telemetry.logSession(this.sessionLog(s, false, null, null));
     await this.audio.stop();
     this.go(msg || s.stage ? 'home' : 'mode');
     if (msg) this.showAlert(msg);
+  },
+
+  /* 2026-09-30: numbers for Telemetry.logSession. rec is null for a left session:
+   * then counts come from the rounds played so far (threshold may still be null). */
+  sessionLog(s, completed, rec, stars) {
+    const rounds = Array.isArray(s.rounds) ? s.rounds : [];
+    let total, answered, median, hes, dur;
+    if (rec) {
+      total = rec.totalRounds; answered = rec.answeredRounds; median = rec.medianLatencyMs;
+      hes = rec.hesitationsCount; dur = rec.totalSessionDurationMs;
+    } else {
+      const lats = rounds.filter(r => !r.missed).map(r => r.latencyMs).filter(v => typeof v === 'number' && isFinite(v));
+      total = rounds.length;
+      answered = rounds.filter(r => !r.missed).length;
+      median = lats.length ? Math.round(Util.median(lats)) : null;
+      hes = s.cfg && s.cfg.trackHesitations ? rounds.reduce((a, r) => a + (r.hesitations || 0), 0) : null;
+      dur = Math.round(performance.now() - s.startedAt);
+    }
+    return {
+      completed, mode: s.mode, stageId: s.stage ? s.stage.id : null, stars: completed && s.stage ? stars : null,
+      roundsTotal: total, roundsAnswered: answered, medianLatencyMs: median, hesitations: hes,
+      durationMs: dur, ttsOn: Speech.enabled(), noisy: !!s.noisy
+    };
+  },
+
+  /* ---------- 2026-09-30: feedback form ---------- */
+  fbMsgs: {
+    ok: 'תודה! המשוב נשלח. אנחנו קוראים כל הודעה.',
+    too_short: 'קצר מדי. כתוב לפחות 5 תווים.',
+    too_long: 'ארוך מדי. אפשר עד 500 תווים.',
+    bad_category: 'בחר על מה המשוב ונסה שוב.',
+    unknown_install: 'לא הצלחנו לזהות את המכשיר. נסה שוב בעוד רגע.',
+    wait: 'כבר קיבלנו ממך משוב לפני רגע. אפשר לשלוח שוב בעוד כמה דקות.',
+    daily_limit: 'שלחת 5 הודעות היום. אפשר לשלוח שוב מחר.',
+    busy: 'יש עומס כרגע. נסה שוב מאוחר יותר.',
+    network: 'אין חיבור לשרת. בדוק את האינטרנט ונסה שוב.',
+    error: 'השליחה נכשלה. נסה שוב מאוחר יותר.',
+    early: 'רגע, עוד לא הספקת לכתוב. נסה שוב בעוד שנייה.'
+  },
+  fb: { cat: null, rating: 0, openedAt: 0, sending: false, from: null, done: false },
+
+  initFeedback() {
+    const dlg = $('dlg-feedback');
+    $('fb-rate').innerHTML = [1, 2, 3, 4, 5].map(n =>
+      '<button class="fb-star" type="button" aria-pressed="false" aria-label="' + n + ' מתוך 5" data-rate="' + n + '">' + starSvg(false) + '</button>').join('');
+    $('fb-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); // backdrop
+    dlg.addEventListener('close', () => this.fbViewport(false));
+    $('fb-cats').addEventListener('click', e => {
+      const b = e.target.closest('[data-cat]');
+      if (!b) return;
+      this.fb.cat = b.dataset.cat;
+      this.renderFeedback();
+    });
+    $('fb-rate').addEventListener('click', e => {
+      const b = e.target.closest('[data-rate]');
+      if (!b) return;
+      const n = Number(b.dataset.rate);
+      this.fb.rating = this.fb.rating === n ? 0 : n; // tap the same star again to clear
+      this.renderFeedback();
+    });
+    $('fb-text').addEventListener('input', () => { if (!this.fb.done) this.setFbMsg('', ''); this.renderFeedback(); });
+    $('fb-text').addEventListener('focus', () => setTimeout(() => this.fbViewport(true), 300));
+    $('fb-send').addEventListener('click', () => this.sendFeedback());
+    // Keep the form above the on-screen keyboard (small phones).
+    if (window.visualViewport) {
+      const vv = () => { if (dlg.open) this.fbViewport(document.activeElement === $('fb-text')); };
+      window.visualViewport.addEventListener('resize', vv);
+      window.visualViewport.addEventListener('scroll', vv);
+    }
+  },
+
+  // When the keyboard takes part of the screen, fit the dialog into the visible part.
+  fbViewport(focused) {
+    const dlg = $('dlg-feedback');
+    const vv = window.visualViewport;
+    const kb = !!(vv && dlg.open && vv.height < window.innerHeight - 80);
+    dlg.classList.toggle('kb', kb);
+    if (kb) {
+      dlg.style.setProperty('--fb-vh', Math.round(vv.height) + 'px');
+      dlg.style.setProperty('--fb-top', Math.round(vv.offsetTop + 8) + 'px');
+    } else {
+      dlg.style.removeProperty('--fb-vh');
+      dlg.style.removeProperty('--fb-top');
+    }
+    if (focused && dlg.open) {
+      try { $('fb-text').scrollIntoView({ block: 'nearest' }); } catch (e) { /* old engines */ }
+    }
+  },
+
+  openFeedback(from) {
+    const f = this.fb;
+    f.from = from;
+    f.openedAt = performance.now();
+    f.sending = false;
+    if (f.done) { // fresh form after a sent message
+      f.done = false; f.cat = null; f.rating = 0;
+      $('fb-text').value = '';
+    }
+    $('fb-hp').value = '';
+    this.setFbMsg('', '');
+    this.renderFeedback();
+    $('dlg-feedback').showModal();
+  },
+
+  setFbMsg(text, cls) {
+    const el = $('fb-msg');
+    el.textContent = text;
+    el.className = 'fb-msg' + (cls ? ' ' + cls : '');
+  },
+
+  renderFeedback() {
+    const f = this.fb;
+    const t = CONFIG.telemetry;
+    document.querySelectorAll('#fb-cats [data-cat]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.cat === f.cat)));
+    document.querySelectorAll('#fb-rate [data-rate]').forEach(b => {
+      const n = Number(b.dataset.rate);
+      b.setAttribute('aria-pressed', String(n === f.rating));
+      b.innerHTML = starSvg(n <= f.rating);
+    });
+    const len = $('fb-text').value.length;
+    $('fb-count').textContent = len + '/' + t.feedbackMax;
+    $('fb-count-row').classList.toggle('bad', len > 0 && $('fb-text').value.trim().length < t.feedbackMin);
+    const wait = Telemetry.feedbackWaitMin();
+    if (wait && !f.sending) {
+      const note = 'אפשר לשלוח שוב בעוד ' + (wait === 1 ? 'דקה' : wait + ' דקות');
+      this.setFbMsg(f.done ? this.fbMsgs.ok + ' ' + note + '.' : note + '.', f.done ? 'ok' : '');
+    }
+    const trimmed = $('fb-text').value.trim().length;
+    $('fb-send').disabled = f.sending || !!wait || trimmed < t.feedbackMin || trimmed > t.feedbackMax;
+  },
+
+  // Context for the team: current view, where the form was opened and the stage, if any.
+  fbContext() {
+    const src = this.view === 'summary' ? this.last : (this.view === 'intro' ? this.pending : null);
+    const st = src && src.stage ? src.stage.id : null;
+    return ('view=' + (this.view || '') + ';from=' + (this.fb.from || '') + (st ? ';stage=' + st : '')).slice(0, 200);
+  },
+
+  async sendFeedback() {
+    const f = this.fb;
+    const t = CONFIG.telemetry;
+    if (f.sending || Telemetry.feedbackWaitMin()) return;
+    const text = $('fb-text').value.trim();
+    if (text.length < t.feedbackMin) { this.setFbMsg(this.fbMsgs.too_short, 'bad'); return; }
+    if (text.length > t.feedbackMax) { this.setFbMsg(this.fbMsgs.too_long, 'bad'); return; }
+    if (performance.now() - f.openedAt < t.feedbackMinMs) { this.setFbMsg(this.fbMsgs.early, 'bad'); return; }
+    f.sending = true;
+    this.renderFeedback();
+    this.setFbMsg('שולח...', '');
+    let code;
+    if ($('fb-hp').value) {
+      code = 'ok'; // a bot filled the hidden field: fake success, send nothing
+    } else {
+      code = await Telemetry.feedback(text, f.cat || 'other', f.rating || null, this.fbContext());
+    }
+    f.sending = false;
+    if (code === 'ok') {
+      Telemetry.markFeedback();
+      f.done = true;
+      $('fb-text').value = '';
+      this.renderFeedback(); // shows thanks + "אפשר לשלוח שוב בעוד N דקות"
+      Sound.play('pop');
+      return;
+    }
+    this.renderFeedback();
+    this.setFbMsg(this.fbMsgs[code] || this.fbMsgs.error, 'bad');
   },
 
   /* ---------- summary ---------- */
