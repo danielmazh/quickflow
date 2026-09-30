@@ -293,6 +293,51 @@
   .tab svg { width: 20px; height: 20px; }
   .tab[aria-selected="true"] { background: var(--orange); color: var(--ink); box-shadow: inset 0 -3px 0 var(--orange-d), inset 0 2px 0 rgba(255,255,255,.4); }
   .tab:active { transform: scale(.96); }
+  /* 2026-09-30: 4th tab (אלופים). Tighter tabs so all 4 fit at 375px. Was gap 6px, padding 7px 6px, 1.05rem. */
+  .tabs .tab { gap: 4px; padding: 7px 3px; font-size: .98rem; min-width: 0; white-space: nowrap; }
+  .tabs .tab svg { width: 18px; height: 18px; flex: none; }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  /* ---------- 2026-09-30: online name screen + champions board ---------- */
+  .name-input {
+    width: 100%; font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; color: var(--ink);
+    background: #fff; border: 3px solid var(--brown); border-radius: 16px; padding: 9px 14px;
+    box-shadow: inset 0 3px 0 rgba(90,42,18,.12);
+  }
+  .name-input:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; box-shadow: none; }
+  .name-msg { min-height: 1.45em; margin: 6px 2px 2px; font-size: .9rem; font-weight: 600; color: var(--ink-2); }
+  .name-msg.ok { color: var(--green-d); }
+  .name-msg.bad { color: var(--red); }
+  .name-rule { margin: 0 2px 12px; font-size: .82rem; }
+  .name-lbl { display: block; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin: 10px 0 6px; }
+  .skip-btn { flex: none; margin: 0 3px 6px; width: calc(100% - 6px); }
+  .lb-kinds { display: flex; gap: 4px; flex: none; margin-bottom: 8px; }
+  .lb-kind {
+    flex: 1; min-width: 0; padding: 5px 2px; border-radius: 999px; white-space: nowrap;
+    background: var(--cream-2); border: 2.5px solid var(--brown); font-family: var(--font-display); font-weight: 700; font-size: .9rem;
+  }
+  .lb-kind[aria-selected="true"] { background: var(--orange); box-shadow: inset 0 -3px 0 var(--orange-d); }
+  .lb-me { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .88rem; margin: 0 2px 4px; min-height: 30px; }
+  .lb-me b { font-family: var(--font-display); }
+  .lb-note { flex: none; margin: 0 2px 8px; font-size: .78rem; color: var(--ink-2); }
+  .lb-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .lb-row { display: flex; align-items: center; gap: 10px; background: var(--cream-2); border-radius: 14px; padding: 6px 10px; border: 2.5px solid transparent; }
+  .lb-row.me { background: #fff6e2; border-color: var(--orange); }
+  .lb-rank {
+    width: 32px; height: 32px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    background: var(--cream); border: 2.5px solid var(--brown); font-family: var(--font-display); font-weight: 700; font-size: .95rem;
+  }
+  .lb-row.r1 .lb-rank { background: var(--gold); }
+  .lb-row.r2 .lb-rank { background: #D9DEE3; }
+  .lb-row.r3 .lb-rank { background: #E0A06A; }
+  .lb-row.r1, .lb-row.r2, .lb-row.r3 { box-shadow: inset 0 -3px 0 rgba(210,127,34,.3); }
+  .lb-name { flex: 1; min-width: 0; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: start; }
+  .lb-you { font-family: var(--font); font-size: .75rem; font-weight: 600; color: var(--orange-d); margin-inline-start: 4px; }
+  .lb-val { flex: none; display: inline-flex; align-items: center; gap: 3px; font-weight: 700; direction: ltr; }
+  .lb-val .star { width: 18px; height: 18px; }
+  .lb-state { list-style: none; }
+  .set-player { display: flex; align-items: center; gap: 8px; font-weight: 600; min-width: 0; }
+  .set-player .nm { font-family: var(--font-display); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
   .alert {
     background: #FFE1DC; border: 3px solid var(--red); color: #6E1512;
     border-radius: 16px; padding: 8px 12px; font-size: .88rem; margin: 0 3px 10px; font-weight: 500;
@@ -680,7 +725,8 @@
       </div>
       <div class="w-sec privacy">
         <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
-        <p>החוויה אישית לגמרי. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. שום הקלטה לא נשמרת ושום מידע לא נשלח. רק התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע.</p>
+        <!-- 2026-09-30: was "שום הקלטה לא נשמרת ושום מידע לא נשלח". Not true once a player picks a name. -->
+        <p>החוויה אישית לגמרי. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. שום הקלטה לא נשמרת והקול לא נשלח. התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע. אם תבחר שם לטבלת האלופים, נשלח לשרת רק סיכום: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע.</p>
       </div>
       </div>
     </div>
@@ -706,6 +752,7 @@
       <button id="tab-map" class="tab" role="tab" type="button" aria-controls="panel-map"><span data-icon="map"></span>מפה</button>
       <button id="tab-plan" class="tab" role="tab" type="button" aria-controls="panel-plan"><span data-icon="list"></span>תוכנית</button>
       <button id="tab-free" class="tab" role="tab" type="button" aria-controls="panel-free"><span data-icon="dumbbell"></span>חופשי</button>
+      <button id="tab-champs" class="tab" role="tab" type="button" aria-controls="panel-champs"><span data-icon="trophy"></span>אלופים</button>
     </div>
 
     <div id="panel-map" class="tabpanel" role="tabpanel" aria-labelledby="tab-map">
@@ -735,13 +782,44 @@
             <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דבר עכשיו!" עם מיקרופון מהבהב, מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול שלך מזוהה.</p>
             <p>סבב בלי תגובה נספר כהחמצה ולא נכנס לחישוב זמן התגובה.</p>
             <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
-            <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה.</p>
+            <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה, והקול לא נשלח לשרת. התוצאות (מספרים) נשמרות בדפדפן הזה. אם בחרת שם, סיכום קצר נשלח לטבלת האלופים.</p>
+            <!-- 2026-09-30: was "אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה." -->
+
             <p>המוזיקה והצלילים נעצרים לפני הכיול ולא מתנגנים אף פעם בזמן שהמיקרופון מקשיב.</p>
             <p>הקראה בקול (בהגדרות): המשחק מקריא את המילה או הנושא. בזמן ההקראה המיקרופון לא נמדד, וזמן התגובה נספר רק אחרי שההקראה נגמרה.</p>
           </details>
         </div>
       </div>
     </div>
+
+    <!-- 2026-09-30: champions board. Loads from the server on each open, no polling. -->
+    <div id="panel-champs" class="tabpanel" role="tabpanel" aria-labelledby="tab-champs" hidden>
+      <div class="panel has-ribbon fill">
+        <span class="ribbon"><span data-icon="trophy"></span>טבלת האלופים</span>
+        <div id="lb-kinds" class="lb-kinds" role="tablist" aria-label="סוג הדירוג"></div>
+        <div id="lb-me" class="lb-me"></div>
+        <p id="lb-note" class="lb-note"></p>
+        <div class="scroll"><ol id="lb-list" class="lb-list" aria-live="polite"></ol></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NAME (2026-09-30: online name for the champions board) ================= -->
+  <section id="view-name" class="view" hidden>
+    <div class="topbar"><span class="topbar-title on-bg">טבלת האלופים</span></div>
+    <div class="panel has-ribbon fill">
+      <span class="ribbon"><span data-icon="trophy"></span>בחר שם</span>
+      <div class="scroll">
+        <p class="w-p">בחר שם שיופיע בטבלת האלופים, ותראה איך אתה מול שחקנים אחרים. אי אפשר לשנות את השם אחר כך.</p>
+        <label for="name-input" class="name-lbl">השם שלך</label>
+        <input id="name-input" class="name-input" type="text" maxlength="16" dir="auto" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-describedby="name-msg name-rule">
+        <p id="name-msg" class="name-msg" aria-live="polite"></p>
+        <p id="name-rule" class="name-rule muted">2 עד 16 תווים: אותיות בעברית או באנגלית, ספרות, רווח, מקף או קו תחתון.</p>
+        <div class="privacy-line"><span data-icon="shield"></span><span>בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע. הקול לא נשמר ולא נשלח.</span></div>
+      </div>
+    </div>
+    <button id="name-save" class="btn btn-green btn-big foot-btn" type="button" disabled><span data-icon="check"></span>שמור</button>
+    <button id="name-skip" class="btn btn-cream skip-btn" type="button">אולי אחר כך</button>
   </section>
 
   <!-- ================= MODE (free play stats) ================= -->
@@ -782,7 +860,7 @@
         <div id="intro-goals" class="goals"></div>
       </div>
       <div id="intro-tip" class="tip"></div>
-      <div class="privacy-line"><span data-icon="shield"></span><span>המיקרופון רק מזהה מתי אתה מדבר. שום הקלטה לא נשמרת ושום מידע לא נשלח. הדפדפן יבקש רשות למיקרופון בפעם הראשונה.</span></div>
+      <div class="privacy-line"><span data-icon="shield"></span><span>המיקרופון רק מזהה מתי אתה מדבר. שום הקלטה לא נשמרת והקול לא נשלח<!-- 2026-09-30: was "ושום מידע לא נשלח" -->. הדפדפן יבקש רשות למיקרופון בפעם הראשונה.</span></div>
       </div>
     </div>
     <button id="intro-go" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
@@ -875,6 +953,8 @@
     <div class="set-row"><b><span data-icon="music"></span>מוזיקה</b><button id="tgl-music" class="tgl" type="button" role="switch" aria-checked="true" aria-label="מוזיקה" data-sound-toggle><span></span><i></i></button></div>
     <div class="set-row"><b><span data-icon="speaker"></span>הקראה בקול</b><button id="tgl-tts" class="tgl" type="button" role="switch" aria-checked="true" aria-label="הקראה בקול" aria-describedby="tts-note"><span></span><i></i></button></div>
     <p id="tts-note" class="set-note" hidden>אין בדפדפן הזה קול בעברית, לכן אי אפשר להפעיל הקראה.</p>
+    <!-- 2026-09-30: online name. Shown only, no rename. -->
+    <div class="set-row"><b><span data-icon="trophy"></span>שם בטבלה</b><span id="set-player" class="set-player"></span></div>
     <div class="btn-stack">
       <button id="set-help" class="btn btn-cream btn-block" type="button"><span data-icon="question"></span>איך משחקים</button>
       <button id="set-export" class="btn btn-cream btn-block" type="button"><span data-icon="download"></span>ייצוא היסטוריה</button>
@@ -882,7 +962,8 @@
     </div>
     <div class="privacy">
       <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
-      <p>שום הקלטה לא נשמרת ושום מידע לא נשלח. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. רק התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה.</p>
+      <!-- 2026-09-30: was "שום הקלטה לא נשמרת ושום מידע לא נשלח". Not true once a player picks a name. -->
+      <p>שום הקלטה לא נשמרת והקול לא נשלח. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה. אם בחרת שם, בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע.</p>
     </div>
     <div class="dlg-status" aria-live="polite">
       <span id="storage-status"></span>
@@ -943,6 +1024,27 @@ const CONFIG = {
   },
   statsWindow: 10,
   sparkPoints: 20,
+  // 2026-09-30: online name + champions board (Supabase project "quickflow").
+  // The publishable key is public by design. The server checks the secret on every write.
+  online: {
+    url: 'https://usveowxgekesiixjdlzy.supabase.co',
+    key: 'sb_publishable_WUKZFr-xxiNC8Z4-iswrxw_z-gY-1Ob',
+    timeoutMs: 8000,     // every call gives up after this
+    checkDelayMs: 400,   // debounce for the "is the name free" check
+    boardLimit: 50,      // rows in the champions list
+    latencyWindow: 20,   // recent sessions used for the average reaction time
+    maxSessions: 1000,   // cap for the session count sent on register
+    nameMin: 2,
+    nameMax: 16,
+    // same rule as the server: letters (Hebrew/English), digits, inner space, dash, underscore
+    nameRe: /^[A-Za-z0-9א-ת][A-Za-z0-9א-ת _-]*[A-Za-z0-9א-ת]$/,
+    kinds: {
+      stars: { label: 'כוכבים', note: 'הכי הרבה כוכבים בכל השלבים.' },
+      streak: { label: 'התמדה', note: 'הכי הרבה ימים ברצף של אימון.' },
+      sessions: { label: 'סשנים', note: 'הכי הרבה סשנים שהושלמו.' },
+      speed: { label: 'מהירות', note: 'זמן תגובה ממוצע בשניות. פחות זה יותר מהיר. רק מ-3 סשנים ומעלה.' }
+    }
+  },
   modes: {
     word_association: {
       label: "אסוציאציות",
@@ -2495,6 +2597,165 @@ const Seen = {
   add(m) { const a = this.list(); if (!a.includes(m)) { a.push(m); try { localStorage.setItem(this.key, JSON.stringify(a)); } catch (e) { /* ignore */ } } }
 };
 
+/* ============================================================
+ * Online (2026-09-30): optional player name and the champions board.
+ * Only a summary goes to the server (name, stars, top stage, sessions,
+ * average reaction time). Never the voice. Every call may fail: the game
+ * works fully offline, errors are silent or a small toast.
+ * Player in localStorage: { id, username, secret }. Memory fallback.
+ * ============================================================ */
+const Online = {
+  key: 'quickflow_player',
+  skipKey: 'quickflow_player_skip',
+  pendingKey: 'quickflow_player_pending',
+  draftKey: 'quickflow_player_draft', // secret kept until sign-up succeeds
+  mem: {},
+
+  get(k) {
+    let v = null;
+    try { v = localStorage.getItem(k); } catch (e) { /* blocked */ }
+    return v !== null ? v : (Object.prototype.hasOwnProperty.call(this.mem, k) ? this.mem[k] : null);
+  },
+  set(k, v) { this.mem[k] = v; try { localStorage.setItem(k, v); } catch (e) { /* memory only */ } },
+  del(k) { delete this.mem[k]; try { localStorage.removeItem(k); } catch (e) { /* ignore */ } },
+
+  player() {
+    try {
+      const p = JSON.parse(this.get(this.key));
+      if (p && typeof p.id === 'string' && typeof p.username === 'string' && /^[0-9a-f]{64}$/.test(p.secret)) return p;
+    } catch (e) { /* none saved */ }
+    return null;
+  },
+  skipped() { return this.get(this.skipKey) === '1'; },
+  skip() { this.set(this.skipKey, '1'); },
+  forget() { this.del(this.key); this.del(this.pendingKey); },
+
+  // Same rule as the server. Returns { name, err } with err: empty | short | long | chars | spaces | null.
+  checkName(raw) {
+    const c = CONFIG.online;
+    const name = String(raw || '').trim();
+    if (!name) return { name, err: 'empty' };
+    if (name.length < c.nameMin) return { name, err: 'short' };
+    if (name.length > c.nameMax) return { name, err: 'long' };
+    if (!c.nameRe.test(name)) return { name, err: 'chars' };
+    if (/\s\s/.test(name)) return { name, err: 'spaces' };
+    return { name, err: null };
+  },
+
+  // 32 random bytes as 64 hex chars. The server keeps only its sha256.
+  newSecret() {
+    const b = new Uint8Array(32);
+    crypto.getRandomValues(b);
+    return Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+  },
+
+  // POST {url}/rest/v1/rpc/<fn>. Returns the data or throws Error(<server code>).
+  // err.network = true for no connection, timeout or a 5xx reply.
+  async rpc(fn, body) {
+    const c = CONFIG.online;
+    const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), c.timeoutMs) : null;
+    try {
+      let res;
+      try {
+        res = await fetch(c.url + '/rest/v1/rpc/' + fn, {
+          method: 'POST',
+          headers: { apikey: c.key, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body || {}),
+          signal: ctl ? ctl.signal : undefined
+        });
+      } catch (e) {
+        const err = new Error('network');
+        err.network = true;
+        throw err;
+      }
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* empty or not JSON */ }
+      if (!res.ok) {
+        const err = new Error((data && typeof data.message === 'string' && data.message) || 'http_' + res.status);
+        err.status = res.status;
+        err.network = res.status >= 500;
+        throw err;
+      }
+      return data;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  },
+
+  // Values the server gets. See CONFIG.online for the windows.
+  stats() {
+    const c = CONFIG.online;
+    const sessions = Storage.store ? Storage.store.sessions : [];
+    const top = STAGES.reduce((m, st) => (Progress.stars(st.id) >= 1 ? Math.max(m, st.id) : m), 0);
+    const lat = sessions.map(r => r.medianLatencyMs).filter(v => typeof v === 'number' && isFinite(v)).slice(-c.latencyWindow);
+    const med = Util.median(lat);
+    return {
+      stars: Progress.total(),
+      top,
+      avg: med === null ? null : Math.round(med),
+      sessions: Math.min(c.maxSessions, sessions.length)
+    };
+  },
+
+  async available(name) {
+    return (await this.rpc('qf_name_available', { p_username: name })) === true;
+  },
+
+  async register(name) {
+    // 2026-09-30: keep one secret until sign-up succeeds. If a reply is lost, a retry
+    // with the same name and secret gets the same id back (server is idempotent).
+    let secret = this.get(this.draftKey);
+    if (!/^[0-9a-f]{64}$/.test(secret || '')) { secret = this.newSecret(); this.set(this.draftKey, secret); }
+    const s = this.stats();
+    const id = await this.rpc('qf_register', {
+      p_username: name, p_secret: secret, p_stars: s.stars, p_top_stage: s.top,
+      p_sessions: s.sessions, p_avg_latency: s.avg
+    });
+    if (typeof id !== 'string' || !id) throw new Error('bad_reply');
+    this.set(this.key, JSON.stringify({ id, username: name, secret }));
+    this.del(this.draftKey);
+    this.del(this.skipKey);
+    this.del(this.pendingKey);
+    return id;
+  },
+
+  // Fire-and-forget after a finished session. Never rejects.
+  // Network failure: keep a pending flag, resent once on the next app start.
+  async recordSession() {
+    const p = this.player();
+    if (!p) return null;
+    const s = this.stats();
+    try {
+      const r = await this.rpc('qf_record_session', {
+        p_id: p.id, p_secret: p.secret, p_stars: s.stars, p_top_stage: s.top, p_avg_latency: s.avg
+      });
+      this.del(this.pendingKey);
+      return r;
+    } catch (e) {
+      if (e.message === 'unauthorized') {
+        // secret lost or player deleted on the server: start over with a new name
+        this.forget();
+        if (typeof App !== 'undefined') App.toast('החיבור לטבלת האלופים אבד. אפשר לבחור שם מחדש.');
+      } else if (e.network) {
+        this.set(this.pendingKey, '1');
+      }
+      return null;
+    }
+  },
+
+  resendPending() {
+    if (this.get(this.pendingKey) !== '1' || !this.player()) return Promise.resolve(null);
+    this.del(this.pendingKey); // once per start. A new network failure sets it again.
+    return this.recordSession();
+  },
+
+  async board(kind) {
+    const rows = await this.rpc('qf_leaderboard', { p_kind: kind, p_limit: CONFIG.online.boardLimit });
+    return Array.isArray(rows) ? rows : [];
+  }
+};
+
 
 /* ============================================================
  * Screen Wake Lock (2026-09-30): keep the screen on while a session
@@ -2569,10 +2830,31 @@ const App = {
     $('btn-abort').innerHTML = Icons.back + 'יציאה';
     $('mode-start').innerHTML = Icons.play + 'התחל';
 
-    $('btn-welcome-go').addEventListener('click', () => { Sound.play('pop'); this.go('home'); });
+    // 2026-09-30: ask for an online name once, unless saved or skipped. Was: always go('home').
+    $('btn-welcome-go').addEventListener('click', () => {
+      Sound.play('pop');
+      if (!Online.player() && !Online.skipped()) this.openName(); else this.go('home');
+    });
     $('tab-map').addEventListener('click', () => this.setTab('map'));
     $('tab-free').addEventListener('click', () => this.setTab('free'));
     $('tab-plan').addEventListener('click', () => this.setTab('plan'));
+    $('tab-champs').addEventListener('click', () => this.setTab('champs'));
+    // 2026-09-30: champions board sub-tabs, "pick a name" and "try again"
+    $('lb-kinds').innerHTML = Object.keys(CONFIG.online.kinds).map(k =>
+      '<button class="lb-kind" type="button" role="tab" data-kind="' + k + '">' + CONFIG.online.kinds[k].label + '</button>').join('');
+    $('lb-kinds').addEventListener('click', e => {
+      const b = e.target.closest('[data-kind]');
+      if (b) { this.lbKind = b.dataset.kind; this.renderChamps(); }
+    });
+    $('panel-champs').addEventListener('click', e => {
+      if (e.target.closest('[data-pick-name]')) this.openName();
+      if (e.target.closest('[data-lb-retry]')) this.renderChamps();
+    });
+    // 2026-09-30: name screen
+    $('name-input').addEventListener('input', () => this.onNameInput());
+    $('name-input').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('name-save').disabled) { e.preventDefault(); this.saveName(); } });
+    $('name-save').addEventListener('click', () => this.saveName());
+    $('name-skip').addEventListener('click', () => { Online.skip(); this.go('home'); });
     const pickStage = e => {
       const b = e.target.closest('[data-stage]');
       if (!b) return;
@@ -2610,6 +2892,7 @@ const App = {
     $('set-help').addEventListener('click', () => { dlg.close(); this.go('welcome'); });
     $('set-export').addEventListener('click', () => this.exportData());
     $('set-reset').addEventListener('click', () => this.resetData());
+    $('set-player').addEventListener('click', e => { if (e.target.closest('[data-pick-name]')) { dlg.close(); this.openName(); } });
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.s) this.abort(); });
     document.addEventListener('visibilitychange', () => {
@@ -2623,11 +2906,12 @@ const App = {
     if (Storage.message) this.setAlert(Storage.message);
     if (!Origin.ok()) this.setAlert(Origin.msg());
     else if (!AudioEngine.supported()) this.setAlert('הדפדפן לא תומך בגישה למיקרופון. פתח ב-Chrome מכתובת https או localhost.');
+    Online.resendPending(); // 2026-09-30: a session that failed to send last time (network). Silent.
   },
 
   /* ---------- navigation ---------- */
   go(view) {
-    ['welcome', 'home', 'mode', 'intro', 'session', 'summary'].forEach(v => { $('view-' + v).hidden = v !== view; });
+    ['welcome', 'home', 'mode', 'intro', 'session', 'summary', 'name'].forEach(v => { $('view-' + v).hidden = v !== view; });
     this.view = view;
     if (view === 'home') this.renderHome();
     if (view === 'mode') this.renderMode();
@@ -2643,10 +2927,11 @@ const App = {
 
   setTab(tab) {
     this.homeTab = tab;
-    ['map', 'plan', 'free'].forEach(t => {
+    ['map', 'plan', 'free', 'champs'].forEach(t => { // 2026-09-30: + champs
       $('tab-' + t).setAttribute('aria-selected', String(t === tab));
       $('panel-' + t).hidden = t !== tab;
     });
+    if (tab === 'champs') this.renderChamps(); // fresh data on each open
   },
 
   setAlert(msg) {
@@ -2929,6 +3214,7 @@ const App = {
   openSettings() {
     this.renderStatus();
     this.renderSoundUi();
+    this.renderPlayer(); // 2026-09-30
     $('dlg-settings').showModal();
   },
 
@@ -3412,6 +3698,10 @@ const App = {
       const prev = Progress.record(s.stage.id, stars);
       result = { stars, prev, checks };
     }
+    // 2026-09-30: send the new totals to the champions board. Fire-and-forget, never blocks.
+    Online.recordSession().then(r => {
+      if (r && this.view === 'home' && this.homeTab === 'champs') this.renderChamps();
+    });
     this.renderSummary(s, rec, before, result);
     this.go('summary'); // mic is fully stopped here, music may come back
     this.celebrate(s, rec, before, result);
@@ -3575,6 +3865,136 @@ const App = {
     }, reduced ? 0 : 500 + result.stars * 450);
   },
 
+  /* ---------- online: name screen + champions board (2026-09-30) ---------- */
+  lbKind: 'stars',
+  lbSeq: 0,
+  nameSeq: 0,
+  nameT: null,
+
+  nameMsgs: {
+    empty: '',
+    short: 'השם קצר מדי. לפחות 2 תווים.',
+    long: 'השם ארוך מדי. עד 16 תווים.',
+    chars: 'אפשר רק אותיות בעברית או באנגלית, ספרות, רווח, מקף וקו תחתון. השם מתחיל ונגמר באות או בספרה.',
+    spaces: 'בלי שני רווחים ברצף.',
+    checking: 'בודק אם השם פנוי...',
+    free: 'השם פנוי!',
+    name_taken: 'השם הזה כבר תפוס. נסה שם אחר.',
+    name_invalid: 'השם לא תקין. בדוק את התווים.',
+    offline: 'אין חיבור לשרת. אפשר לנסות שוב אחר כך.',
+    failed: 'משהו השתבש. נסה שוב.'
+  },
+
+  setNameMsg(key, tone) {
+    const el = $('name-msg');
+    el.textContent = this.nameMsgs[key] || '';
+    el.className = 'name-msg' + (tone ? ' ' + tone : '');
+  },
+
+  openName() {
+    clearTimeout(this.nameT);
+    this.nameSeq++;
+    $('name-input').value = '';
+    $('name-save').disabled = true;
+    this.setNameMsg('');
+    this.go('name');
+    setTimeout(() => { try { $('name-input').focus(); } catch (e) { /* ignore */ } }, 60);
+  },
+
+  // Live check, then a debounced "is it free" call. Old replies are ignored (nameSeq).
+  onNameInput() {
+    clearTimeout(this.nameT);
+    const seq = ++this.nameSeq;
+    const c = Online.checkName($('name-input').value);
+    if (c.err) {
+      $('name-save').disabled = true;
+      this.setNameMsg(c.err, c.err === 'empty' ? '' : 'bad');
+      return;
+    }
+    $('name-save').disabled = false;
+    this.setNameMsg('checking');
+    this.nameT = setTimeout(() => {
+      Online.available(c.name).then(ok => {
+        if (seq !== this.nameSeq) return;
+        $('name-save').disabled = !ok;
+        this.setNameMsg(ok ? 'free' : 'name_taken', ok ? 'ok' : 'bad');
+      }).catch(() => {
+        if (seq === this.nameSeq) this.setNameMsg('offline', 'bad');
+      });
+    }, CONFIG.online.checkDelayMs);
+  },
+
+  async saveName() {
+    const c = Online.checkName($('name-input').value);
+    if (c.err) { this.setNameMsg(c.err, 'bad'); return; }
+    clearTimeout(this.nameT);
+    const seq = ++this.nameSeq;
+    const btn = $('name-save');
+    btn.disabled = true;
+    this.setNameMsg('checking');
+    try {
+      await Online.register(c.name);
+      if (seq !== this.nameSeq) return;
+      Sound.play('pop');
+      this.toast('נרשמת בשם ' + c.name + '. בהצלחה!');
+      this.go('home');
+    } catch (e) {
+      if (seq !== this.nameSeq) return;
+      const key = this.nameMsgs[e.message] ? e.message : e.network ? 'offline' : 'failed';
+      this.setNameMsg(key, 'bad');
+      btn.disabled = key === 'name_taken';
+    }
+  },
+
+  renderPlayer() {
+    const p = Online.player();
+    $('set-player').innerHTML = p
+      ? '<span class="nm" dir="auto">' + esc(p.username) + '</span>'
+      : '<span class="muted">לא רשום</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחר שם</button>';
+  },
+
+  lbValue(kind, raw) {
+    const v = Number(raw); // numeric columns may come back as strings
+    if (raw === null || raw === undefined || !isFinite(v)) return '';
+    if (kind === 'speed') return Util.sec(v);
+    if (kind === 'stars') return '<span class="num">' + v + '</span>' + starSvg(true);
+    if (kind === 'streak') return v === 1 ? 'יום 1' : '<span class="num">' + v + '</span>&nbsp;ימים';
+    return '<span class="num">' + v + '</span>';
+  },
+
+  renderChamps() {
+    const kind = CONFIG.online.kinds[this.lbKind] ? this.lbKind : 'stars';
+    $('lb-kinds').querySelectorAll('[data-kind]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.kind === kind)));
+    const p = Online.player();
+    $('lb-me').innerHTML = p
+      ? '<span>אתה משחק בשם <b dir="auto">' + esc(p.username) + '</b></span>'
+      : '<span>רוצה להופיע בטבלה?</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחר שם</button>';
+    $('lb-note').textContent = CONFIG.online.kinds[kind].note;
+    const list = $('lb-list');
+    list.innerHTML = '<li class="lb-state empty">טוען את הטבלה...</li>';
+    const seq = ++this.lbSeq;
+    const me = p ? p.username.toLowerCase() : null;
+    Online.board(kind).then(rows => {
+      if (seq !== this.lbSeq) return;
+      if (!rows.length) {
+        list.innerHTML = '<li class="lb-state empty">עוד אין אלופים כאן. שחק סשן ותהיה הראשון!</li>';
+        return;
+      }
+      list.innerHTML = rows.map(r => {
+        const rank = Number(r.rank) || 0;
+        const mine = me !== null && String(r.username).toLowerCase() === me;
+        return '<li class="lb-row' + (rank >= 1 && rank <= 3 ? ' r' + rank : '') + (mine ? ' me' : '') + '"' + (mine ? ' aria-current="true"' : '') + '>' +
+          '<span class="lb-rank num">' + rank + '</span>' +
+          '<span class="lb-name"><span dir="auto">' + esc(r.username) + '</span>' + (mine ? '<span class="lb-you">(אתה)</span>' : '') + '</span>' +
+          '<span class="lb-val">' + this.lbValue(kind, r.value) + '</span></li>';
+      }).join('');
+    }).catch(() => {
+      if (seq !== this.lbSeq) return;
+      list.innerHTML = '<li class="lb-state empty">אין חיבור לשרת, אז אי אפשר לטעון את הטבלה. המשחק עצמו עובד כרגיל.' +
+        '<br><button class="btn btn-cream btn-sm" type="button" data-lb-retry style="margin-top:10px">' + Icons.redo + 'נסה שוב</button></li>';
+    });
+  },
+
   /* ---------- data tools ---------- */
   exportData() {
     const blob = new Blob([JSON.stringify(Storage.store, null, 2)], { type: 'application/json' });
@@ -3589,7 +4009,9 @@ const App = {
   },
 
   resetData() {
-    if (!confirm('למחוק את כל היסטוריית הסשנים ואת כל הכוכבים? הפעולה לא הפיכה.')) return;
+    // 2026-09-30: added the note on the online name. The server data is not touched here.
+    const onl = Online.player() ? '\n\nהשם שלך בטבלת האלופים והנתונים שם לא נמחקים.' : '';
+    if (!confirm('למחוק את כל היסטוריית הסשנים ואת כל הכוכבים? הפעולה לא הפיכה.' + onl)) return;
     Storage.clearSessions();
     Progress.reset();
     $('dlg-settings').close();
