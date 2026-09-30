@@ -4445,8 +4445,81 @@ const App = {
   }
 };
 
+/* ============================================================
+ * Move to the new address (2026-09-30). Browser data is per address, so the
+ * old site hands all quickflow_* keys to the new one in the URL fragment
+ * (#qf-import=...). A fragment is never sent to any server. The new site
+ * only fills keys it does not have yet, then removes the fragment.
+ * ============================================================ */
+const Move = {
+  fromHost: 'danielmazh.github.io',
+  to: 'https://quickflow-game.pages.dev/',
+  param: 'qf-import',
+  maxChars: 200000,
+  enc(obj) {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  },
+  dec(s) {
+    const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  },
+  collect() {
+    const data = {};
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.indexOf('quickflow_') === 0) data[k] = localStorage.getItem(k);
+      }
+    } catch (e) { /* no storage: move without data */ }
+    return data;
+  },
+  // Old address: send the player to the new one. Returns true when leaving.
+  leave() {
+    if (location.hostname !== this.fromHost) return false;
+    const data = this.collect();
+    let url = this.to;
+    if (Object.keys(data).length) {
+      let packed = this.enc(data);
+      if (packed.length > this.maxChars && data.quickflow_store) {
+        // Very long history: keep the newest 100 sessions so the link stays short.
+        try {
+          const st = JSON.parse(data.quickflow_store);
+          st.sessions = (st.sessions || []).slice(-100);
+          data.quickflow_store = JSON.stringify(st);
+          packed = this.enc(data);
+        } catch (e) { /* send as is */ }
+      }
+      url += '#' + this.param + '=' + packed;
+    }
+    location.replace(url);
+    return true;
+  },
+  // New address: take the data once, never overwrite what is already here.
+  arrive() {
+    const h = location.hash || '';
+    const pre = '#' + this.param + '=';
+    if (h.indexOf(pre) !== 0) return;
+    try {
+      const data = this.dec(h.slice(pre.length));
+      Object.keys(data).forEach(k => {
+        if (k.indexOf('quickflow_') !== 0 || typeof data[k] !== 'string') return;
+        if (localStorage.getItem(k) === null) localStorage.setItem(k, data[k]);
+      });
+    } catch (e) { /* bad or partial link: start fresh */ }
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { location.hash = ''; }
+  }
+};
+
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  window.addEventListener('DOMContentLoaded', () => App.init());
+  if (!Move.leave()) {
+    Move.arrive();
+    window.addEventListener('DOMContentLoaded', () => App.init());
+  }
 }
 </script>
 </body>
