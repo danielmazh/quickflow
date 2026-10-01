@@ -2,6 +2,9 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<!-- 2026-10-01: Content Security Policy. Blocks injected scripts from other origins and data exfiltration.
+     frame-ancestors is not allowed in a meta tag (needs a header). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://usveowxgekesiixjdlzy.supabase.co; img-src 'self' data:; media-src 'self' blob: data:; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4E8A45">
 <title>QuickFlow | משחק ספונטניות</title>
@@ -69,7 +72,8 @@
     height: 100vh;
     height: 100dvh;
     margin: 0 auto;
-    padding: calc(10px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
+    /* 2026-10-01: 13px + the 3px panel margin = 16px side gutter. Was 14px. */
+    padding: calc(10px + env(safe-area-inset-top)) calc(13px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(13px + env(safe-area-inset-left));
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -102,11 +106,12 @@
     position: relative;
     background: var(--cream);
     color: var(--ink);
-    border: 6px solid var(--orange);
-    border-radius: 28px;
-    box-shadow: 0 0 0 3px var(--brown), 0 8px 0 3px var(--brown), inset 0 4px 0 rgba(255,255,255,.55), inset 0 -5px 0 rgba(210,127,34,.18);
-    padding: 14px 14px 12px;
-    margin: 0 3px 16px;
+    /* 2026-10-01: lighter frame (border 5, drop 5, one inset). Was border 6, drop 8, two insets, padding 14. */
+    border: 5px solid var(--orange);
+    border-radius: 26px;
+    box-shadow: 0 0 0 3px var(--brown), 0 5px 0 3px var(--brown), inset 0 3px 0 rgba(255,255,255,.5);
+    padding: 12px 12px 10px;
+    margin: 0 3px 14px;
   }
   .panel.has-ribbon { margin-top: 24px; padding-top: 28px; }
   .ribbon {
@@ -162,7 +167,7 @@
 
   /* round icon buttons (coin style) */
   .ibtn {
-    width: 48px; height: 48px; border-radius: 50%; flex: none;
+    width: 44px; height: 44px; border-radius: 50%; flex: none; /* 2026-10-01: was 48px */
     display: grid; place-items: center;
     background: radial-gradient(circle, var(--cream) 0 54%, var(--orange) 56%);
     color: var(--ink);
@@ -178,7 +183,7 @@
   .ibtn.held { opacity: .6; }
   .corner {
     position: fixed; z-index: 50; top: calc(10px + env(safe-area-inset-top));
-    left: max(10px, calc(50% - 230px + 10px));
+    left: max(16px, calc(50% - 230px + 16px)); /* 2026-10-01: was 10px */
     display: flex; gap: 8px;
   }
 
@@ -232,12 +237,14 @@
   .track-fill.dim { background: linear-gradient(180deg, #E6D2AE, #C9AE82); transition: none; }
 
   /* ---------- top bars ---------- */
-  .topbar { display: flex; align-items: center; gap: 12px; min-height: 52px; margin-bottom: 6px; padding-left: 112px; flex: none; }
+  /* 2026-10-01: padding-left 156px leaves room for the 3 header buttons (was 112px, they overlapped). */
+  .topbar { display: flex; align-items: center; gap: 12px; min-height: 52px; margin-bottom: 6px; padding-left: 156px; flex: none; }
+  #view-session .topbar { padding-left: 56px; } /* only the music button shows in a session */
   .topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }
 
   /* ---------- welcome ---------- */
   .welcome { text-align: center; }
-  .w-hero { display: flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 56px; padding-left: 112px; flex: none; }
+  .w-hero { display: flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 56px; padding-left: 156px; flex: none; } /* 2026-10-01: was 112px */
   .w-logo { width: 52px; height: 52px; flex: none; animation: floaty 3.2s ease-in-out infinite; filter: drop-shadow(0 3px 0 var(--brown)); }
   @keyframes floaty { 50% { transform: translateY(-8px) rotate(-5deg); } }
   .w-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1; margin: 0; direction: ltr; }
@@ -271,7 +278,7 @@
   .w-go { flex: none; }
 
   /* ---------- home: header + tabs ---------- */
-  .home-head { display: flex; align-items: center; gap: 10px; min-height: 52px; padding-left: 168px; /* 2026-10-01: was 112px, room for the 3rd header button */ margin-bottom: 4px; flex: none; }
+  .home-head { display: flex; align-items: center; gap: 10px; min-height: 52px; padding-left: 156px; /* 2026-10-01: was 112px, then 168px */ margin-bottom: 8px; flex: none; }
   .brand { display: flex; align-items: center; gap: 8px; }
   .brand svg { width: 36px; height: 36px; filter: drop-shadow(0 3px 0 var(--brown)); }
   .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; direction: ltr; }
@@ -338,6 +345,7 @@
   .lb-val .star { width: 18px; height: 18px; }
   .lb-state { list-style: none; }
   .set-player { display: flex; align-items: center; gap: 8px; font-weight: 600; min-width: 0; }
+  .set-install { font-size: .85rem; color: var(--ink-2); } /* 2026-10-01 */
   .set-player .nm { font-family: var(--font-display); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
   .alert {
     background: #FFE1DC; border: 3px solid var(--red); color: #6E1512;
@@ -771,6 +779,15 @@
   .adm-fb-msg { margin: 6px 0; white-space: pre-wrap; word-break: break-word; }
   .adm-fb-ctx { font-size: .74rem; color: var(--ink-2); word-break: break-all; margin: 0 0 6px; }
   .adm-empty { color: var(--ink-2); font-size: .85rem; margin: 0; }
+  /* 2026-10-01: owner panel: client errors + delete on request */
+  .adm-err { border-bottom: 1px solid var(--cream-3); padding: 6px 2px; font-size: .8rem; }
+  .adm-err-msg { direction: ltr; text-align: left; word-break: break-word; font-family: ui-monospace, monospace; margin: 2px 0; }
+  .adm-err-meta { display: flex; flex-wrap: wrap; gap: 2px 10px; color: var(--ink-2); font-size: .74rem; }
+  .adm-del { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .adm-del select, .adm-del input { font: inherit; font-size: .85rem; padding: 5px 8px; border: 2px solid var(--brown); border-radius: 10px; background: #fff; min-width: 0; }
+  .adm-del input { flex: 1 1 160px; }
+  .adm-del-msg { font-size: .8rem; margin: 6px 0 0; min-height: 1.2em; }
+  .adm-del-msg.bad { color: var(--red-d); font-weight: 700; }
 
   /* ---------- 2026-10-01: social track ("ערב אימפרו") ---------- */
   .soc-card { margin-bottom: 10px; background: #fff6e2; border: 2.5px solid var(--orange); }
@@ -859,6 +876,157 @@
     .cast-c b { font-size: .84rem; }
   }
 
+
+  /* ================= 2026-10-01: mobile UX pass (less text, 3 tabs, sheets, feedback) ================= */
+  /* header: gold trophy with a soft pulse (off with reduced motion, see the media query below) */
+  .ibtn.gold { background: radial-gradient(circle, #FFE58A 0 54%, var(--gold) 56%); color: var(--brown); animation: trophyGlow 2.4s ease-in-out infinite; }
+  @keyframes trophyGlow {
+    0%, 100% { box-shadow: 0 4px 0 var(--brown), inset 0 2px 0 rgba(255,255,255,.5), 0 0 0 0 rgba(255,200,61,0); }
+    50% { box-shadow: 0 4px 0 var(--brown), inset 0 2px 0 rgba(255,255,255,.5), 0 0 14px 5px rgba(255,214,90,.75); }
+  }
+  .ibtn[data-icon="gear"] svg { width: 24px; height: 24px; }
+
+  /* welcome */
+  .welcome { justify-content: space-between; }
+  .welcome .w-hero { padding-left: 0; justify-content: center; margin-top: 54px; min-height: 0; } /* below the header buttons */
+  .w-main { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 8px 0; }
+  .w-tag { font-size: clamp(1.35rem, 6.4vw, 1.75rem); line-height: 1.2; margin: 0; }
+  .w-bens { list-style: none; margin: 0 3px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; text-align: right; }
+  .w-bens li { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; line-height: 1.25; }
+  .w-ben-i { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--orange); border: 3px solid var(--brown); color: var(--ink); }
+  .w-ben-i svg { width: 20px; height: 20px; }
+  .w-go { margin: 8px 3px 0; width: calc(100% - 6px); }
+  .w-links { flex: none; display: flex; justify-content: center; gap: 8px; margin-top: 6px; }
+  .link-btn.on-bg-link { color: #fff; margin: 0; font-size: .95rem; text-shadow: 0 1px 0 var(--brown), 0 0 3px var(--brown); }
+
+  /* home */
+  .tabs { margin-bottom: 14px; }
+  .tabs .tab { min-height: 44px; }
+  .panel.flat { padding-top: 12px; }
+  .tab-intro { margin: 0 0 12px; font-size: .95rem; color: var(--ink-2); }
+  .tab-intro b { color: var(--ink); }
+  .panel.board { position: relative; }
+  .map-pills { position: absolute; top: 8px; inset-inline-start: 8px; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; pointer-events: none; }
+  .map-pills .pill { font-size: .85rem; padding: 1px 8px 1px 6px; border-width: 2.5px; box-shadow: 0 2px 0 var(--brown); }
+  .map-pills .pill svg, .map-pills .pill .star { width: 16px; height: 16px; }
+  .next-main .next-l { font-size: .78rem; font-weight: 600; color: var(--ink-2); }
+  .next-bar { padding: 8px 10px; margin: 0 3px 4px; }
+  .next-bar .plan-n { width: 34px; height: 34px; }
+  .rows { gap: 10px; }
+  #home-modes .row, #friends-modes .row { padding: 8px 10px; }
+  .drive-note { display: flex; gap: 8px; align-items: flex-start; font-size: .85rem; line-height: 1.4; color: var(--ink); background: var(--cream-2); border-radius: 12px; padding: 8px 10px; margin: 12px 0 4px; }
+  .how.more { margin-top: 8px; }
+  .how > summary { min-height: 44px; display: flex; align-items: center; gap: 6px; color: var(--ink); list-style: none; }
+  .how > summary::-webkit-details-marker { display: none; }
+  .how > summary::before { content: "+"; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 2.5px solid var(--brown); font-size: 1rem; line-height: 1; flex: none; }
+  .how[open] > summary::before { content: "-"; }
+
+  /* intro: compact steps */
+  .mode-head { margin-bottom: 10px; }
+  .mode-head .row-icon { width: 44px; height: 44px; }
+  .mode-head-t { min-width: 0; }
+  .mode-name { font-size: 1.45rem; }
+  .intro-meta { margin: 2px 0 0; font-size: .88rem; }
+  .steps.compact { margin: 0 0 10px; gap: 4px; }
+  .steps.compact .step { padding: 3px 6px; gap: 8px; border-radius: 12px; background: none; line-height: 1.3; }
+  .steps.compact .step.go { background: var(--green-bg); border: 0; padding: 5px 6px; }
+  .steps.compact .step-n { width: 26px; height: 26px; border-width: 2.5px; font-size: .9rem; }
+  .steps.compact .step b { display: inline; font-size: 1rem; }
+  .steps.compact .step span span { font-size: .86rem; }
+  .mini-h { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+  .mini-h svg { width: 18px; height: 18px; color: var(--orange-d); }
+  #intro-goals .goal { font-size: .86rem; }
+  .goals { margin-bottom: 10px; }
+  .safety { background: var(--green-bg); border-radius: 12px; padding: 7px 10px; color: var(--green-d); font-size: .8rem; line-height: 1.35; }
+  .safety p { margin: 0; display: flex; gap: 6px; align-items: flex-start; }
+  .safety p + p { margin-top: 4px; }
+  .tip { margin: 8px 0 4px; }
+
+  /* summary */
+  .sum-rate { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 4px 0 2px; font-family: var(--font-display); font-weight: 700; }
+  .thumb { width: 48px; height: 44px; border-radius: 999px; border: 2.5px solid var(--brown); background: var(--cream-2); font-size: 1.3rem; line-height: 1; box-shadow: 0 3px 0 var(--brown); }
+  .thumb:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--brown); }
+  .thumb:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+  #sum-more .donut-wrap { width: 120px; height: 120px; }
+  #sum-more .donut-val { font-size: 1.5rem; }
+  #sum-more .tiles { margin-top: 4px; }
+  .big-stars { margin-top: 6px; }
+  .btn-row { margin-top: 10px; }
+
+  /* settings */
+  .set-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0 14px; }
+  .set-grid .btn { padding: 8px 8px; font-size: .9rem; line-height: 1.15; }
+  .set-grid .btn svg { width: 17px; height: 17px; }
+  .set-note.drive { color: var(--ink); background: var(--cream-2); border-radius: 10px; padding: 6px 8px; margin: 0 2px 6px; }
+  .set-row { padding: 4px 2px; }
+  .set-install { flex-wrap: nowrap; }
+  .set-install > span { min-width: 0; }
+  .set-note.drive { font-size: .78rem; line-height: 1.35; }
+  .set-grid .btn { font-size: .85rem; }
+  .topbar .topbar-title { min-width: 0; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* privacy card + sheets */
+  .pv-card { background: var(--green-bg); border: 2.5px solid var(--green-l); border-radius: 16px; padding: 10px 12px; color: var(--green-d); }
+  .pv-title { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; color: var(--green-d); }
+  .pv-title svg { width: 20px; height: 20px; color: var(--green); }
+  .pv-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; font-size: .86rem; line-height: 1.4; color: #1F441A; }
+  .pv-list li { display: flex; gap: 8px; align-items: flex-start; }
+  .pv-i { flex: none; width: 1.4em; text-align: center; }
+  .pv-list b { color: #163512; }
+  .pv-more-btn { margin: 6px auto 0; color: var(--green-d); }
+  .pv-full { font-size: .88rem; }
+  .pv-full ul { margin: 4px 0 8px; padding-inline-start: 18px; }
+  .pv-full li { margin: 2px 0; }
+  .pv-h { font-family: var(--font-display); font-size: 1rem; margin: 10px 0 2px; }
+  .pv-full p { margin: 2px 0 6px; }
+  .how-sheet p { margin: 0 0 8px; font-size: .92rem; }
+  .how-sheet .h2 { margin-top: 12px; }
+  .how-sheet .h2:first-child { margin-top: 0; }
+  .how-sheet .w-list li { padding: 3px 10px; font-size: .85rem; }
+  .how-sheet .w-grid { margin-bottom: 4px; }
+  .how-sheet .w-item { padding: 8px; }
+  .how-sheet .btn { margin-top: 6px; }
+  .link-btn.inline { display: inline; margin: 0; padding: 0 2px; min-height: 0; color: var(--green-d); font-size: inherit; }
+  .champs-fb { flex: none; margin: 6px auto 0; }
+
+  /* feedback nudge (toast card) */
+  .nudge {
+    /* sits over the empty lower part of the summary panel, above the 3 summary buttons */
+    position: fixed; z-index: 65; bottom: calc(156px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+    width: min(calc(100% - 32px), 420px); background: var(--cream); color: var(--ink);
+    border: 3px solid var(--brown); border-radius: 18px; box-shadow: 0 4px 0 var(--brown); padding: 10px 12px;
+    animation: dlgIn .3s var(--bounce);
+  }
+  .nudge p { margin: 0 0 8px; text-align: center; font-size: .95rem; }
+  .nudge-row { display: flex; gap: 8px; }
+  .nudge-row .btn { flex: 1; }
+
+  /* 44px minimum tap targets */
+  .btn-sm { min-height: 44px; }
+  .link-btn { min-height: 44px; }
+  .lb-kind, .fb-cat { min-height: 44px; }
+  .fb-star { width: 44px; height: 44px; }
+  .soc-x { width: 44px; height: 44px; }
+  .soc-seg button { min-width: 44px; min-height: 44px; }
+  .row .ibtn, .soc-card .ibtn { width: 44px; height: 44px; }
+
+  @media (max-height: 660px) {
+    #home-modes .row { padding: 6px 10px; }
+    #home-modes { gap: 8px; }
+    .tab-intro { margin-bottom: 8px; }
+    .steps.compact { margin-bottom: 6px; }
+    .mode-head { margin-bottom: 6px; }
+    .safety { font-size: .76rem; }
+  }
+  @media (max-height: 700px) {
+    .w-bens { padding: 12px 14px; gap: 10px; }
+    .w-bens li { font-size: 1.04rem; }
+    .w-ben-i { width: 36px; height: 36px; }
+    .btn-big { font-size: 1.35rem; padding: 13px 22px; }
+    .big-stars .slot { width: clamp(40px, 7dvh, 56px); height: clamp(40px, 7dvh, 56px); }
+    .big-stars .slot:nth-child(2) { width: clamp(48px, 9dvh, 70px); height: clamp(48px, 9dvh, 70px); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .big-stars .slot.pop .star.on { transform: none; opacity: 1; }
@@ -870,14 +1038,16 @@
 </head>
 <body>
 <div class="corner">
+  <!-- 2026-10-01: header = 3 round buttons. Trophy (the only champions entry, gold glow), settings (cog), music. Was order music, settings, trophy. -->
+  <button id="btn-champs" class="ibtn gold" type="button" aria-label="טבלת האלופים" aria-haspopup="dialog" data-icon="trophy"></button>
+  <button id="btn-settings" class="ibtn" type="button" aria-label="הגדרות" aria-haspopup="dialog" data-icon="gear"></button>
   <button id="btn-music" class="ibtn" type="button" aria-pressed="true" aria-label="מוזיקת רקע" data-sound-toggle></button>
-  <button id="btn-settings" class="ibtn" type="button" aria-label="הגדרות" data-icon="gear"></button>
-  <!-- 2026-10-01: champions board moved from the home tabs to this header button -->
-  <button id="btn-champs" class="ibtn" type="button" aria-label="טבלת האלופים" aria-haspopup="dialog" data-icon="trophy"></button>
 </div>
 <div class="app">
 
-  <!-- ================= WELCOME ================= -->
+  <!-- ================= WELCOME =================
+       2026-10-01: short welcome. Hero line, 3 benefits, one button. The long text moved to #dlg-how,
+       the privacy text to #dlg-privacy. Was: panel "למה לשחק?" with goal, 4 measures, 5 benefits, privacy. -->
   <section id="view-welcome" class="view welcome">
     <div class="w-hero">
     <svg class="w-logo" viewBox="0 0 32 32" aria-hidden="true">
@@ -887,48 +1057,24 @@
     </svg>
     <h1 class="w-title on-bg">Quick<span>Flow</span></h1>
     </div>
-    <p class="w-tag on-bg">המשחק שמאמן אותך לדבר בלי לחשוב פעמיים</p>
-
-    <div class="panel has-ribbon fill w-body">
-      <span class="ribbon">למה לשחק?</span>
-      <div class="scroll">
-      <div class="w-sec">
-        <h2 class="h2"><span data-icon="target"></span>המטרה</h2>
-        <p class="w-p">לאמן דיבור ספונטני: לענות מהר, בלי לסנן ובלי להיתקע. מקבלים מילה, משפט או נושא, ועונים בקול.</p>
-      </div>
-      <div class="w-sec">
-        <h2 class="h2"><span data-icon="clock"></span>מה נמדד</h2>
-        <div class="w-grid">
-          <div class="w-item"><span data-icon="clock"></span><b>זמן תגובה</b><span>כמה מהר התחלת לדבר</span></div>
-          <div class="w-item"><span data-icon="check"></span><b>אחוז מענה</b><span>בכמה סבבים ענית</span></div>
-          <div class="w-item"><span data-icon="pause"></span><b>היסוסים</b><span>הפסקות ארוכות באמצע</span></div>
-          <div class="w-item"><span data-icon="wave"></span><b>רצף דיבור</b><span>כמה מהזמן דיברת</span></div>
-        </div>
-      </div>
-      <div class="w-sec">
-        <h2 class="h2"><span data-icon="bolt"></span>מה משתפר</h2>
-        <ul class="w-list">
-          <li><span data-icon="bolt"></span>תגובה מהירה יותר</li>
-          <li><span data-icon="wave"></span>דיבור שוטף</li>
-          <li><span data-icon="pause"></span>פחות היסוסים</li>
-          <li><span data-icon="smile"></span>ביטחון באלתור</li>
-          <li><span data-icon="users"></span>פגישות ושיחות</li>
-        </ul>
-      </div>
-      <div class="w-sec privacy">
-        <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
-        <!-- 2026-09-30: was "שום הקלטה לא נשמרת ושום מידע לא נשלח". Not true once a player picks a name. -->
-        <!-- 2026-09-30: was "... התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע. אם תבחר שם לטבלת האלופים, נשלח לשרת רק סיכום: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע." Usage data is now sent too. -->
-        <p>החוויה אישית לגמרי. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. שום הקלטה לא נשמרת והקול לא נשלח. התוצאות שלך נשמרות בדפדפן שלך, ואפשר למחוק אותן בכל רגע. כדי לשפר את המשחק נשלחים לשרת נתוני שימוש אנונימיים: סוג מכשיר, מערכת הפעלה, דפדפן, גודל מסך, שפה ותוצאות הסשנים (מספרים). אם תבחר שם, נשלחים גם השם והניקוד. אם תשלח משוב, נשלח גם הטקסט שכתבת. לא נשלחים קול, מיקום או אנשי קשר.</p>
-      </div>
-      </div>
+    <div class="w-main">
+      <p class="w-tag on-bg">משחק שמאמן לדבר בלי לחשוב פעמיים</p>
+      <ul class="panel w-bens">
+        <li><span class="w-ben-i" data-icon="bolt"></span>תגובה מהירה, בלי לסנן</li>
+        <li><span class="w-ben-i" data-icon="mic"></span>צריך רק מיקרופון, בלי הרשמה</li>
+        <li><span class="w-ben-i" data-icon="clock"></span>שלבים קצרים של פחות מדקה</li>
+      </ul>
     </div>
-
-    <button id="btn-welcome-go" class="btn btn-green btn-big btn-block w-go" type="button"><span data-icon="play"></span>התחל משחק</button>
-    <p class="w-note on-bg">שלבים קצרים, כוכבים, וצריך רק מיקרופון.</p>
+    <button id="btn-welcome-go" class="btn btn-green btn-big btn-block w-go" type="button"><span data-icon="play"></span>מתחילים לשחק</button>
+    <div class="w-links">
+      <button id="w-how" class="link-btn on-bg-link" type="button" aria-haspopup="dialog">איך זה עובד?</button>
+      <button id="w-privacy" class="link-btn on-bg-link" type="button" aria-haspopup="dialog">פרטיות בקצרה</button>
+    </div>
   </section>
 
-  <!-- ================= HOME (map + free play) ================= -->
+  <!-- ================= HOME =================
+       2026-10-01: 3 tabs: מפה | תרגול | עם חברים. The "תוכנית" tab became the "הצעה להיום" bar on the map.
+       The 3 header pills became 2 small chips on the map board. -->
   <section id="view-home" class="view" hidden>
     <div class="home-head">
       <!-- 2026-09-30: id for the owner panel door (10 fast taps). No visual change. -->
@@ -940,55 +1086,41 @@
         <span class="brand-name on-bg">Quick<span>Flow</span></span>
       </div>
     </div>
-    <div id="home-pills" class="head-pills"></div>
     <div id="alert" class="alert" role="alert" hidden></div>
     <div class="tabs" role="tablist" aria-label="מסכי המשחק">
       <button id="tab-map" class="tab" role="tab" type="button" aria-controls="panel-map"><span data-icon="map"></span>מפה</button>
-      <button id="tab-plan" class="tab" role="tab" type="button" aria-controls="panel-plan"><span data-icon="list"></span>תוכנית</button>
-      <button id="tab-free" class="tab" role="tab" type="button" aria-controls="panel-free"><span data-icon="dumbbell"></span>חופשי</button>
-      <!-- 2026-10-01: אלופים tab removed. The board opens from the trophy button in the header (#btn-champs). -->
+      <button id="tab-free" class="tab" role="tab" type="button" aria-controls="panel-free"><span data-icon="dumbbell"></span>תרגול</button>
+      <button id="tab-friends" class="tab" role="tab" type="button" aria-controls="panel-friends"><span data-icon="users"></span>עם חברים</button>
     </div>
 
     <div id="panel-map" class="tabpanel" role="tabpanel" aria-labelledby="tab-map">
-      <div class="panel board"><div id="map" class="map-board"></div></div>
+      <div class="panel board"><div id="home-pills" class="map-pills"></div><div id="map" class="map-board"></div></div>
       <div id="next-bar" class="next-bar"></div>
     </div>
 
-    <div id="panel-plan" class="tabpanel" role="tabpanel" aria-labelledby="tab-plan" hidden>
-      <div class="panel has-ribbon fill">
-        <span class="ribbon">התוכנית להיום</span>
-        <div class="scroll"><ol id="plan" class="plan"></ol></div>
+    <div id="panel-free" class="tabpanel" role="tabpanel" aria-labelledby="tab-free" hidden>
+      <div class="panel fill flat">
+        <div class="scroll">
+          <p class="tab-intro">בלי יעדים ובלי כוכבים. בוחרים מצב ומתאמנים.</p>
+          <div id="home-modes" class="rows"></div>
+          <!-- 2026-10-01: the driving line shows on every intro screen (stage and practice), in settings and in the how sheet -->
+          <details class="how more">
+            <summary>עוד פרטים: השבוע שלי</summary>
+            <p id="week-title" class="week-title"></p>
+            <div id="week-chart"></div>
+            <button class="link-btn" type="button" data-open-how>איך המדידה עובדת?</button>
+          </details>
+        </div>
       </div>
     </div>
 
-    <div id="panel-free" class="tabpanel" role="tabpanel" aria-labelledby="tab-free" hidden>
-      <div class="panel has-ribbon fill">
-        <span class="ribbon orange">אימון חופשי</span>
+    <!-- 2026-10-01: social track ("ערב אימפרו") has its own tab. Was a big card in the free play tab. -->
+    <div id="panel-friends" class="tabpanel" role="tabpanel" aria-labelledby="tab-friends" hidden>
+      <div class="panel fill flat">
         <div class="scroll">
-          <p class="muted" style="margin:0 0 10px">בלי יעדים ובלי כוכבים. מתאמנים במצב שבוחרים.</p>
-          <!-- 2026-10-01: social track entry (2-4 players, one phone) -->
-          <div id="social-card" class="row soc-card" role="button" tabindex="0" aria-label="ערב אימפרו, משחק קבוצתי לטלפון אחד">
-            <span class="row-icon" style="background:var(--red-d)" data-icon="users"></span>
-            <span class="row-main"><span class="row-title">ערב אימפרו</span><span class="row-sub">2 עד 4 משתתפים, טלפון אחד. אסוציאציות וסצנות</span></span>
-            <span class="ibtn play" aria-hidden="true" data-icon="play"></span>
-          </div>
-          <div id="home-modes" class="rows"></div>
-          <p class="section-label">השבוע שלך</p>
-          <p id="week-title" class="week-title"></p>
-          <div id="week-chart"></div>
-          <details class="how">
-            <summary>איך המדידה עובדת</summary>
-            <p>כל סשן מתחיל ב-1.5 שניות של שקט לכיול רעש הרקע. סף הדיבור מחושב מהרעש שנמדד.</p>
-            <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דבר עכשיו!" עם מיקרופון מהבהב, מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול שלך מזוהה.</p>
-            <p>סבב בלי תגובה נספר כהחמצה ולא נכנס לחישוב זמן התגובה.</p>
-            <p>היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. כל הפסקה נספרת פעם אחת, ושקט בסוף תשובה לא נספר.</p>
-            <!-- 2026-09-30: was "... התוצאות (מספרים) נשמרות בדפדפן הזה. אם בחרת שם, סיכום קצר נשלח לטבלת האלופים." -->
-            <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. אין הקלטה, והקול לא נשלח לשרת. התוצאות נשמרות בדפדפן הזה. לשרת נשלחים נתוני שימוש אנונימיים: סוג מכשיר, מערכת הפעלה, דפדפן, מסך, שפה ותוצאות הסשנים (מספרים). אם בחרת שם, גם השם והניקוד. בלי קול, מיקום או אנשי קשר.</p>
-            <!-- 2026-09-30: was "אין הקלטה ואין שליחה לשרת. רק התוצאות (מספרים) נשמרות בדפדפן הזה." -->
-
-            <p>המוזיקה והצלילים נעצרים לפני הכיול ולא מתנגנים אף פעם בזמן שהמיקרופון מקשיב.</p>
-            <p>הקראה בקול (בהגדרות): המשחק מקריא את המילה או הנושא. בזמן ההקראה המיקרופון לא נמדד, וזמן התגובה נספר רק אחרי שההקראה נגמרה.</p>
-          </details>
+          <p class="tab-intro"><b>ערב אימפרו: טלפון אחד, 2 עד 4 משתתפים.</b> מעבירים את הטלפון בתורות.</p>
+          <div id="friends-modes" class="rows"></div>
+          <p class="drive-note"><span aria-hidden="true">🤫</span><span>בזמן תור, כל השאר בשקט. הטלפון מקשיב רק למי שהתור שלו.</span></p>
         </div>
       </div>
     </div>
@@ -996,26 +1128,28 @@
     <!-- 2026-10-01: champions board markup moved to #dlg-champs (was #panel-champs, a home tab). -->
   </section>
 
-  <!-- ================= NAME (2026-09-30: online name for the champions board) ================= -->
+  <!-- ================= NAME (2026-09-30: online name for the champions board) =================
+       2026-10-01: shown after the first finished session (was before the first one). Shorter, neutral text. -->
   <section id="view-name" class="view" hidden>
     <div class="topbar"><span class="topbar-title on-bg">טבלת האלופים</span></div>
     <div class="panel has-ribbon fill">
-      <span class="ribbon"><span data-icon="trophy"></span>בחר שם</span>
+      <span class="ribbon"><span data-icon="trophy"></span>בחירת שם</span>
       <div class="scroll">
-        <p class="w-p">בחר שם שיופיע בטבלת האלופים, ותראה איך אתה מול שחקנים אחרים. אי אפשר לשנות את השם אחר כך.</p>
-        <label for="name-input" class="name-lbl">השם שלך</label>
+        <p class="w-p">השם יופיע בטבלת האלופים, מול שחקנים אחרים. אי אפשר לשנות אותו אחר כך.</p>
+        <label for="name-input" class="name-lbl">השם בטבלה</label>
         <input id="name-input" class="name-input" type="text" maxlength="16" dir="auto" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-describedby="name-msg name-rule">
         <p id="name-msg" class="name-msg" aria-live="polite"></p>
-        <p id="name-rule" class="name-rule muted">2 עד 16 תווים: אותיות בעברית או באנגלית, ספרות, רווח, מקף או קו תחתון.</p>
-        <!-- 2026-09-30: was "בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע. הקול לא נשמר ולא נשלח." -->
-        <div class="privacy-line"><span data-icon="shield"></span><span>בשרת נשמרים: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע. נתוני השימוש (סוג מכשיר, מערכת, דפדפן, מסך, שפה ותוצאות סשנים) יקושרו לשם. לא נשלחים קול, מיקום או אנשי קשר.</span></div>
+        <p id="name-rule" class="name-rule muted">2 עד 16 תווים: אותיות, ספרות, רווח, מקף או קו תחתון.</p>
+        <!-- 2026-10-01: was a long privacy line (server fields). Now the key point + the privacy card. -->
+        <div class="privacy-line"><span data-icon="shield"></span><span><b>השם מקושר לנתוני המשחק.</b> מומלץ לא להשתמש בשם מלא. <button class="link-btn inline" type="button" data-open-privacy>פרטיות בקצרה</button></span></div>
       </div>
     </div>
-    <button id="name-save" class="btn btn-green btn-big foot-btn" type="button" disabled><span data-icon="check"></span>שמור</button>
+    <button id="name-save" class="btn btn-green btn-big foot-btn" type="button" disabled><span data-icon="check"></span>שמירה</button>
     <button id="name-skip" class="btn btn-cream skip-btn" type="button">אולי אחר כך</button>
   </section>
 
-  <!-- ================= MODE (free play stats) ================= -->
+  <!-- ================= MODE (free play stats) =================
+       2026-10-01: history list moved behind "עוד פרטים". -->
   <section id="view-mode" class="view" hidden>
     <div class="topbar">
       <button id="mode-back" class="btn btn-cream btn-sm" type="button"></button>
@@ -1026,14 +1160,17 @@
         <p id="mode-desc" class="mode-desc"></p>
         <p class="section-label">10 הסשנים האחרונים</p>
         <div id="mode-tiles" class="tiles"></div>
-        <p class="section-label">היסטוריה</p>
-        <div id="mode-hist" class="rows"></div>
+        <details class="how more">
+          <summary>עוד פרטים: היסטוריה</summary>
+          <div id="mode-hist" class="rows"></div>
+        </details>
       </div>
     </div>
     <button id="mode-start" class="btn btn-green btn-big foot-btn" type="button"></button>
   </section>
 
-  <!-- ================= INTRO (how it works + stage goals) ================= -->
+  <!-- ================= INTRO (how it works + stage goals) =================
+       2026-10-01: goal + 3 short steps. Tip behind "עוד פרטים". Mic and driving lines are short. -->
   <section id="view-intro" class="view" hidden>
     <div class="topbar">
       <button id="intro-back" class="btn btn-cream btn-sm" type="button"></button>
@@ -1043,17 +1180,24 @@
       <div class="scroll">
       <div class="mode-head">
         <span id="intro-icon"></span>
-        <h2 id="intro-name" class="mode-name"></h2>
+        <div class="mode-head-t">
+          <h2 id="intro-name" class="mode-name"></h2>
+          <p id="intro-meta" class="intro-meta muted"></p>
+        </div>
       </div>
-      <p id="intro-meta" class="mode-desc muted"></p>
-      <h3 class="h2"><span data-icon="question"></span>ככה משחקים</h3>
-      <ol id="intro-steps" class="steps"></ol>
+      <ol id="intro-steps" class="steps compact" aria-label="ככה משחקים"></ol>
       <div id="intro-goals-wrap">
-        <h3 class="h2"><span data-icon="trophy"></span>איך משיגים כוכבים</h3>
+        <p class="sr">איך משיגים כוכבים</p><!-- 2026-10-01: visual heading dropped, the star rows explain themselves -->
         <div id="intro-goals" class="goals"></div>
       </div>
-      <div id="intro-tip" class="tip"></div>
-      <div class="privacy-line"><span data-icon="shield"></span><span>המיקרופון רק מזהה מתי אתה מדבר. שום הקלטה לא נשמרת והקול לא נשלח<!-- 2026-09-30: was "ושום מידע לא נשלח" -->. הדפדפן יבקש רשות למיקרופון בפעם הראשונה.</span></div>
+      <div class="safety">
+        <p><span aria-hidden="true">🎙️</span><span><b>הקול לא מוקלט ולא נשלח.</b> רק עוצמה, בזמן אמת.</span></p>
+        <p><span aria-hidden="true">🚗</span><span><b>בנהיגה:</b> לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</span></p>
+      </div>
+      <details class="how more">
+        <summary>עוד פרטים: טיפ</summary>
+        <div id="intro-tip" class="tip"></div>
+      </details>
       </div>
     </div>
     <button id="intro-go" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
@@ -1063,12 +1207,13 @@
   <section id="view-social" class="view" hidden>
     <div class="topbar">
       <button id="soc-back" class="btn btn-cream btn-sm" type="button"></button>
-      <span class="topbar-title on-bg">ערב אימפרו</span>
+      <span id="soc-title" class="topbar-title on-bg">ערב אימפרו</span>
     </div>
     <div id="soc-setup" class="panel has-ribbon fill">
       <span class="ribbon orange"><span data-icon="users"></span>מי משחקים?</span>
       <div class="scroll">
-        <div id="soc-modes" class="soc-modes" role="radiogroup" aria-label="בחירת משחק"></div>
+        <!-- 2026-10-01: the game is picked on the "עם חברים" tab, so the chooser is hidden here. -->
+        <div id="soc-modes" class="soc-modes" role="radiogroup" aria-label="בחירת משחק" hidden></div>
         <p id="soc-desc" class="soc-desc muted"></p>
         <div id="soc-names" class="soc-names"></div>
         <button id="soc-add" class="btn btn-cream btn-sm soc-add" type="button"></button>
@@ -1141,7 +1286,8 @@
     <div class="hint on-bg">"יציאה" (או Esc) עוצרים את השלב בלי לשמור אותו.</div>
   </section>
 
-  <!-- ================= SUMMARY ================= -->
+  <!-- ================= SUMMARY =================
+       2026-10-01: result, stars, one tip, "איך היה?" thumbs. Goals, donut, tiles and rounds behind "עוד פרטים". -->
   <section id="view-summary" class="view" hidden>
     <div class="topbar">
       <button id="sum-back" class="btn btn-cream btn-sm" type="button" hidden></button>
@@ -1153,25 +1299,32 @@
       <p id="sum-subline" class="sum-sub muted"></p>
       <div class="scroll">
         <div id="sum-unlock" class="unlock" hidden></div>
-        <div id="sum-goals-wrap" hidden>
-          <div id="sum-goals" class="goals"></div>
-        </div>
         <div id="sum-social" class="soc-rank" hidden></div><!-- 2026-10-01: social ranking -->
-        <div id="sum-donut-wrap" class="donut-wrap">
-          <div id="sum-donut"></div>
-          <div class="donut-center">
-            <div id="sum-val" class="donut-val num"></div>
-            <div class="donut-l">חציון זמן תגובה</div>
-            <div id="sum-sub" class="donut-s num"></div>
-          </div>
-        </div>
         <div id="sum-banner"></div>
-        <div id="sum-tiles" class="tiles"></div>
-        <details class="how" style="margin-top:12px">
-          <summary>פירוט סבבים</summary>
+        <!-- 2026-10-01: quick feedback. Opens the feedback form with category and rating preset. -->
+        <div id="sum-rate" class="sum-rate">
+          <span id="sum-rate-l">איך היה?</span>
+          <button class="thumb" type="button" data-thumb="up" aria-label="אהבתי, כתיבת משוב">👍</button>
+          <button class="thumb" type="button" data-thumb="down" aria-label="לא אהבתי, כתיבת משוב">👎</button>
+        </div>
+        <button id="sum-feedback" class="link-btn" type="button" hidden>משוב</button><!-- 2026-10-01: social results only -->
+        <details id="sum-more" class="how more">
+          <summary>עוד פרטים</summary>
+          <div id="sum-goals-wrap" hidden>
+            <div id="sum-goals" class="goals"></div>
+          </div>
+          <div id="sum-donut-wrap" class="donut-wrap">
+            <div id="sum-donut"></div>
+            <div class="donut-center">
+              <div id="sum-val" class="donut-val num"></div>
+              <div class="donut-l">חציון זמן תגובה</div>
+              <div id="sum-sub" class="donut-s num"></div>
+            </div>
+          </div>
+          <div id="sum-tiles" class="tiles"></div>
+          <p class="section-label">פירוט סבבים</p>
           <div id="sum-rounds" class="rounds"></div>
         </details>
-        <button id="sum-feedback" class="link-btn" type="button">יש לך רעיון? ספר לנו</button><!-- 2026-09-30 -->
       </div>
     </div>
     <button id="btn-next" class="btn btn-green btn-big foot-btn" type="button" data-mic-start></button>
@@ -1183,29 +1336,29 @@
 
 </div>
 
-<!-- ================= SETTINGS DIALOG ================= -->
+<!-- ================= SETTINGS DIALOG =================
+     2026-10-01: compact. Buttons in a 2x2 grid, "פרטיות בקצרה" card instead of the long privacy text. -->
 <dialog id="dlg-settings" class="panel dlg" aria-labelledby="dlg-title">
   <span id="dlg-title" class="ribbon">הגדרות</span>
   <button id="dlg-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
   <div class="dlg-scroll">
     <div class="set-row"><b><span data-icon="bell"></span>צלילים</b><button id="tgl-sfx" class="tgl" type="button" role="switch" aria-checked="true" aria-label="צלילים" data-sound-toggle><span></span><i></i></button></div>
     <div class="set-row"><b><span data-icon="music"></span>מוזיקה</b><button id="tgl-music" class="tgl" type="button" role="switch" aria-checked="true" aria-label="מוזיקה" data-sound-toggle><span></span><i></i></button></div>
-    <div class="set-row"><b><span data-icon="speaker"></span>הקראה בקול</b><button id="tgl-tts" class="tgl" type="button" role="switch" aria-checked="true" aria-label="הקראה בקול" aria-describedby="tts-note"><span></span><i></i></button></div>
+    <div class="set-row"><b><span data-icon="speaker"></span>הקראה בקול</b><button id="tgl-tts" class="tgl" type="button" role="switch" aria-checked="true" aria-label="הקראה בקול" aria-describedby="tts-note tts-drive"><span></span><i></i></button></div>
     <p id="tts-note" class="set-note" hidden>אין בדפדפן הזה קול בעברית, לכן אי אפשר להפעיל הקראה.</p>
+    <p id="tts-drive" class="set-note drive">🚗 בנהיגה: לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</p>
     <!-- 2026-09-30: online name. Shown only, no rename. -->
     <div class="set-row"><b><span data-icon="trophy"></span>שם בטבלה</b><span id="set-player" class="set-player"></span></div>
-    <div class="btn-stack">
-      <button id="set-help" class="btn btn-cream btn-block" type="button"><span data-icon="question"></span>איך משחקים</button>
-      <button id="set-feedback" class="btn btn-cream btn-block" type="button"><span data-icon="chat"></span>שלח משוב</button><!-- 2026-09-30 -->
-      <button id="set-export" class="btn btn-cream btn-block" type="button"><span data-icon="download"></span>ייצוא היסטוריה</button>
-      <button id="set-reset" class="btn btn-red btn-block" type="button"><span data-icon="trash"></span>מחיקת היסטוריה והתקדמות</button>
+    <!-- 2026-10-01: device id for deletion requests. Shows 8 chars, copies the full id. -->
+    <div class="set-row set-install"><span>מזהה מכשיר: <b id="set-install" class="num" dir="ltr"></b></span><button id="set-install-copy" class="btn btn-cream btn-sm" type="button">העתקה</button></div>
+    <div class="set-grid">
+      <button id="set-help" class="btn btn-cream btn-sm" type="button"><span data-icon="question"></span>איך משחקים</button>
+      <button id="set-feedback" class="btn btn-cream btn-sm" type="button"><span data-icon="chat"></span>שליחת משוב</button><!-- 2026-09-30 -->
+      <button id="set-export" class="btn btn-cream btn-sm" type="button"><span data-icon="download"></span>ייצוא היסטוריה</button>
+      <button id="set-reset" class="btn btn-red btn-sm" type="button"><span data-icon="trash"></span>מחיקת היסטוריה</button>
     </div>
-    <div class="privacy">
-      <h2 class="h2"><span data-icon="shield"></span>פרטיות</h2>
-      <!-- 2026-09-30: was "שום הקלטה לא נשמרת ושום מידע לא נשלח". Not true once a player picks a name. -->
-      <!-- 2026-09-30: was "... התוצאות שלך (מספרים) נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה. אם בחרת שם, בשרת נשמרים רק: השם, כוכבים, שלב, מספר סשנים, ימים ברצף וזמן תגובה ממוצע." -->
-      <p>שום הקלטה לא נשמרת והקול לא נשלח. המיקרופון משמש רק בזמן אמת, כדי לזהות מתי התחלת ומתי הפסקת לדבר. התוצאות שלך נשמרות בדפדפן שלך, ואפשר למחוק אותן בכפתור למעלה. לשרת נשלחים נתוני שימוש אנונימיים: סוג מכשיר, מערכת הפעלה, דפדפן, גודל מסך, שפה ותוצאות הסשנים (מספרים). אם בחרת שם, נשלחים גם השם והניקוד. משוב נשלח רק אם כתבת אותו. לא נשלחים קול, מיקום או אנשי קשר.</p>
-    </div>
+    <!-- 2026-10-01: was a long privacy paragraph. Linked data is no longer called anonymous. -->
+    <div class="pv-card" data-pv-card></div>
     <div class="dlg-status" aria-live="polite">
       <span id="storage-status"></span>
       <span id="calib-status"></span>
@@ -1218,24 +1371,26 @@
   <span id="fb-title" class="ribbon">משוב</span>
   <button id="fb-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
   <div class="dlg-scroll">
-    <p class="fb-intro">מצאת באג? יש לך רעיון? נשמח לשמוע. כל הודעה נקראת.</p>
+    <p class="fb-intro">באג, רעיון, ביקורת או מחמאה? כל הודעה נקראת.</p>
     <span id="fb-cat-lbl" class="fb-lbl">על מה?</span>
     <div id="fb-cats" class="fb-cats" role="radiogroup" aria-labelledby="fb-cat-lbl">
       <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="bug">באג</button>
       <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="idea">רעיון</button>
       <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="praise">מחמאה</button>
       <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="other">אחר</button>
+      <!-- 2026-10-01: privacy / deletion requests (server category 'privacy') -->
+      <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="privacy">פרטיות / בקשת מחיקה</button>
     </div>
-    <span id="fb-rate-lbl" class="fb-lbl">כמה אתה נהנה? <small>לא חובה</small></span>
+    <span id="fb-rate-lbl" class="fb-lbl">כמה נהנים מהמשחק? <small>לא חובה</small></span>
     <div id="fb-rate" class="fb-rate" role="group" aria-labelledby="fb-rate-lbl"></div>
-    <label for="fb-text" class="fb-lbl">ההודעה שלך</label>
+    <label for="fb-text" class="fb-lbl">ההודעה</label>
     <textarea id="fb-text" class="fb-text" rows="4" maxlength="500" dir="auto" aria-describedby="fb-count-row fb-msg"></textarea>
     <div id="fb-count-row" class="fb-count"><span>לפחות 5 תווים</span><span id="fb-count" class="num">0/500</span></div>
     <!-- anti-bot honeypot: people never see or fill this -->
     <input id="fb-hp" class="fb-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p id="fb-msg" class="fb-msg" aria-live="polite"></p>
-    <button id="fb-send" class="btn btn-green btn-block" type="button" disabled><span data-icon="send"></span>שלח</button>
-    <div class="privacy-line fb-privacy"><span data-icon="shield"></span><span>נשלחים הטקסט, הסוג, הדירוג, המסך הנוכחי וסוג המכשיר. אל תכתוב פרטים אישיים.</span></div>
+    <button id="fb-send" class="btn btn-green btn-block" type="button" disabled><span data-icon="send"></span>שליחה</button>
+    <div class="privacy-line fb-privacy"><span data-icon="shield"></span><span>נשלחים הטקסט, הסוג, הדירוג, המסך הנוכחי, סוג המכשיר ומזהה המכשיר. בלי פרטים אישיים, בבקשה.</span></div>
   </div>
 </dialog>
 <!-- ================= CHAMPIONS DIALOG (2026-10-01: was the #panel-champs home tab) =================
@@ -1247,7 +1402,87 @@
   <div id="lb-me" class="lb-me"></div>
   <p id="lb-note" class="lb-note"></p>
   <div class="scroll"><ol id="lb-list" class="lb-list" aria-live="polite"></ol></div>
+  <button id="champs-feedback" class="link-btn champs-fb" type="button">משוב</button><!-- 2026-10-01 -->
 </dialog>
+
+<!-- ================= HOW IT WORKS (2026-10-01) =================
+     The long welcome text and the "איך המדידה עובדת" notes, now in one sheet. -->
+<dialog id="dlg-how" class="panel dlg" aria-labelledby="how-title">
+  <span id="how-title" class="ribbon">איך זה עובד?</span>
+  <button id="how-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
+  <div class="dlg-scroll how-sheet">
+    <h3 class="h2"><span data-icon="target"></span>המטרה</h3>
+    <p>לאמן דיבור ספונטני: לענות מהר, בלי לסנן ובלי להיתקע. מקבלים מילה, משפט או נושא, ועונים בקול.</p>
+    <h3 class="h2"><span data-icon="clock"></span>מה נמדד</h3>
+    <div class="w-grid">
+      <div class="w-item"><b>זמן תגובה</b><span>כמה מהר מתחילים לדבר</span></div>
+      <div class="w-item"><b>אחוז מענה</b><span>בכמה סבבים הייתה תשובה</span></div>
+      <div class="w-item"><b>היסוסים</b><span>הפסקות ארוכות באמצע</span></div>
+      <div class="w-item"><b>רצף דיבור</b><span>כמה מהזמן היה דיבור</span></div>
+    </div>
+    <h3 class="h2"><span data-icon="bolt"></span>מה משתפר</h3>
+    <ul class="w-list">
+      <li>תגובה מהירה יותר</li><li>דיבור שוטף</li><li>פחות היסוסים</li><li>ביטחון באלתור</li><li>פגישות ושיחות</li>
+    </ul>
+    <h3 class="h2"><span data-icon="wave"></span>איך המדידה עובדת</h3>
+    <p>כל סשן מתחיל ב-1.5 שניות של שקט, לכיול רעש הרקע. סף הדיבור מחושב מהרעש שנמדד.</p>
+    <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דברו עכשיו!" מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול מזוהה.</p>
+    <p>סבב בלי תגובה נספר כהחמצה. היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. שקט בסוף תשובה לא נספר.</p>
+    <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. המוזיקה נעצרת לפני הכיול ולא מתנגנת בזמן שהמיקרופון מקשיב.</p>
+    <p>הקראה בקול (בהגדרות): בזמן ההקראה המיקרופון לא נמדד, וזמן התגובה נספר רק אחרי שההקראה נגמרה.</p>
+    <p class="drive-note"><span aria-hidden="true">🚗</span><span><b>בנהיגה:</b> לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</span></p>
+    <button class="btn btn-cream btn-block btn-sm" type="button" data-open-privacy><span data-icon="shield"></span>פרטיות בקצרה</button>
+  </div>
+</dialog>
+
+<!-- ================= PRIVACY (2026-10-01) =================
+     Short card (4 points, same text as in settings) + the full sheet behind "עוד פרטים". -->
+<dialog id="dlg-privacy" class="panel dlg" aria-labelledby="priv-title">
+  <span id="priv-title" class="ribbon">פרטיות</span>
+  <button id="priv-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
+  <div class="dlg-scroll">
+    <div class="pv-card" data-pv-card data-pv-nomore></div>
+    <details id="priv-more" class="how more pv-full">
+      <summary>עוד פרטים</summary>
+      <h3 class="pv-h">מה נשמר בדפדפן</h3>
+      <p>היסטוריית הסשנים, כוכבים והתקדמות, הגדרות, מזהה המכשיר והשם שנבחר. אפשר למחוק את ההיסטוריה וההתקדמות בהגדרות.</p>
+      <h3 class="pv-h">מה נשלח לשרת</h3>
+      <ul>
+        <li>מזהה מכשיר אקראי (לא קשור לטלפון עצמו).</li>
+        <li>סוג מכשיר, מערכת הפעלה, דפדפן, גודל מסך ושפה.</li>
+        <li>תוצאות סשנים, מספרים בלבד: מהירות, היסוסים, כוכבים, שלב.</li>
+        <li>השם שבוחרים, וסיכום הניקוד לטבלת האלופים.</li>
+        <li>משוב, רק אם כותבים אותו. דיווח טכני על תקלות בדף.</li>
+        <li>כתובת ה-IP מגיעה לשרת עם כל בקשה.</li>
+      </ul>
+      <h3 class="pv-h">מה לא נשלח</h3>
+      <p>קול, הקלטות, מיקום ואנשי קשר. המיקרופון מודד רק עוצמה, בזמן אמת, בתוך הדפדפן.</p>
+      <h3 class="pv-h">מי מעבד את המידע</h3>
+      <ul>
+        <li><b>Supabase</b>: השרת ומסד הנתונים, באיחוד האירופי (פרנקפורט).</li>
+        <li><b>Cloudflare Pages</b>: אחסון האתר.</li>
+        <li><b>GitHub Pages</b>: הכתובת הקודמת של האתר, מעבירה לכתובת החדשה.</li>
+        <li><b>Google Fonts</b>: הגופנים. Google מקבלת את כתובת ה-IP כשהגופנים נטענים.</li>
+      </ul>
+      <h3 class="pv-h">כמה זמן נשמר</h3>
+      <p>נשמר עד שתבקשו מחיקה; מדיניות שמירה קצובה בדרך.</p>
+      <h3 class="pv-h">גיל</h3>
+      <p>מיועד לגיל 13 ומעלה.</p>
+      <h3 class="pv-h">מחיקה ויצירת קשר</h3>
+      <p>דרך המשוב, בקטגוריה "פרטיות", עם מזהה המכשיר מההגדרות.</p>
+      <button id="priv-fb" class="btn btn-cream btn-block btn-sm" type="button"><span data-icon="chat"></span>משוב בנושא פרטיות</button>
+    </details>
+  </div>
+</dialog>
+
+<!-- 2026-10-01: feedback nudge after the 3rd and the 10th finished session. Not modal, never in a session. -->
+<div id="fb-nudge" class="nudge" role="region" aria-labelledby="nudge-t" hidden>
+  <p id="nudge-t"><b>יש לכם רעיון או ביקורת?</b> 30 שניות</p>
+  <div class="nudge-row">
+    <button id="nudge-go" class="btn btn-green btn-sm" type="button">כתיבת משוב</button>
+    <button id="nudge-no" class="btn btn-cream btn-sm" type="button">לא עכשיו</button>
+  </div>
+</div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
 <!-- ================= OWNER PANEL (2026-09-30) =================
@@ -1288,6 +1523,9 @@ const CONFIG = {
   storageKey: 'quickflow_store',
   legacyKey: 'quickflow_v1_store',
   schemaVersion: 2,
+  maxSessions: 2000, // 2026-10-01: local history cap, oldest records dropped first
+  // 2026-10-01: client error reports (qf_client_error). Fire and forget, never throws.
+  errors: { enabled: true, maxPerLoad: 5, maxMsg: 300, maxSource: 200 },
   fftSize: 1024,
   vad: {
     attackMs: 60,        // continuous time above ON threshold to confirm speech start
@@ -1312,7 +1550,23 @@ const CONFIG = {
     adaptBlend: 0.5,     // new threshold = old * (1 - blend) + estimate * blend
     // 2026-09-30: was the median. A test with speech during reading lifted the threshold
     // to 0.43. A low percentile reads the gaps between words, so talking does not lift it.
-    adaptPercentile: 0.2
+    adaptPercentile: 0.2,
+    // 2026-10-01: time-based adapt window. adaptMinSamples / adaptMaxSamples assumed 60 fps
+    // (30 fps never adapted, 120 Hz halved the window). They stay as a minimum frame count only.
+    adaptMinMs: 330,     // quiet time needed before a re-estimate is trusted
+    adaptMaxMs: 2000,    // keep only the last 2 s of quiet samples
+    adaptMinCount: 5,    // and at least this many frames
+    // 2026-10-01: one adapt step may move the threshold only to 0.7x - 1.5x of the current one,
+    // and never below 0.8x the calibrated threshold (car noise pulled it down to false onsets).
+    adaptStepMin: 0.7,
+    adaptStepMax: 1.5,
+    adaptCalibFloor: 0.8,
+    // 2026-10-01: if the level is already above ON at the cue (TTS tail, early talk), the VAD
+    // arms only after this much time below OFF. Then the onset counts.
+    armQuietMs: 150,
+    // 2026-10-01: an answer faster than this is an early start (talk before the cue). It counts
+    // as a missed round with r.early = true: out of medians, stars and the board average.
+    earlyMs: 250
   },
   hesitationMs: 1200,
   // 2026-09-30: operator asked for a little more reading time. Added to every
@@ -1322,7 +1576,8 @@ const CONFIG = {
   // 2026-09-30: read prompts aloud (for use while driving). Mic input is ignored while it speaks.
   tts: {
     rate: 1.0,             // speech rate for the Hebrew voice
-    guardMs: 200,          // extra quiet time after the voice ends, before the mic counts again
+    // 2026-10-01: was 200. The TTS tail (and Bluetooth delay of 150-300 ms) counted as an instant answer.
+    guardMs: 450,          // extra quiet time after the voice ends, before the mic counts again
     safetyBaseMs: 1500,    // if onend never fires: give up after base + length * perChar
     safetyPerCharMs: 90,
     safetyMaxMs: 8000,
@@ -1332,7 +1587,8 @@ const CONFIG = {
   sparkPoints: 20,
   // 2026-09-30: build tag sent with usage data and feedback. Bump on every release.
   // 2026-10-01: was '2026-09-30.1'. Social track (ערב אימפרו).
-  appVersion: '2026-10-01.1',
+  // 2026-10-01: was '2026-10-01.1'. Security fixes, error reports, speech detection safety.
+  appVersion: '2026-10-01.3', // 2026-10-01: UX pass + neutral cue
   // 2026-09-30: anonymous usage data + feedback form. Same server as `online`.
   // Fire-and-forget: every call may fail and the game never waits for it.
   telemetry: {
@@ -1358,7 +1614,7 @@ const CONFIG = {
     ranges: [7, 30, 90],       // chart range buttons (server allows 7-365)
     chartHeight: 150,
     timeZone: 'Asia/Jerusalem',
-    categories: { bug: 'באג', idea: 'רעיון', praise: 'מחמאה', other: 'אחר' }
+    categories: { bug: 'באג', idea: 'רעיון', praise: 'מחמאה', other: 'אחר', privacy: 'פרטיות' } // 2026-10-01: + privacy
   },
   // 2026-09-30: online name + champions board (Supabase project "quickflow").
   // The publishable key is public by design. The server checks the secret on every write.
@@ -1384,7 +1640,7 @@ const CONFIG = {
   modes: {
     word_association: {
       label: "אסוציאציות",
-      desc: "מופיעה מילה. אמור בקול את המילה הראשונה שעולה לך, תוך 3 שניות. אין תשובה לא נכונה.",
+      desc: "מופיעה מילה. אומרים בקול את המילה הראשונה שעולה, תוך 3 שניות. אין תשובה לא נכונה.", // 2026-10-01: neutral wording
       short: "מילה אחת, תגובה מהירה",
       readLabel: "קרא",
       lead: "המילה:",
@@ -1399,7 +1655,7 @@ const CONFIG = {
     },
     yes_and: {
       label: "כן, ו...",
-      desc: "מופיע משפט פתיחה. קרא אותו בזמן הספירה לאחור. כשמופיע \"דבר עכשיו!\" המשך אותו בקול: התחל ב\"כן, ו...\" והוסף רעיון משלך, בלי לסנן.",
+      desc: "מופיע משפט פתיחה. קוראים אותו בזמן הספירה לאחור. כשמופיע \"דברו עכשיו!\" ממשיכים אותו בקול: מתחילים ב\"כן, ו...\" ומוסיפים רעיון, בלי לסנן.", // 2026-10-01: neutral wording
       short: "ממשיכים משפט ומוסיפים רעיון",
       readLabel: "קרא את המשפט",
       lead: "משפט הפתיחה:",
@@ -1414,7 +1670,7 @@ const CONFIG = {
     },
     thirty_sec_rant: {
       label: "דבר על זה",
-      desc: "מקבלים נושא ו-3 שניות לחשוב. כשמופיע \"דבר עכשיו!\" מדברים עליו 30 שניות ברצף, בלי לעצור.",
+      desc: "מקבלים נושא ו-3 שניות לחשוב. כשמופיע \"דברו עכשיו!\" מדברים עליו 30 שניות ברצף, בלי לעצור.",
       short: "30 שניות ברצף על נושא",
       readLabel: "קרא את הנושא",
       lead: "הנושא:",
@@ -1430,7 +1686,7 @@ const CONFIG = {
     // 2026-09-30: new mode. Like the rant, plus random "change direction" signals.
     new_choice: {
       label: "שנה כיוון!",
-      desc: "מקבלים נושא ומדברים עליו ברצף. מדי פעם מופיע \"שנה כיוון!\": עבור מיד לרעיון חדש, בלי לעצור.",
+      desc: "מקבלים נושא ומדברים עליו ברצף. מדי פעם מופיע \"שנה כיוון!\": עוברים מיד לרעיון חדש, בלי לעצור." /* 2026-10-01: neutral */,
       short: "מדברים ברצף ומחליפים כיוון",
       readLabel: "קרא את הנושא",
       lead: "הנושא:",
@@ -1451,7 +1707,7 @@ const CONFIG = {
     // 2026-09-30: new mode. One session = one story, one round per fixed beat.
     story_spine: {
       label: "שלד סיפור",
-      desc: "מקבלים גיבור לסיפור ומספרים אותו בשישה קטעים קבועים, מ\"פעם היה...\" ועד \"עד שלבסוף...\". כל קטע מתחיל ב\"דבר עכשיו!\" ונגמר כשאתה שותק.",
+      desc: "מקבלים גיבור לסיפור ומספרים אותו בשישה קטעים קבועים, מ\"פעם היה...\" ועד \"עד שלבסוף...\". כל קטע מתחיל ב\"דברו עכשיו!\" ונגמר כששותקים." /* 2026-10-01: neutral */,
       short: "סיפור בשישה קטעים קבועים",
       readLabel: "קרא את הגיבור",
       lead: "הסיפור:",
@@ -2254,6 +2510,9 @@ function buildSessionRecord(mode, cfg, rounds, startedAtWall, durationMs, thresh
     totalSessionDurationMs: Math.round(durationMs),
     threshold: Number(threshold.toFixed(4))
   };
+  // 2026-10-01: early starts (talk before the cue) are in missedRounds; this counts them.
+  const early = rounds.filter(r => r.early).length;
+  if (early) rec.earlyRounds = early;
   // 2026-09-30: extra fields, only for the new_choice mode. Old code ignores unknown fields.
   if (cfg.switchEveryMs) {
     const sw = [].concat(...rounds.map(r => Array.isArray(r.switches) ? r.switches : []));
@@ -2278,21 +2537,62 @@ const Storage = {
 
   isNumOrNull(v) { return v === null || (typeof v === 'number' && isFinite(v)); },
 
+  // 2026-10-01: strict type checks on EVERY field a renderer reads. A crafted import link could
+  // store strings where numbers belong (stored XSS via innerHTML). Unknown extra fields are dropped
+  // by cleanRecord. Was: only sessionId, timestamp, gameMode, totalRounds, avg, hesitations and social.
+  isNum(v) { return typeof v === 'number' && isFinite(v); },
+  optNum(v) { return v === undefined || this.isNumOrNull(v); },
+  optStr(v, max) { return v === undefined || v === null || (typeof v === 'string' && v.length <= max); },
+  optBool(v) { return v === undefined || typeof v === 'boolean'; },
+  numFields: ['totalRounds', 'answeredRounds', 'missedRounds', 'avgLatencyMs', 'medianLatencyMs', 'hesitationsCount',
+    'totalSpeakingDurationMs', 'speakingWindowMs', 'totalSessionDurationMs', 'threshold', 'switchCount',
+    'avgSwitchLatencyMs', 'players', 'sceneLevel', 'earlyRounds'],
+  validPlayer(p) {
+    return !!p && typeof p === 'object' && !Array.isArray(p)
+      && typeof p.name === 'string' && p.name.length <= 16
+      && typeof p.score === 'number' && isFinite(p.score)
+      && ['turns', 'answered', 'medianLatencyMs', 'hesitations', 'rank'].every(k => p[k] === undefined || this.isNumOrNull(p[k]));
+  },
+
   validRecord(r) {
-    return r && typeof r === 'object'
-      && typeof r.sessionId === 'string'
-      && typeof r.timestamp === 'number'
+    if (!r || typeof r !== 'object' || Array.isArray(r)) return false;
+    return typeof r.sessionId === 'string' && r.sessionId.length <= 80
+      && this.isNum(r.timestamp)
       && Object.prototype.hasOwnProperty.call(CONFIG.modes, r.gameMode)
-      && typeof r.totalRounds === 'number'
+      && this.isNum(r.totalRounds) && r.totalRounds >= 0 && r.totalRounds <= 1000
       && this.isNumOrNull(r.avgLatencyMs)
       && this.isNumOrNull(r.hesitationsCount)
-      // 2026-09-30: optional new_choice field. Absent on every older record, so they still pass.
-      && (r.avgSwitchLatencyMs === undefined || this.isNumOrNull(r.avgSwitchLatencyMs))
-      // 2026-10-01: optional social fields. Absent on every older record, so they still pass.
-      && (r.players === undefined || (typeof r.players === 'number' && isFinite(r.players)))
-      && (r.winner === undefined || r.winner === null || typeof r.winner === 'string')
-      && (r.perPlayer === undefined || (Array.isArray(r.perPlayer) && r.perPlayer.every(p =>
-        p && typeof p === 'object' && typeof p.name === 'string' && typeof p.score === 'number' && isFinite(p.score))));
+      && this.numFields.every(k => this.optNum(r[k]))
+      && this.optBool(r.legacy) && this.optBool(r.tie)
+      && this.optStr(r.seed, 200) && this.optStr(r.situation, 300) && this.optStr(r.sceneId, 60)
+      // 2026-10-01: winner = up to 4 names joined with ", "
+      && this.optStr(r.winner, 80)
+      && (r.perPlayer === undefined || (Array.isArray(r.perPlayer) && r.perPlayer.length <= 8 && r.perPlayer.every(p => this.validPlayer(p))));
+  },
+
+  // 2026-10-01: keep only known fields, so nothing unchecked reaches a renderer.
+  recordKeys: ['sessionId', 'timestamp', 'gameMode', 'totalRounds', 'answeredRounds', 'missedRounds', 'avgLatencyMs',
+    'medianLatencyMs', 'hesitationsCount', 'totalSpeakingDurationMs', 'speakingWindowMs', 'totalSessionDurationMs',
+    'threshold', 'switchCount', 'avgSwitchLatencyMs', 'seed', 'legacy', 'players', 'winner', 'tie', 'perPlayer',
+    'situation', 'sceneId', 'sceneLevel', 'earlyRounds'],
+  cleanRecord(r) {
+    const o = {};
+    this.recordKeys.forEach(k => { if (r[k] !== undefined) o[k] = r[k]; });
+    if (o.perPlayer) o.perPlayer = o.perPlayer.map(p => {
+      const q = {};
+      ['name', 'turns', 'answered', 'medianLatencyMs', 'hesitations', 'score', 'rank'].forEach(k => { if (p[k] !== undefined) q[k] = p[k]; });
+      return q;
+    });
+    return o;
+  },
+  // 2026-10-01: calibration is shown with toFixed: numbers only, else dropped.
+  validCalibration(c) {
+    return c && typeof c === 'object' && this.isNum(c.threshold) && this.isNum(c.noiseFloor) ? c : null;
+  },
+  // 2026-10-01: cap the local history (oldest dropped first).
+  cap(sessions) {
+    const max = CONFIG.maxSessions;
+    return sessions.length > max ? sessions.slice(sessions.length - max) : sessions;
   },
 
   migrate(data) {
@@ -2313,10 +2613,14 @@ const Storage = {
     }
     if (data.version !== CONFIG.schemaVersion) throw new Error('unknown version ' + data.version);
     const before = data.sessions.length;
-    data.sessions = data.sessions.filter(r => this.validRecord(r));
+    data.sessions = data.sessions.filter(r => this.validRecord(r)).map(r => this.cleanRecord(r)); // 2026-10-01: + cleanRecord
     const dropped = before - data.sessions.length;
+    data.sessions = this.cap(data.sessions); // 2026-10-01
+    data.calibration = this.validCalibration(data.calibration); // 2026-10-01
     if (dropped) this.message = 'נמחקו ' + dropped + ' רשומות לא תקינות';
-    return data;
+    // 2026-10-01: only the known top-level fields, typed. Was: return data.
+    return { version: data.version, lastUpdated: this.isNum(data.lastUpdated) ? data.lastUpdated : Date.now(),
+      calibration: data.calibration, sessions: data.sessions };
   },
 
   load() {
@@ -2368,7 +2672,8 @@ const Storage = {
     }
   },
 
-  appendSession(rec) { this.store.sessions.push(rec); this.save(); },
+  // 2026-10-01: + cap at CONFIG.maxSessions. Was: push only (uncapped).
+  appendSession(rec) { this.store.sessions.push(rec); this.store.sessions = this.cap(this.store.sessions); this.save(); },
   setCalibration(c) { this.store.calibration = c; this.save(); },
   clearSessions() { this.store.sessions = []; this.save(); }
 };
@@ -2472,7 +2777,8 @@ const Icons = {
   music: svgI('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'),
   musicOff: svgI('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M3 3l18 18"/>'),
   bell: svgI('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>'),
-  gear: svgI('<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>'),
+  // 2026-10-01: a real cog (ring + 8 thick teeth). Was a sun-like circle with thin rays.
+  gear: svgI('<circle cx="12" cy="12" r="6.2"/><circle cx="12" cy="12" r="2.3"/><path d="M12 1.6v4.2M12 18.2v4.2M1.6 12h4.2M18.2 12h4.2M4.6 4.6l3 3M16.4 16.4l3 3M4.6 19.4l3-3M16.4 7.6l3-3" stroke-width="3.6" stroke-linecap="butt"/>'),
   close: svgI('<path d="M6 6l12 12M18 6L6 18"/>', ' stroke-width="3.2"'),
   lock: svgI('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
   shield: svgI('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>'),
@@ -2535,43 +2841,43 @@ const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
  * ============================================================ */
 const STAGES = [
   { id: 1, mode: 'word_association', name: 'חימום', tier: 'easy', rounds: 6, responseWindowMs: 3500, min: 4, t2: 1800, t3: 1300,
-    tip: 'אמור את המילה הראשונה שעולה, גם אם היא מוזרה. אין טעויות.' },
+    tip: 'אומרים את המילה הראשונה שעולה, גם אם היא מוזרה. אין טעויות.' },
   { id: 2, mode: 'yes_and', name: 'כן, ו... ראשון', tier: 'easy', rounds: 3, responseWindowMs: 6000, min: 2, t2: 2500, t3: 1800,
-    tip: 'התחל ב"כן, ו..." ואז הוסף פרט אחד בלבד. זה מספיק.' },
+    tip: 'מתחילים ב"כן, ו..." ומוסיפים פרט אחד בלבד. זה מספיק.' },
   { id: 3, mode: 'word_association', name: 'אסוציאציות בקצב', tier: 'easy', rounds: 8, responseWindowMs: 3000, min: 6, t2: 1500, t3: 1100,
-    tip: 'אל תחפש מילה חכמה. הראשונה שעולה היא הנכונה.' },
+    tip: 'לא לחפש מילה חכמה. הראשונה שעולה היא הנכונה.' },
   { id: 4, mode: 'thirty_sec_rant', name: 'דבר 20 שניות', rounds: 1, readMs: 4000, responseWindowMs: 6000, speakMs: 20000, t2: 3000, maxHes: 2,
-    tip: 'נתקעת? תאר מה אתה רואה, או תן דוגמה מהחיים.' },
+    tip: 'נתקעים? מתארים מה רואים, או נותנים דוגמה מהחיים.' },
   { id: 5, mode: 'yes_and', name: 'כן, ו... בקצב', tier: 'all', rounds: 5, responseWindowMs: 5000, min: 3, t2: 2000, t3: 1500,
-    tip: 'אל תתכנן את כל התשובה. התחל לדבר, והרעיון יגיע תוך כדי.' },
+    tip: 'לא לתכנן את כל התשובה. מתחילים לדבר, והרעיון מגיע תוך כדי.' },
   { id: 6, mode: 'word_association', name: 'מילים מופשטות', tier: 'abstract', rounds: 8, responseWindowMs: 3000, min: 6, t2: 1600, t3: 1200,
-    tip: 'מילה מופשטת? אמור תמונה שעולה לך. למשל "חופש" ואז "ים".' },
+    tip: 'מילה מופשטת? אומרים תמונה שעולה. למשל "חופש" ואז "ים".' },
   { id: 7, mode: 'thirty_sec_rant', name: 'דבר 30 שניות', rounds: 1, readMs: 3000, responseWindowMs: 6000, speakMs: 30000, t2: 2500, maxHes: 2,
-    tip: 'בנה שלושה חלקים: דעה, דוגמה, סיכום.' },
+    tip: 'שלושה חלקים: דעה, דוגמה, סיכום.' },
   { id: 8, mode: 'yes_and', name: 'כן, ו... מהיר', tier: 'hard', rounds: 5, responseWindowMs: 4000, min: 3, t2: 1800, t3: 1300,
-    tip: 'הוסף פרט מצחיק או מפתיע. ככל שזה מוגזם יותר, קל יותר.' },
+    tip: 'מוסיפים פרט מצחיק או מפתיע. ככל שזה מוגזם יותר, קל יותר.' },
   { id: 9, mode: 'word_association', name: 'ברק', tier: 'mix', rounds: 10, responseWindowMs: 2500, min: 7, t2: 1300, t3: 1000,
-    tip: 'נשום לפני הסבב, ודבר מיד כשמופיע "דבר עכשיו!".' },
+    tip: 'נושמים לפני הסבב, ומדברים מיד כשמופיע "דברו עכשיו!".' },
   { id: 10, mode: 'thirty_sec_rant', name: 'דבר 45 שניות', rounds: 1, readMs: 3000, responseWindowMs: 5000, speakMs: 45000, t2: 2000, maxHes: 3,
-    tip: 'נגמרו הרעיונות? אמור "ועוד דבר..." ועבור לנקודה חדשה.' },
+    tip: 'נגמרו הרעיונות? אומרים "ועוד דבר..." ועוברים לנקודה חדשה.' },
   { id: 11, mode: 'yes_and', name: 'מאסטר כן, ו...', tier: 'hard', rounds: 6, responseWindowMs: 3500, min: 4, t2: 1600, t3: 1200,
-    tip: 'אחרי "כן, ו..." ענה על שאלה אחת: מי, איפה, או מה קרה אחר כך.' },
+    tip: 'אחרי "כן, ו..." עונים על שאלה אחת: מי, איפה, או מה קרה אחר כך.' },
   { id: 12, mode: 'word_association', name: 'ברק כפול', tier: 'mix', rounds: 12, responseWindowMs: 2000, min: 9, t2: 1100, t3: 900,
-    tip: 'אל תעצור לשפוט. מילה מוזרה זה בסדר, העיקר מהר.' },
+    tip: 'לא עוצרים לשפוט. מילה מוזרה זה בסדר, העיקר מהר.' },
   { id: 13, mode: 'thirty_sec_rant', name: 'דקה שלמה', rounds: 1, readMs: 2000, responseWindowMs: 4000, speakMs: 60000, t2: 1500, maxHes: 4,
-    tip: 'דבר כאילו אתה מספר לחבר. לא צריך להיות מושלם.' },
+    tip: 'מדברים כמו בשיחה עם חברים. לא צריך להיות מושלם.' },
   { id: 14, mode: 'yes_and', name: 'הגמר', tier: 'all', rounds: 8, responseWindowMs: 3000, min: 6, t2: 1500, t3: 1100,
-    tip: 'שלב אחרון! היה נועז, והוסף רעיון חדש בכל פעם.' },
+    tip: 'שלב אחרון! להעז, ולהוסיף רעיון חדש בכל פעם.' },
   // 2026-09-30: chapter 2, two new modes. Stage 15 opens with a star on 14, like every stage.
   { id: 15, mode: 'story_spine', name: 'שלד סיפור', responseWindowMs: 5000, speakMs: 12000, min: 4, t2: 2500, t3: 1800,
-    tip: 'משפט אחד לכל קטע מספיק. תמשיך מהקטע הקודם.' },
+    tip: 'משפט אחד לכל קטע מספיק. ממשיכים מהקטע הקודם.' },
   { id: 16, mode: 'new_choice', name: 'שנה כיוון', rounds: 1, readMs: 3000, responseWindowMs: 6000, speakMs: 30000, t2: 2000, maxHes: 3,
-    tip: 'ב"שנה כיוון!" אמור "או ש..." ועבור לרעיון חדש.' },
+    tip: 'ב"שנה כיוון!" אומרים "או ש..." ועוברים לרעיון חדש.' },
   { id: 17, mode: 'story_spine', name: 'סיפור בקצב', responseWindowMs: 4000, speakMs: 10000, min: 4, t2: 1800, t3: 1300,
-    tip: 'אל תתכנן את הסוף. כל קטע רק צריך לנבוע מהקודם.' },
+    tip: 'לא לתכנן את הסוף. כל קטע רק צריך לנבוע מהקודם.' },
   { id: 18, mode: 'new_choice', name: 'שנה כיוון 45', rounds: 1, readMs: 3000, responseWindowMs: 5000, speakMs: 45000,
     switchEveryMs: [5000, 8000], t2: 1500, maxHes: 3,
-    tip: 'אל תסיים את המשפט הקודם. פשוט קפוץ לכיוון החדש.' }
+    tip: 'לא מסיימים את המשפט הקודם. פשוט קופצים לכיוון החדש.' }
 ];
 
 const Stages = {
@@ -3154,43 +3460,44 @@ const Origin = {
 
 
 /* Steps shown before a stage or a free session. Numbers come from the real config. */
+// 2026-10-01: shorter, neutral steps (title + one short line). "דברו עכשיו!" is quoted: it is the on-screen cue.
 const Steps = {
   for(mode, cfg) {
-    const w = secs(cfg.responseWindowMs);
+    const now = '"דברו עכשיו!"';
     if (mode === 'word_association') return [
-      ['מופיעה מילה', 'והמשחק מתחיל להקשיב מיד.'],
-      ['דבר עכשיו!', 'אמור בקול את המילה הראשונה שעולה לך. יש ' + w + ' להתחיל.'],
-      ['שתוק כשסיימת', 'הסבב נגמר לבד, ועוברים למילה הבאה.']
+      ['מופיעה מילה', 'המשחק מקשיב מיד.'],
+      [now, 'אומרים את המילה הראשונה שעולה.'],
+      ['שותקים בסוף', 'הסבב נגמר לבד.']
     ];
-    // 2026-09-30: intro rows for the new modes
     if (mode === 'new_choice') return [
-      ['קרא את הנושא', 'יש ' + secs(Util.readMsFor(cfg, '')) + ' לחשוב, עם ספירה לאחור.'],
-      ['דבר עכשיו!', 'דבר על הנושא ' + secs(cfg.speakMs) + ' ברצף. יש ' + secs(cfg.responseWindowMs) + ' להתחיל.'],
-      ['שנה כיוון!', 'כשהמסך מהבהב, עבור מיד לרעיון חדש, בלי לעצור. נמדד כמה מהר חזרת לדבר.']
+      ['קוראים את הנושא', secs(Util.readMsFor(cfg, '')) + ' לחשוב.'],
+      [now, 'מדברים ' + secs(cfg.speakMs) + ' ברצף.'],
+      ['ב"שנה כיוון!"', 'עוברים מיד לרעיון חדש, בלי לעצור.']
     ];
     if (mode === 'story_spine') return [
-      ['קרא את הגיבור', 'יש ' + secs(cfg.firstReadMs + CONFIG.readExtraMs) + ' להכיר את הגיבור של הסיפור.'],
-      ['דבר עכשיו!', 'בכל קטע מופיעה פתיחה, כמו "פעם היה...". המשך אותה בקול. יש ' + secs(cfg.responseWindowMs) + ' להתחיל.'],
-      ['שתוק כשסיימת', 'אחרי ' + secs(cfg.endOnSilenceMs) + ' של שקט עוברים לקטע הבא. עד ' + secs(cfg.speakMs) + ' לכל קטע.']
+      ['קוראים את הגיבור', secs(cfg.firstReadMs + CONFIG.readExtraMs) + ' להכיר אותו.'],
+      [now, 'ממשיכים את הפתיחה בקול, כמו "פעם היה...".'],
+      ['שותקים בסוף', 'וממשיכים לקטע הבא.']
     ];
     if (mode === 'yes_and') return [
-      ['קרא את המשפט', 'יש כמה שניות, עם ספירה לאחור.'],
-      ['דבר עכשיו!', 'התחל ב"כן, ו..." והוסף רעיון משלך. יש ' + w + ' להתחיל.'],
-      ['שתוק כשסיימת', 'אחרי ' + secs(cfg.endOnSilenceMs) + ' של שקט הסבב נגמר. אפשר לדבר עד ' + secs(cfg.speakMs) + '.']
+      ['קוראים את המשפט', 'עם ספירה לאחור.'],
+      [now, 'מתחילים ב"כן, ו..." ומוסיפים רעיון.'],
+      ['שותקים בסוף', 'והסבב נגמר.']
     ];
     return [
-      ['קרא את הנושא', 'יש ' + secs(Util.readMsFor(cfg, '')) + ' לחשוב, עם ספירה לאחור.'],
-      ['דבר עכשיו!', 'דבר על הנושא ' + secs(cfg.speakMs) + ' ברצף. כל דעה מתאימה.'],
-      ['אל תעצור', 'שקט של ' + secs(CONFIG.hesitationMs) + ' ומעלה נספר כהיסוס. הפס מראה כמה זמן נשאר.']
+      ['קוראים את הנושא', secs(Util.readMsFor(cfg, '')) + ' לחשוב.'],
+      [now, 'מדברים ' + secs(cfg.speakMs) + ' ברצף.'],
+      ['לא עוצרים', 'שקט ארוך נספר כהיסוס.']
     ];
   }
 };
 const FREE_TIPS = {
-  word_association: 'אמור את המילה הראשונה שעולה, גם אם היא מוזרה.',
-  yes_and: 'התחל ב"כן, ו..." ואז הוסף פרט אחד. זה מספיק.',
-  thirty_sec_rant: 'נתקעת? תאר מה אתה רואה, או תן דוגמה מהחיים.',
-  new_choice: 'ב"שנה כיוון!" אמור "או ש..." ועבור לרעיון חדש.',
-  story_spine: 'משפט אחד לכל קטע מספיק. תמשיך מהקטע הקודם.'
+  // 2026-10-01: neutral wording
+  word_association: 'אומרים את המילה הראשונה שעולה, גם אם היא מוזרה.',
+  yes_and: 'מתחילים ב"כן, ו..." ומוסיפים פרט אחד. זה מספיק.',
+  thirty_sec_rant: 'נתקעים? מתארים מה רואים, או נותנים דוגמה מהחיים.',
+  new_choice: 'ב"שנה כיוון!" אומרים "או ש..." ועוברים לרעיון חדש.',
+  story_spine: 'משפט אחד לכל קטע מספיק. ממשיכים מהקטע הקודם.'
 };
 // 2026-09-30: "6 סבבים" reads wrong for story beats. Modes may set roundWords [one, many].
 const roundsText = cfg => {
@@ -3324,6 +3631,7 @@ const Online = {
       p_username: name, p_secret: secret, p_stars: s.stars, p_top_stage: s.top,
       p_sessions: s.sessions, p_avg_latency: s.avg
     });
+    if (id && typeof id === 'object' && typeof id.error === 'string') throw new Error(id.error); // 2026-10-01: {error} reply (name_blocked)
     if (typeof id !== 'string' || !id) throw new Error('bad_reply');
     this.set(this.key, JSON.stringify({ id, username: name, secret }));
     this.del(this.draftKey);
@@ -3540,6 +3848,49 @@ const Telemetry = {
  * the tab is hidden, the app is minimized or the phone is locked.
  * No permission prompt. Needs https. No-op where not supported.
  * ============================================================ */
+/* ============================================================
+ * 2026-10-01: client error reports. window 'error' and 'unhandledrejection'
+ * -> qf_client_error. Fire and forget, at most CONFIG.errors.maxPerLoad per page
+ * load, same message sent once, never throws.
+ * ============================================================ */
+const ErrorReport = {
+  sent: 0,
+  seen: new Set(),
+  init() {
+    if (typeof window === 'undefined') return;
+    window.addEventListener('error', e => {
+      try {
+        const err = e && e.error;
+        this.send((err && err.message) || (e && e.message) || 'error', (e && e.filename) || '', e && e.lineno);
+      } catch (_) { /* never throw */ }
+    });
+    window.addEventListener('unhandledrejection', e => {
+      try {
+        const r = e && e.reason;
+        const msg = r && typeof r === 'object' ? (r.message || r.name || 'rejection') : String(r);
+        this.send('unhandledrejection: ' + msg, '', null);
+      } catch (_) { /* never throw */ }
+    });
+  },
+  send(message, source, line) {
+    try {
+      const c = CONFIG.errors;
+      if (!c || !c.enabled || !Telemetry.enabled()) return;
+      const msg = String(message || '').slice(0, c.maxMsg);
+      if (!msg || this.seen.has(msg) || this.sent >= c.maxPerLoad) return;
+      this.seen.add(msg);
+      this.sent++;
+      Online.rpc('qf_client_error', {
+        p_install_id: Telemetry.installId(),
+        p_message: msg,
+        p_source: String(source || '').slice(0, c.maxSource) || null,
+        p_line: typeof line === 'number' && isFinite(line) ? Math.round(line) : null,
+        p_app_version: CONFIG.appVersion
+      }, { keepalive: true }).catch(() => { /* fire and forget */ });
+    } catch (_) { /* never throw */ }
+  }
+};
+
 const ScreenAwake = {
   sentinel: null,
   want: false,
@@ -3702,17 +4053,20 @@ const App = {
     $('mode-back').innerHTML = Icons.back + 'חזרה';
     $('intro-back').innerHTML = Icons.back + 'חזרה';
     $('btn-abort').innerHTML = Icons.back + 'יציאה';
-    $('mode-start').innerHTML = Icons.play + 'התחל';
+    $('mode-start').innerHTML = Icons.play + 'מתחילים'; // 2026-10-01: was 'התחל'
     this.initSocial(); // 2026-10-01
+    this.initSheets(); // 2026-10-01: how-it-works + privacy sheets, feedback entry points
 
-    // 2026-09-30: ask for an online name once, unless saved or skipped. Was: always go('home').
+    // 2026-10-01: first run goes straight to the stage 1 intro. The name screen comes after the
+    // first finished session (App.nameGate). Was: name screen first, then home.
     $('btn-welcome-go').addEventListener('click', () => {
       Sound.play('pop');
-      if (!Online.player() && !Online.skipped()) this.openName(); else this.go('home');
+      if (!Storage.store.sessions.length && !Progress.total()) this.openIntro({ stage: STAGES[0] });
+      else this.go('home');
     });
     $('tab-map').addEventListener('click', () => this.setTab('map'));
     $('tab-free').addEventListener('click', () => this.setTab('free'));
-    $('tab-plan').addEventListener('click', () => this.setTab('plan'));
+    $('tab-friends').addEventListener('click', () => this.setTab('friends')); // 2026-10-01: was tab-plan
     // 2026-10-01: was $('tab-champs') -> setTab('champs'). Now a header button opens a dialog.
     $('btn-champs').addEventListener('click', () => this.openChamps());
     const dlgC = $('dlg-champs');
@@ -3733,16 +4087,15 @@ const App = {
     $('name-input').addEventListener('input', () => this.onNameInput());
     $('name-input').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('name-save').disabled) { e.preventDefault(); this.saveName(); } });
     $('name-save').addEventListener('click', () => this.saveName());
-    $('name-skip').addEventListener('click', () => { Online.skip(); this.go('home'); });
+    $('name-skip').addEventListener('click', () => { Online.skip(); this.leaveName(); }); // 2026-10-01: was go('home')
     const pickStage = e => {
       const b = e.target.closest('[data-stage]');
       if (!b) return;
       const st = Stages.byId(Number(b.dataset.stage));
       if (!st) return;
-      if (!Progress.unlocked(st.id)) { this.toast('השג לפחות כוכב אחד בשלב ' + (st.id - 1) + ' כדי לפתוח את השלב הזה'); return; }
+      if (!Progress.unlocked(st.id)) { this.toast('צריך לפחות כוכב אחד בשלב ' + (st.id - 1) + ' כדי לפתוח את השלב הזה'); return; }
       this.openIntro({ stage: st });
     };
-    $('plan').addEventListener('click', pickStage);
     $('map').addEventListener('click', pickStage);
     $('next-bar').addEventListener('click', pickStage);
     $('map').addEventListener('keydown', e => {
@@ -3755,10 +4108,11 @@ const App = {
     });
     $('intro-go').addEventListener('click', () => this.begin(this.pending));
     $('btn-abort').addEventListener('click', () => this.abort());
-    $('sum-back').addEventListener('click', () => this.go('home'));
-    $('btn-next').addEventListener('click', () => this.sumActions.next && this.sumActions.next());
-    $('btn-again').addEventListener('click', () => this.sumActions.again && this.sumActions.again());
-    $('btn-to-map').addEventListener('click', () => this.go('home'));
+    // 2026-10-01: after the first finished session, any way out of the summary passes the name screen once.
+    $('sum-back').addEventListener('click', () => { if (!this.nameGate()) this.go('home'); });
+    $('btn-next').addEventListener('click', () => { if (!this.nameGate()) this.sumActions.next && this.sumActions.next(); });
+    $('btn-again').addEventListener('click', () => { if (!this.nameGate()) this.sumActions.again && this.sumActions.again(); });
+    $('btn-to-map').addEventListener('click', () => { if (!this.nameGate()) this.go('home'); });
     $('sum-feedback').addEventListener('click', () => this.openFeedback('summary')); // 2026-09-30
 
     $('btn-music').addEventListener('click', () => Sound.toggleMusic());
@@ -3769,11 +4123,20 @@ const App = {
     $('tgl-sfx').addEventListener('click', () => Sound.toggleSfx());
     $('tgl-music').addEventListener('click', () => Sound.toggleMusic());
     $('tgl-tts').addEventListener('click', () => { Speech.toggle(); this.renderSoundUi(); });
-    $('set-help').addEventListener('click', () => { dlg.close(); this.go('welcome'); });
+    $('set-help').addEventListener('click', () => this.openSheet('dlg-how')); // 2026-10-01: was go('welcome')
     $('set-export').addEventListener('click', () => this.exportData());
     $('set-reset').addEventListener('click', () => this.resetData());
     $('set-feedback').addEventListener('click', () => { dlg.close(); this.openFeedback('settings'); }); // 2026-09-30
     $('set-player').addEventListener('click', e => { if (e.target.closest('[data-pick-name]')) { dlg.close(); this.openName(); } });
+    // 2026-10-01: copy the full install id (for a deletion request in the feedback form)
+    $('set-install-copy').addEventListener('click', () => {
+      const id = Telemetry.installId();
+      const done = ok => { $('set-install-copy').textContent = ok ? 'הועתק' : 'לא הועתק'; };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(id).then(() => done(true), () => done(false));
+        else done(false);
+      } catch (e) { done(false); }
+    });
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.s) this.abort(); });
     document.addEventListener('visibilitychange', () => {
@@ -3786,7 +4149,7 @@ const App = {
     this.go('welcome');
     if (Storage.message) this.setAlert(Storage.message);
     if (!Origin.ok()) this.setAlert(Origin.msg());
-    else if (!AudioEngine.supported()) this.setAlert('הדפדפן לא תומך בגישה למיקרופון. פתח ב-Chrome מכתובת https או localhost.');
+    else if (!AudioEngine.supported()) this.setAlert('הדפדפן לא תומך בגישה למיקרופון. אפשר לפתוח ב-Chrome מכתובת https או localhost.');
     Online.resendPending(); // 2026-09-30: a session that failed to send last time (network). Silent.
     Telemetry.start(); // 2026-09-30: anonymous start ping. Silent, never blocks.
     this.initFeedback(); // 2026-09-30
@@ -3801,6 +4164,7 @@ const App = {
     if (view === 'home') this.renderHome();
     if (view === 'social') this.socialStep(this.soc.step);
     if (view === 'mode') this.renderMode();
+    if (view !== 'summary') this.hideNudge(); // 2026-10-01: never over a session or another screen
     $('btn-settings').hidden = view === 'session';
     $('btn-champs').hidden = view === 'session'; // 2026-10-01: same rule as settings
     if (view === 'session' && $('dlg-champs').open) $('dlg-champs').close(); // 2026-10-01
@@ -3815,9 +4179,10 @@ const App = {
 
   setTab(tab) {
     // 2026-10-01: champions is no longer a tab. Any unknown or old value (e.g. 'champs') falls back to 'map'.
-    if (['map', 'plan', 'free'].indexOf(tab) < 0) tab = 'map';
+    // 2026-10-01: tabs map | free ("תרגול") | friends ("עם חברים"). Old 'plan' falls back to 'map'.
+    if (['map', 'free', 'friends'].indexOf(tab) < 0) tab = 'map';
     this.homeTab = tab;
-    ['map', 'plan', 'free'].forEach(t => { // 2026-10-01: was + 'champs'
+    ['map', 'free', 'friends'].forEach(t => { // 2026-10-01: was 'map', 'plan', 'free' (+ 'champs' before)
       $('tab-' + t).setAttribute('aria-selected', String(t === tab));
       $('panel-' + t).hidden = t !== tab;
     });
@@ -3902,35 +4267,24 @@ const App = {
   renderHome() {
     const sessions = Storage.store.sessions;
     const streak = Dates.streak(sessions);
-    const passed = STAGES.filter(st => Progress.stars(st.id) >= 1).length;
+    // 2026-10-01: 2 small chips on the map board (stars, streak). Was 3 pills above the tabs (+ stages passed).
     $('home-pills').innerHTML =
       '<span class="pill">' + starSvg(true) + '<span class="sr">כוכבים: </span><span class="num">' + Progress.total() + '/' + (STAGES.length * 3) + '</span></span>' +
-      '<span class="pill">' + Icons.trophy + '<span class="num">' + passed + '/' + STAGES.length + '</span> שלבים</span>' +
-      '<span class="pill">' + Icons.flame + (streak === 1 ? 'יום ראשון ברצף' : '<span class="num">' + streak + '</span> ימים ברצף') + '</span>';
+      (streak ? '<span class="pill">' + Icons.flame + '<span class="sr">ימים ברצף: </span><span class="num">' + streak + '</span></span>' : '');
     this.renderPlan();
     this.renderMap();
     this.renderFree();
+    this.renderFriends(); // 2026-10-01
     this.setTab(this.homeTab);
   },
 
+  // 2026-10-01: the "תוכנית" tab is gone. Its first item is the "הצעה להיום" bar under the map.
   renderPlan() {
-    const plan = Progress.plan();
-    const nx = plan[0];
-    $('next-bar').innerHTML = '<span class="plan-n">' + nx.id + '</span><span class="next-main"><b>הבא: ' + esc(nx.name) + '</b><span>' +
-      esc(nx.tip) + '</span></span><button class="btn btn-green btn-sm" type="button" data-stage="' + nx.id + '">' + Icons.play + 'שחק</button>';
-    const tags = ['עכשיו', 'אחר כך', 'ואז'];
+    const nx = Progress.plan()[0];
     const allDone = Progress.total() === STAGES.length * 3;
-    $('plan').innerHTML = (allDone ? '<li class="now"><span class="plan-main"><b>השגת את כל הכוכבים!</b><span class="plan-tip">אפשר לשחק שוב כל שלב, או להתאמן באימון חופשי.</span></span></li>' : '') +
-      plan.map((st, i) => {
-        const playable = Progress.unlocked(st.id);
-        return '<li class="' + (i === 0 ? 'now' : '') + '">' +
-          '<span class="plan-n">' + st.id + '</span>' +
-          '<span class="plan-main"><span class="plan-tag">' + tags[i] + ' | ' + CONFIG.modes[st.mode].label + '</span>' +
-          '<b>' + esc(st.name) + '</b>' +
-          '<span class="plan-tip">' + Icons.bulb + '<span>' + esc(st.tip) + '</span></span></span>' +
-          (i === 0 && playable ? '<button class="btn btn-green btn-sm" type="button" data-stage="' + st.id + '">' + Icons.play + 'שחק</button>' : '') +
-          '</li>';
-      }).join('');
+    $('next-bar').innerHTML = '<span class="plan-n">' + nx.id + '</span><span class="next-main"><span class="next-l">' +
+      (allDone ? 'כל הכוכבים אצלכם! אפשר לשחק שוב' : 'הצעה להיום') + '</span><b>' + esc(nx.name) + '</b></span>' +
+      '<button class="btn btn-green btn-sm" type="button" data-stage="' + nx.id + '" aria-label="משחקים בשלב ' + nx.id + ', ' + esc(nx.name) + '">' + Icons.play + 'משחקים</button>';
   },
 
   /* The level map is one SVG picture (viewBox scales to fit the board, no scroll).
@@ -4014,7 +4368,7 @@ const App = {
     list.innerHTML = '';
     Object.keys(CONFIG.modes).forEach(key => {
       const cfg = CONFIG.modes[key];
-      if (cfg.social) return; // 2026-10-01: social modes open from the "ערב אימפרו" card above
+      if (cfg.social) return; // 2026-10-01: social modes live in the "עם חברים" tab
       const st = this.modeStats(key);
       const row = document.createElement('div');
       row.className = 'row';
@@ -4037,6 +4391,14 @@ const App = {
       });
       list.appendChild(row);
     });
+  },
+
+  // 2026-10-01: "עם חברים" tab: one compact card per social game. A tap opens its setup.
+  renderFriends() {
+    $('friends-modes').innerHTML = ['social_assoc', 'social_scene'].map(k =>
+      '<div class="row" role="button" tabindex="0" data-soc-open="' + k + '" aria-label="' + CONFIG.modes[k].label + ', ' + CONFIG.modes[k].short + '">' +
+      Draw.modeIcon(k) + '<span class="row-main"><span class="row-title">' + CONFIG.modes[k].label + '</span><span class="row-sub">' + CONFIG.modes[k].short + '</span></span>' +
+      '<span class="ibtn play" aria-hidden="true">' + Icons.play + '</span></div>').join('');
   },
 
   renderStatus() {
@@ -4067,13 +4429,15 @@ const App = {
       '<div class="tile"><div class="tile-l">' + t[0] + '</div><div class="tile-v num' + (t[2] ? ' hi' : '') + '">' + t[1] + '</div></div>').join('');
     const hist = $('mode-hist');
     if (!st.count) {
-      hist.innerHTML = '<div class="empty">עוד אין סשנים במצב הזה. לחץ "התחל" לסשן הראשון.</div>';
+      hist.innerHTML = '<div class="empty">עוד אין סשנים במצב הזה.</div>'; // 2026-10-01: was 'לחץ "התחל"...'
       return;
     }
+    // 2026-10-01: numbers go through Number() and the date through esc(). Was raw fields (stored XSS).
+    const nOr = v => (typeof v === 'number' && isFinite(v) ? String(Number(v)) : '-');
     hist.innerHTML = st.all.slice(-8).reverse().map(r =>
-      '<div class="hist-row"><span><span class="num">' + Util.sec(r.medianLatencyMs) + '</span> <span class="m">חציון</span></span>' +
-      '<span class="m num">' + r.answeredRounds + '/' + r.totalRounds + ' נענו</span>' +
-      '<span class="m num">' + Dates.short(r.timestamp) + '</span></div>').join('');
+      '<div class="hist-row"><span><span class="num">' + esc(Util.sec(typeof r.medianLatencyMs === 'number' ? Number(r.medianLatencyMs) : null)) + '</span> <span class="m">חציון</span></span>' +
+      '<span class="m num">' + nOr(r.answeredRounds) + '/' + nOr(r.totalRounds) + ' נענו</span>' +
+      '<span class="m num">' + esc(Dates.short(Number(r.timestamp))) + '</span></div>').join('');
   },
 
   /* ---------- intro: how it works + goals, shown before a stage ---------- */
@@ -4086,19 +4450,20 @@ const App = {
     $('intro-ribbon').textContent = st ? 'שלב ' + st.id : 'אימון חופשי';
     $('intro-icon').innerHTML = Draw.modeIcon(mode);
     $('intro-name').textContent = st ? st.name : mcfg.label;
-    $('intro-meta').textContent = (st ? 'מצב: ' + mcfg.label + ' | ' : '') + roundsText(cfg) +
-      (st ? '' : ' | ' + mcfg.short);
+    // 2026-10-01: shorter. The response window moved here from the steps.
+    $('intro-meta').textContent = (st ? mcfg.label + ' | ' : '') + roundsText(cfg) + ' | ' + secs(cfg.responseWindowMs) + ' להתחיל';
     $('intro-steps').innerHTML = Steps.for(mode, cfg).map((s, i) =>
-      '<li class="step' + (i === 1 ? ' go' : '') + '"><span class="step-n">' + (i + 1) + '</span><span><b>' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></span></li>').join('');
+      '<li class="step' + (i === 1 ? ' go' : '') + '"><span class="step-n">' + (i + 1) + '</span><span><b>' + esc(s[0]) + '</b> <span>' + esc(s[1]) + '</span></span></li>').join('');
+    $('intro-tip').closest('details').open = false;
     $('intro-goals-wrap').hidden = !st;
     if (st) {
       const best = Progress.stars(st.id);
       $('intro-goals').innerHTML = Stages.goals(st).map((g, i) =>
         '<div class="goal"><span class="stars-mini">' + starsRow(i + 1, i + 1) + '</span><span>' + esc(g) + '</span></div>').join('') +
-        (best ? '<div class="goal muted">השיא שלך בשלב הזה: ' + best + ' מתוך 3 כוכבים</div>' : '');
+        (best ? '<div class="goal muted">השיא בשלב הזה: ' + best + ' מתוך 3 כוכבים</div>' : '');
     }
     $('intro-tip').innerHTML = Icons.bulb + '<span><b>טיפ: </b>' + esc(st ? st.tip : FREE_TIPS[mode]) + '</span>';
-    $('intro-go').innerHTML = Icons.play + (st ? 'התחל שלב ' + st.id : 'יאללה, מתחילים!');
+    $('intro-go').innerHTML = Icons.play + (st ? 'מתחילים שלב ' + st.id : 'יאללה, מתחילים!'); // 2026-10-01: was 'התחל שלב'
     this.go('intro');
   },
 
@@ -4112,6 +4477,8 @@ const App = {
     this.renderStatus();
     this.renderSoundUi();
     this.renderPlayer(); // 2026-09-30
+    $('set-install').textContent = Telemetry.installId().slice(0, 8); // 2026-10-01
+    $('set-install-copy').textContent = 'העתקה';
     $('dlg-settings').showModal();
   },
 
@@ -4122,10 +4489,12 @@ const App = {
     $('soc-add').innerHTML = '+ הוספת משתתף';
     // 2026-10-01: scene v2: no re-roll buttons (were soc-sit-roll, soc-roll-all, data-reroll).
     $('soc-cast-back').innerHTML = Icons.back + 'חזרה';
-    const card = $('social-card');
-    card.addEventListener('click', () => this.openSocial());
-    card.addEventListener('keydown', e => {
-      if ((e.key === 'Enter' || e.key === ' ') && e.target === card) { e.preventDefault(); this.openSocial(); }
+    // 2026-10-01: the cards on the "עם חברים" tab open the setup. Was one #social-card in free play.
+    const fm = $('friends-modes');
+    fm.addEventListener('click', e => { const c = e.target.closest('[data-soc-open]'); if (c) this.openSocial(c.dataset.socOpen); });
+    fm.addEventListener('keydown', e => {
+      const c = e.target.closest('[data-soc-open]');
+      if (c && (e.key === 'Enter' || e.key === ' ') && e.target === c) { e.preventDefault(); this.openSocial(c.dataset.socOpen); }
     });
     $('soc-modes').addEventListener('click', e => {
       const b = e.target.closest('[data-soc-mode]');
@@ -4168,14 +4537,15 @@ const App = {
     });
     $('soc-back').addEventListener('click', () => {
       if (this.soc.step === 'cast') this.socialStep('setup');
-      else { this.homeTab = 'free'; this.go('home'); }
+      else { this.homeTab = 'friends'; this.go('home'); } // 2026-10-01: was 'free'
     });
     $('soc-cast-back').addEventListener('click', () => this.socialStep('setup'));
     $('soc-go').addEventListener('click', () => this.socialGo());
   },
 
-  openSocial() {
+  openSocial(mode) {
     const soc = this.soc;
+    if (mode && CONFIG.modes[mode] && CONFIG.modes[mode].social) soc.mode = mode; // 2026-10-01
     if (!soc.names) {
       const saved = Social.loadNames();
       soc.names = saved.length >= CONFIG.social.minPlayers ? saved : ['', ''];
@@ -4216,6 +4586,7 @@ const App = {
       '<button type="button" class="soc-mode" role="radio" aria-checked="' + (k === soc.mode) + '" data-soc-mode="' + k + '">' +
       Draw.modeIcon(k) + CONFIG.modes[k].label + '<small>' + CONFIG.modes[k].short + '</small></button>').join('');
     $('soc-desc').textContent = CONFIG.modes[soc.mode].desc;
+    $('soc-title').textContent = CONFIG.modes[soc.mode].label; // 2026-10-01: was always "ערב אימפרו"
     $('soc-names').innerHTML = soc.names.map((v, i) =>
       '<div class="soc-name-row"><span class="soc-dot" style="background:' + c.colors[i] + '">' + (i + 1) + '</span>' +
       '<input class="name-input" type="text" maxlength="' + c.nameMax + '" dir="auto" autocomplete="off" spellcheck="false" enterkeyhint="next"' +
@@ -4251,8 +4622,9 @@ const App = {
     const list = Storage.store.sessions.filter(r => CONFIG.modes[r.gameMode] && CONFIG.modes[r.gameMode].social).slice(-CONFIG.social.histRows).reverse();
     $('soc-hist').innerHTML = list.length ? '<p class="section-label">משחקים אחרונים</p><div class="rows soc-hist">' + list.map(r =>
       '<div class="hist-row"><span>' + (r.winner ? '🏆 <b>' + esc(r.winner) + '</b>' : '<span class="m">בלי מנצח</span>') + '</span>' +
-      '<span class="m">' + CONFIG.modes[r.gameMode].label + (typeof r.players === 'number' ? ' | ' + r.players + ' משתתפים' : '') + '</span>' +
-      '<span class="m num">' + Dates.short(r.timestamp) + '</span></div>').join('') + '</div>' : '';
+      // 2026-10-01: players via Number(), date via esc()
+      '<span class="m">' + CONFIG.modes[r.gameMode].label + (typeof r.players === 'number' && isFinite(r.players) ? ' | ' + Number(r.players) + ' משתתפים' : '') + '</span>' +
+      '<span class="m num">' + esc(Dates.short(Number(r.timestamp))) + '</span></div>').join('') + '</div>' : '';
   },
 
   // 2026-10-01: scene v2 cast sheet: title, situation, one row per player "<name> - <role>: <hook>".
@@ -4490,6 +4862,9 @@ const App = {
     if (soc && soc.cast) cfg.speakMs = Social.levelInfo(soc.cast.level).speakMs;
     if (!soc) this.modeKey = mode; // 2026-10-01: social modes have no free play mode screen
     this.starting = true;
+    // 2026-10-01: start race. Back / settings / start are disabled while the mic opens.
+    const startView = this.view;
+    this.lockStart(true);
 
     // 2026-09-30: iOS needs the first speak() inside the user gesture. Before any await.
     Speech.prime();
@@ -4501,6 +4876,7 @@ const App = {
       await Promise.all([mic, quiet]);
     } catch (e) {
       this.starting = false;
+      this.lockStart(false); // 2026-10-01
       await quiet;
       const msgs = {
         NotAllowedError: 'הגישה למיקרופון נחסמה. בדוק שתי הרשאות: הרשאת האתר (סמל המנעול בשורת הכתובת) והרשאת הדפדפן במערכת (הגדרות > אפליקציות > הדפדפן > הרשאות > מיקרופון).',
@@ -4514,6 +4890,14 @@ const App = {
       return;
     }
     this.starting = false;
+    this.lockStart(false); // 2026-10-01
+    // 2026-10-01: the view changed or the page hid while the mic opened: stop it, no session.
+    if (this.view !== startView || document.hidden) {
+      await this.audio.stop();
+      Sound.setScene(this.view !== 'session');
+      return;
+    }
+    this.watchMic(); // 2026-10-01: abort on a phone call, Siri, Bluetooth switch
     Seen.add(mode);
     this.last = opts;
 
@@ -4570,6 +4954,36 @@ const App = {
     this.rafId = requestAnimationFrame(t => this.loop(t));
   },
 
+  // 2026-10-01: disable (or restore) the controls that can navigate or start while the mic opens.
+  startCtlIds: ['btn-settings', 'btn-champs', 'mode-back', 'intro-back', 'soc-back', 'soc-cast-back', 'mode-start', 'intro-go', 'soc-go', 'btn-next', 'btn-again', 'btn-to-map', 'sum-back'],
+  lockStart(on) {
+    this.startCtlIds.forEach(id => {
+      const b = $(id);
+      if (!b) return;
+      if (on) { b.dataset.startLock = b.disabled ? '1' : '0'; b.disabled = true; }
+      else if (b.dataset.startLock !== undefined) { b.disabled = b.dataset.startLock === '1'; delete b.dataset.startLock; }
+    });
+  },
+
+  // 2026-10-01: mic interruptions. Track ended / muted, or the mic context interrupted / suspended
+  // during a session: abort with a message. abort() never saves a result (only a "left" usage log).
+  micLostMsg: 'המיקרופון הופסק (שיחה או מכשיר אחר). אפשר לנסות שוב.',
+  watchMic() {
+    const audio = this.audio;
+    const stream = audio.stream, ctx = audio.ctx;
+    const lost = () => {
+      if (!this.s || audio.stream !== stream) return; // old session or mic already stopped
+      this.abort(this.micLostMsg);
+    };
+    if (stream) stream.getAudioTracks().forEach(tr => {
+      tr.addEventListener('ended', lost);
+      tr.addEventListener('mute', lost);
+    });
+    if (ctx) ctx.addEventListener('statechange', () => {
+      if (ctx.state === 'interrupted' || ctx.state === 'suspended') lost();
+    });
+  },
+
   finishCalibration() {
     const s = this.s;
     const v = CONFIG.vad;
@@ -4577,6 +4991,7 @@ const App = {
     const sd = Util.std(s.calib);
     const thr = Math.max(v.minThreshold, floor + v.calibK * sd, floor * v.calibFloorMult);
     s.threshold = thr;
+    s.calibThreshold = thr; // 2026-10-01: lower bound for adaptation (adaptCalibFloor)
     s.vad = new VadTracker(thr, v);
     s.noisy = floor > v.noisyFloor;
     s.adapt = [];
@@ -4588,21 +5003,28 @@ const App = {
   adaptThreshold() {
     const s = this.s;
     const v = CONFIG.vad;
-    if (!s.adapt || s.adapt.length < v.adaptMinSamples) return;
-    const sorted = s.adapt.slice().sort((a, b) => a - b);
+    // 2026-10-01: time-based window (adaptMinMs of quiet). Was: adaptMinSamples frames (assumed 60 fps).
+    if (!s.adapt || s.adapt.length < v.adaptMinCount) return;
+    if (s.adapt[s.adapt.length - 1].t - s.adapt[0].t < v.adaptMinMs) return;
+    const sorted = s.adapt.map(x => x.rms).sort((a, b) => a - b);
     const floor = sorted[Math.floor((sorted.length - 1) * v.adaptPercentile)];
     const est = Math.max(v.minThreshold, floor * v.calibFloorMult);
-    s.threshold = s.threshold * (1 - v.adaptBlend) + est * v.adaptBlend;
+    // 2026-10-01: one step moves only 0.7x - 1.5x of the current threshold, never below 0.8x calibrated.
+    const blended = s.threshold * (1 - v.adaptBlend) + est * v.adaptBlend;
+    const stepped = Math.min(s.threshold * v.adaptStepMax, Math.max(s.threshold * v.adaptStepMin, blended));
+    s.threshold = Math.max(stepped, (s.calibThreshold || 0) * v.adaptCalibFloor, v.minThreshold);
     s.vad.setThreshold(s.threshold);
     s.noisy = floor > v.noisyFloor;
     s.adapt = [];
   },
 
-  collectQuiet(rms) {
+  // 2026-10-01: samples carry their time; the window keeps the last adaptMaxMs.
+  // Was: a.push(rms) and a cap of adaptMaxSamples frames.
+  collectQuiet(rms, t) {
     const a = this.s.adapt;
     if (!a) return;
-    a.push(rms);
-    if (a.length > CONFIG.vad.adaptMaxSamples) a.shift();
+    a.push({ rms, t });
+    while (a.length && t - a[0].t > CONFIG.vad.adaptMaxMs) a.shift();
   },
 
   baseChips() {
@@ -4661,7 +5083,7 @@ const App = {
       // 2026-10-01: social variant names the player (gender-neutral text)
       this.setCard('read', Icons.eye + s.cfg.readLabel, s.prompts[s.roundIdx], null, s.social
         ? { icon: Icons.eye, title: 'התור של ' + this.socName(s.roundIdx), sub: 'לקרוא בשקט ולחכות ל"דברו עכשיו!"', count: Math.ceil(s.readMs / 1000) }
-        : { icon: Icons.eye, title: 'עוד רגע תורך', sub: 'קרא בשקט, וחכה ל"דבר עכשיו!"', count: Math.ceil(s.readMs / 1000) });
+        : { icon: Icons.eye, title: 'עוד רגע מתחילים', sub: 'קוראים בשקט ומחכים ל"דברו עכשיו!"', count: Math.ceil(s.readMs / 1000) });
       this.setTimer(1);
     } else {
       this.cue(t);
@@ -4738,6 +5160,9 @@ const App = {
     s.cueAt = t;
     this.adaptThreshold();
     s.vad.reset();
+    // 2026-10-01: level already above ON at the cue (TTS tail or early talk): no onset counts
+    // until the level stayed below OFF for armQuietMs. Was: the VAD re-armed at once (~60 ms "answers").
+    s.arm = (s.lastRms || 0) > s.vad.on ? { quietSince: null } : null;
     s.rm = new RoundMetrics(t, CONFIG.hesitationMs);
     if (s.social) { // 2026-10-01
       this.setCard('live', Icons.mic + esc(this.socName(s.roundIdx)), s.prompts[s.roundIdx], null,
@@ -4745,13 +5170,17 @@ const App = {
       return;
     }
     this.setCard('live', Icons.mic + 'תורך', s.prompts[s.roundIdx], null,
-      { icon: Icons.mic, title: 'דבר עכשיו!', sub: s.cfg.liveSub });
+      { icon: Icons.mic, title: 'דברו עכשיו!', sub: s.cfg.liveSub });
   },
 
   endRound(t, missed, byTime) {
     const s = this.s;
     const cfg = s.cfg;
     if (!missed) s.rm.finish(t, cfg.trackHesitations && byTime);
+    // 2026-10-01: latency under earlyMs = talk started before the cue. Counted as missed
+    // (out of medians, stars and the board average), flagged early.
+    const early = !missed && s.rm.latency !== null && s.rm.latency < CONFIG.vad.earlyMs;
+    if (early) { missed = true; if (s.choice) this.switchEnd(t); } // switchEnd: clears the flash and a pending TTS signal
     const r = {
       prompt: s.prompts[s.roundIdx],
       missed,
@@ -4760,6 +5189,7 @@ const App = {
       windowMs: missed ? 0 : Math.round(t - s.speakStart),
       hesitations: cfg.trackHesitations && !missed ? s.rm.hesitations : 0
     };
+    if (early) r.early = true; // 2026-10-01
     if (s.social) r.player = s.roundIdx % s.social.players.length; // 2026-10-01: turn owner
     // 2026-09-30: new_choice extra fields (old readers ignore them)
     if (cfg.switchEveryMs) {
@@ -4773,7 +5203,9 @@ const App = {
     this.renderProgress();
     if (s.social) { // 2026-10-01: social result card, gender-neutral, with the player's name
       const nm = esc(this.socName(s.roundIdx));
-      if (missed) {
+      if (early) { // 2026-10-01
+        this.setCard('miss', Icons.x + 'התחלה מוקדמת', null, { val: 'מוקדם', sub: 'הדיבור התחיל לפני האות. התור נספר כפספוס.' });
+      } else if (missed) {
         this.setCard('miss', Icons.x + 'לא נשמע קול', null, { val: 'פספוס', sub: 'לא זוהה דיבור בזמן. התור לא נכנס לחישוב זמן התגובה.' });
       } else {
         this.setCard('hit', Icons.check + 'יפה, ' + nm + '!', null, { val: Util.sec(r.latencyMs), sub: cfg.trackHesitations
@@ -4784,7 +5216,9 @@ const App = {
       this.setTimer(0);
       return;
     }
-    if (missed) {
+    if (early) { // 2026-10-01
+      this.setCard('miss', Icons.x + 'התחלה מוקדמת', null, { val: 'מוקדם', sub: 'הדיבור התחיל לפני האות. הסבב נספר כפספוס.' });
+    } else if (missed) {
       this.setCard('miss', Icons.x + 'לא נשמע קול', null, { val: 'פספוס', sub: 'לא זוהה דיבור בזמן. הסבב לא נכנס לחישוב זמן התגובה.' });
     } else {
       const sub = cfg.trackHesitations
@@ -4801,6 +5235,7 @@ const App = {
     Sound.guard(); // belt and braces: nothing may play while the mic is live
     const cfg = s.cfg;
     const rms = this.audio.rms();
+    s.lastRms = rms; // 2026-10-01: read by cue() (arm after quiet)
     this.setMeter(rms, s.threshold, s.vad ? s.vad.speaking : false);
 
     switch (s.phase) {
@@ -4820,7 +5255,7 @@ const App = {
         break;
       }
       case 'reading': {
-        this.collectQuiet(rms);
+        this.collectQuiet(rms, t);
         const el = t - s.phaseStart;
         this.setTimer(1 - el / s.readMs);
         this.setCount(Math.max(1, Math.ceil((s.readMs - el) / 1000)));
@@ -4830,7 +5265,14 @@ const App = {
       case 'awaiting': {
         const el = t - s.cueAt;
         this.setTimer(1 - el / cfg.responseWindowMs);
-        for (const ev of s.vad.update(rms, t)) {
+        // 2026-10-01: arm after quiet (see cue)
+        if (s.arm) {
+          if (rms < s.vad.off) {
+            if (s.arm.quietSince === null) s.arm.quietSince = t;
+            if (t - s.arm.quietSince >= CONFIG.vad.armQuietMs) { s.arm = null; s.vad.reset(); }
+          } else s.arm.quietSince = null;
+        }
+        for (const ev of (s.arm ? [] : s.vad.update(rms, t))) {
           s.rm.onEvent(ev);
           if (ev.type === 'onset') {
             s.phase = 'speaking';
@@ -4874,7 +5316,7 @@ const App = {
         break;
       }
       case 'between': {
-        if (t - s.phaseStart >= CONFIG.vad.adaptTailMs) this.collectQuiet(rms);
+        if (t - s.phaseStart >= CONFIG.vad.adaptTailMs) this.collectQuiet(rms, t);
         // 2026-10-01: social: after the result, a timed "pass the phone" pause. Was: betweenRoundsMs only.
         const passing = !!s.social && s.roundIdx + 1 < cfg.rounds;
         if (passing && !s.passShown && t - s.phaseStart >= CONFIG.betweenRoundsMs) this.showPass(t);
@@ -4920,9 +5362,11 @@ const App = {
       }
       Storage.appendSession(rec);
       Telemetry.logSession(this.sessionLog(s, true, rec, null));
+      this.askName = false; // 2026-10-01: the name screen follows solo sessions only
       this.renderSocialSummary(s, rec, res, unlocked);
       this.go('summary');
       this.celebrate(s, rec, before, null);
+      this.maybeNudge(); // 2026-10-01
       return;
     }
     Storage.appendSession(rec);
@@ -4940,8 +5384,11 @@ const App = {
       if (r && $('dlg-champs').open) this.renderChamps(); // 2026-10-01: was view === 'home' && homeTab === 'champs'
     });
     this.renderSummary(s, rec, before, result);
+    // 2026-10-01: ask for a board name after a finished solo session (once, until saved or skipped).
+    this.askName = !Online.player() && !Online.skipped();
     this.go('summary'); // mic is fully stopped here, music may come back
     this.celebrate(s, rec, before, result);
+    this.maybeNudge(); // 2026-10-01
   },
 
   async abort(msg) {
@@ -4985,17 +5432,18 @@ const App = {
 
   /* ---------- 2026-09-30: feedback form ---------- */
   fbMsgs: {
+    // 2026-10-01: neutral wording
     ok: 'תודה! המשוב נשלח. אנחנו קוראים כל הודעה.',
-    too_short: 'קצר מדי. כתוב לפחות 5 תווים.',
+    too_short: 'קצר מדי. צריך לפחות 5 תווים.',
     too_long: 'ארוך מדי. אפשר עד 500 תווים.',
-    bad_category: 'בחר על מה המשוב ונסה שוב.',
-    unknown_install: 'לא הצלחנו לזהות את המכשיר. נסה שוב בעוד רגע.',
-    wait: 'כבר קיבלנו ממך משוב לפני רגע. אפשר לשלוח שוב בעוד כמה דקות.',
-    daily_limit: 'שלחת 5 הודעות היום. אפשר לשלוח שוב מחר.',
-    busy: 'יש עומס כרגע. נסה שוב מאוחר יותר.',
-    network: 'אין חיבור לשרת. בדוק את האינטרנט ונסה שוב.',
-    error: 'השליחה נכשלה. נסה שוב מאוחר יותר.',
-    early: 'רגע, עוד לא הספקת לכתוב. נסה שוב בעוד שנייה.'
+    bad_category: 'צריך לבחור על מה המשוב, ולנסות שוב.',
+    unknown_install: 'לא הצלחנו לזהות את המכשיר. אפשר לנסות שוב בעוד רגע.',
+    wait: 'כבר קיבלנו משוב לפני רגע. אפשר לשלוח שוב בעוד כמה דקות.',
+    daily_limit: 'נשלחו 5 הודעות היום. אפשר לשלוח שוב מחר.',
+    busy: 'יש עומס כרגע. אפשר לנסות שוב מאוחר יותר.',
+    network: 'אין חיבור לשרת. כדאי לבדוק את האינטרנט ולנסות שוב.',
+    error: 'השליחה נכשלה. אפשר לנסות שוב מאוחר יותר.',
+    early: 'רגע, עוד לא היה זמן לכתוב. אפשר לנסות שוב בעוד שנייה.'
   },
   fb: { cat: null, rating: 0, openedAt: 0, sending: false, from: null, done: false },
 
@@ -5048,7 +5496,8 @@ const App = {
     }
   },
 
-  openFeedback(from) {
+  // 2026-10-01: optional preset { cat, rating } (summary thumbs, privacy sheet). Same form, same server limits.
+  openFeedback(from, preset) {
     const f = this.fb;
     f.from = from;
     f.openedAt = performance.now();
@@ -5056,6 +5505,10 @@ const App = {
     if (f.done) { // fresh form after a sent message
       f.done = false; f.cat = null; f.rating = 0;
       $('fb-text').value = '';
+    }
+    if (preset) {
+      if (preset.cat) f.cat = preset.cat;
+      if (preset.rating) f.rating = preset.rating;
     }
     $('fb-hp').value = '';
     this.setFbMsg('', '');
@@ -5107,7 +5560,7 @@ const App = {
     if (performance.now() - f.openedAt < t.feedbackMinMs) { this.setFbMsg(this.fbMsgs.early, 'bad'); return; }
     f.sending = true;
     this.renderFeedback();
-    this.setFbMsg('שולח...', '');
+    this.setFbMsg('שולחים...', ''); // 2026-10-01: was 'שולח...'
     let code;
     if ($('fb-hp').value) {
       code = 'ok'; // a bot filled the hidden field: fake success, send nothing
@@ -5136,6 +5589,9 @@ const App = {
     $('sum-donut-wrap').hidden = false;
     $('sum-tiles').hidden = false;
     $('btn-to-map').hidden = false;
+    $('sum-more').open = false; // 2026-10-01
+    $('sum-rate').hidden = false;
+    $('sum-feedback').hidden = true;
     $('sum-back').innerHTML = Icons.back + 'למפה';
     const rate = rec.totalRounds ? rec.answeredRounds / rec.totalRounds : 0;
     $('sum-donut').innerHTML = Draw.ring(rate, 190, 14, 'var(--green)', '');
@@ -5157,7 +5613,7 @@ const App = {
       $('sum-head').textContent = ['כמעט!', 'עברת!', 'כל הכבוד!', 'מושלם!'][result.stars];
       $('sum-subline').textContent = result.stars
         ? 'השגת ' + result.stars + ' מתוך 3 כוכבים' + (result.prev > result.stars ? '. השיא שלך בשלב: ' + result.prev : '')
-        : 'צריך לפחות כוכב אחד כדי לפתוח את השלב הבא. נסה שוב!';
+        : 'צריך לפחות כוכב אחד כדי לפתוח את השלב הבא. עוד ניסיון?';
       $('sum-goals').innerHTML = Stages.goals(st).map((g, i) =>
         '<div class="goal ' + (result.checks[i] ? 'ok' : 'no') + '"><span class="goal-mark">' + (result.checks[i] ? Icons.check : Icons.x) +
         '</span><span class="stars-mini">' + starsRow(i + 1, i + 1) + '</span><span>' + esc(g) + '</span></div>').join('');
@@ -5167,6 +5623,7 @@ const App = {
         $('sum-unlock').textContent = 'נפתח שלב חדש: ' + next.name;
       }
       $('sum-banner').innerHTML = result.stars < 3 ? '<div class="banner neutral"><b>טיפ לפעם הבאה: </b>' + esc(st.tip) + '</div>' : '';
+      this.sumActions.afterName = () => this.openIntro({ stage: next && result.stars >= 1 ? next : st }); // 2026-10-01
 
       const nb = $('btn-next'), ab = $('btn-again');
       if (result.stars >= 1 && next) {
@@ -5182,7 +5639,7 @@ const App = {
         ab.innerHTML = Icons.redo + 'שוב';
         this.sumActions.again = () => this.quick({ stage: st });
       } else {
-        nb.innerHTML = Icons.redo + 'נסה שוב';
+        nb.innerHTML = Icons.redo + 'עוד ניסיון'; // 2026-10-01: was 'נסה שוב'
         this.sumActions.next = () => this.quick({ stage: st });
         ab.hidden = true;
       }
@@ -5191,8 +5648,10 @@ const App = {
     } else {
       ribbon.textContent = 'סיכום | ' + cfg.label;
       ribbon.className = 'ribbon orange';
-      $('sum-head').textContent = '';
-      $('sum-subline').textContent = '';
+      // 2026-10-01: the result line is the median reaction time. Was empty (the donut showed it).
+      $('sum-head').textContent = rec.medianLatencyMs !== null ? Util.sec(rec.medianLatencyMs) : 'אין תגובות';
+      $('sum-subline').textContent = 'חציון זמן תגובה | ' + rec.answeredRounds + '/' + rec.totalRounds + ' נענו';
+      this.sumActions.afterName = () => this.go('mode');
       let text, win = true;
       if (rec.medianLatencyMs !== null && before.best !== null && rec.medianLatencyMs < before.best) {
         text = 'שיא אישי חדש: <b class="num">' + Util.sec(rec.medianLatencyMs) + '</b> (קודם ' + Util.sec(before.best) + ')';
@@ -5204,7 +5663,7 @@ const App = {
         win = false;
         text = rec.answeredRounds
           ? 'השיא שלך: <b class="num">' + Util.sec(before.best !== null ? Math.min(before.best, rec.medianLatencyMs) : rec.medianLatencyMs) + '</b>. סשן נוסף יחזק את השליפה.'
-          : 'לא זוהו תגובות. בדוק שהקו הצהוב במד נמצא מתחת לרמת הדיבור שלך.';
+          : 'לא זוהו תגובות. כדאי לבדוק שהקו הצהוב במד נמצא מתחת לרמת הדיבור.';
       }
       s.win = win;
       $('sum-banner').innerHTML = '<div class="banner' + (win ? '' : ' neutral') + '">' + text + '</div>';
@@ -5244,7 +5703,7 @@ const App = {
       p.textContent = r.prompt;
       const v = document.createElement('div');
       v.className = 'rcard-v num ' + (r.missed ? 'miss' : 'hit');
-      v.textContent = r.missed ? 'החמצה' : Util.sec(r.latencyMs);
+      v.textContent = r.early ? 'מוקדם' : r.missed ? 'החמצה' : Util.sec(r.latencyMs); // 2026-10-01: + early
       main.append(p, v);
       const meta = document.createElement('div');
       meta.className = 'rcard-meta';
@@ -5270,6 +5729,9 @@ const App = {
     $('sum-donut-wrap').hidden = true;
     $('sum-tiles').hidden = true;
     $('sum-tiles').innerHTML = '';
+    $('sum-more').open = false; // 2026-10-01: thumbs are for solo, a small "משוב" link here
+    $('sum-rate').hidden = true;
+    $('sum-feedback').hidden = false;
     const ribbon = $('sum-ribbon');
     ribbon.textContent = 'ערב אימפרו | ' + cfg.label;
     ribbon.className = 'ribbon orange';
@@ -5298,7 +5760,7 @@ const App = {
     $('btn-again').innerHTML = Icons.back + 'חזרה';
     this.sumActions.again = () => { this.soc.step = 'setup'; this.go('social'); };
     $('btn-to-map').hidden = true;
-    this.homeTab = 'free';
+    this.homeTab = 'friends'; // 2026-10-01: was 'free'
     s.win = w.length > 0;
     const wrap = $('sum-rounds');
     wrap.innerHTML = '';
@@ -5312,7 +5774,7 @@ const App = {
       p.textContent = soc.players[r.player] + ': ' + r.prompt;
       const v = document.createElement('div');
       v.className = 'rcard-v num ' + (r.missed ? 'miss' : 'hit');
-      v.textContent = r.missed ? 'החמצה' : Util.sec(r.latencyMs);
+      v.textContent = r.early ? 'מוקדם' : r.missed ? 'החמצה' : Util.sec(r.latencyMs); // 2026-10-01: + early
       main.append(p, v);
       const meta = document.createElement('div');
       meta.className = 'rcard-meta';
@@ -5362,12 +5824,13 @@ const App = {
     long: 'השם ארוך מדי. עד 16 תווים.',
     chars: 'אפשר רק אותיות בעברית או באנגלית, ספרות, רווח, מקף וקו תחתון. השם מתחיל ונגמר באות או בספרה.',
     spaces: 'בלי שני רווחים ברצף.',
-    checking: 'בודק אם השם פנוי...',
+    checking: 'בודקים אם השם פנוי...', // 2026-10-01: neutral wording in this list
     free: 'השם פנוי!',
-    name_taken: 'השם הזה כבר תפוס. נסה שם אחר.',
-    name_invalid: 'השם לא תקין. בדוק את התווים.',
+    name_taken: 'השם הזה כבר תפוס. אפשר לנסות שם אחר.',
+    name_invalid: 'השם לא תקין. כדאי לבדוק את התווים.',
+    name_blocked: 'השם הזה לא זמין. נסו שם אחר.', // 2026-10-01: server reserved / block list
     offline: 'אין חיבור לשרת. אפשר לנסות שוב אחר כך.',
-    failed: 'משהו השתבש. נסה שוב.'
+    failed: 'משהו השתבש. אפשר לנסות שוב.'
   },
 
   setNameMsg(key, tone) {
@@ -5422,12 +5885,12 @@ const App = {
       if (seq !== this.nameSeq) return;
       Sound.play('pop');
       this.toast('נרשמת בשם ' + c.name + '. בהצלחה!');
-      this.go('home');
+      this.leaveName(); // 2026-10-01: was go('home')
     } catch (e) {
       if (seq !== this.nameSeq) return;
       const key = this.nameMsgs[e.message] ? e.message : e.network ? 'offline' : 'failed';
       this.setNameMsg(key, 'bad');
-      btn.disabled = key === 'name_taken';
+      btn.disabled = key === 'name_taken' || key === 'name_blocked'; // 2026-10-01: + name_blocked
     }
   },
 
@@ -5435,7 +5898,7 @@ const App = {
     const p = Online.player();
     $('set-player').innerHTML = p
       ? '<span class="nm" dir="auto">' + esc(p.username) + '</span>'
-      : '<span class="muted">לא רשום</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחר שם</button>';
+      : '<span class="muted">עוד אין</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחירת שם</button>'; // 2026-10-01: was 'לא רשום' / 'בחר שם'
   },
 
   lbValue(kind, raw) {
@@ -5452,8 +5915,8 @@ const App = {
     $('lb-kinds').querySelectorAll('[data-kind]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.kind === kind)));
     const p = Online.player();
     $('lb-me').innerHTML = p
-      ? '<span>אתה משחק בשם <b dir="auto">' + esc(p.username) + '</b></span>'
-      : '<span>רוצה להופיע בטבלה?</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחר שם</button>';
+      ? '<span>השם שלי בטבלה: <b dir="auto">' + esc(p.username) + '</b></span>' // 2026-10-01: neutral wording
+      : '<span>להופיע בטבלה?</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחירת שם</button>';
     $('lb-note').textContent = CONFIG.online.kinds[kind].note;
     const list = $('lb-list');
     list.innerHTML = '<li class="lb-state empty">טוען את הטבלה...</li>';
@@ -5462,7 +5925,7 @@ const App = {
     Online.board(kind).then(rows => {
       if (seq !== this.lbSeq) return;
       if (!rows.length) {
-        list.innerHTML = '<li class="lb-state empty">עוד אין אלופים כאן. שחק סשן ותהיה הראשון!</li>';
+        list.innerHTML = '<li class="lb-state empty">עוד אין אלופים כאן. סשן אחד, ואפשר להיות ראשונים!</li>';
         return;
       }
       list.innerHTML = rows.map(r => {
@@ -5470,14 +5933,105 @@ const App = {
         const mine = me !== null && String(r.username).toLowerCase() === me;
         return '<li class="lb-row' + (rank >= 1 && rank <= 3 ? ' r' + rank : '') + (mine ? ' me' : '') + '"' + (mine ? ' aria-current="true"' : '') + '>' +
           '<span class="lb-rank num">' + rank + '</span>' +
-          '<span class="lb-name"><span dir="auto">' + esc(r.username) + '</span>' + (mine ? '<span class="lb-you">(אתה)</span>' : '') + '</span>' +
+          '<span class="lb-name"><span dir="auto">' + esc(r.username) + '</span>' + (mine ? '<span class="lb-you">(אני)</span>' : '') + '</span>' +
           '<span class="lb-val">' + this.lbValue(kind, r.value) + '</span></li>';
       }).join('');
     }).catch(() => {
       if (seq !== this.lbSeq) return;
       list.innerHTML = '<li class="lb-state empty">אין חיבור לשרת, אז אי אפשר לטעון את הטבלה. המשחק עצמו עובד כרגיל.' +
-        '<br><button class="btn btn-cream btn-sm" type="button" data-lb-retry style="margin-top:10px">' + Icons.redo + 'נסה שוב</button></li>';
+        '<br><button class="btn btn-cream btn-sm" type="button" data-lb-retry style="margin-top:10px">' + Icons.redo + 'לנסות שוב</button></li>';
     });
+  },
+
+  /* ---------- 2026-10-01: name screen after the first finished session ---------- */
+  askName: false,
+  afterName: null,
+  // Leaving the summary: once, go to the name screen first. Returns true when it did.
+  nameGate() {
+    if (!this.askName || Online.player() || Online.skipped()) { this.askName = false; return false; }
+    this.askName = false;
+    this.afterName = this.sumActions.afterName || null;
+    this.openName();
+    return true;
+  },
+  leaveName() {
+    const f = this.afterName;
+    this.afterName = null;
+    if (f) f(); else this.go('home');
+  },
+
+  /* ---------- 2026-10-01: how-it-works + privacy sheets, feedback entry points ---------- */
+  PV_POINTS: [
+    ['🎙️', 'הקול לא מוקלט ולא נשלח', ' - רק עוצמה לזיהוי דיבור, בזמן אמת.'],
+    ['📊', 'נשלחים נתוני משחק:', ' מזהה מכשיר אקראי, סוג מכשיר ודפדפן, ותוצאות (מהירות, היסוסים, כוכבים). כתובת ה-IP מגיעה לשרת.'],
+    ['🏆', 'שם שבוחרים מופיע בטבלת האלופים,', ' ומקושר לנתוני המשחק. מומלץ לא להשתמש בשם מלא.'],
+    ['🗑️', 'אפשר לבקש מחיקה', ' דרך המשוב (קטגוריה: פרטיות), עם מזהה המכשיר מההגדרות.']
+  ],
+  initSheets() {
+    const card = el => '<h2 class="pv-title">' + Icons.shield + 'פרטיות בקצרה</h2><ul class="pv-list">' +
+      this.PV_POINTS.map(p => '<li><span class="pv-i" aria-hidden="true">' + p[0] + '</span><span><b>' + p[1] + '</b>' + p[2] + '</span></li>').join('') + '</ul>' +
+      (el.hasAttribute('data-pv-nomore') ? '' : '<button class="link-btn pv-more-btn" type="button" data-open-privacy-full>עוד פרטים</button>');
+    document.querySelectorAll('[data-pv-card]').forEach(el => { el.innerHTML = card(el); });
+    ['dlg-how', 'dlg-privacy'].forEach(id => {
+      const d = $(id);
+      d.addEventListener('click', e => { if (e.target === d) d.close(); }); // backdrop
+    });
+    $('how-close').addEventListener('click', () => $('dlg-how').close());
+    $('priv-close').addEventListener('click', () => $('dlg-privacy').close());
+    $('w-how').addEventListener('click', () => this.openSheet('dlg-how'));
+    $('w-privacy').addEventListener('click', () => this.openPrivacy(false));
+    // One listener for every "איך זה עובד?" / "פרטיות" link, wherever it is.
+    document.addEventListener('click', e => {
+      if (e.target.closest('[data-open-how]')) this.openSheet('dlg-how');
+      else if (e.target.closest('[data-open-privacy-full]')) this.openPrivacy(true);
+      else if (e.target.closest('[data-open-privacy]')) this.openPrivacy(false);
+    });
+    $('priv-fb').addEventListener('click', () => { $('dlg-privacy').close(); this.openFeedback('privacy', { cat: 'privacy' }); });
+    $('champs-feedback').addEventListener('click', () => { $('dlg-champs').close(); this.openFeedback('champs'); });
+    $('sum-rate').addEventListener('click', e => {
+      const b = e.target.closest('[data-thumb]');
+      if (!b) return;
+      const up = b.dataset.thumb === 'up';
+      this.openFeedback(up ? 'summary_up' : 'summary_down', up ? { cat: 'praise', rating: 5 } : { cat: 'idea', rating: 2 });
+    });
+    $('nudge-go').addEventListener('click', () => { this.hideNudge(); this.openFeedback('nudge'); });
+    $('nudge-no').addEventListener('click', () => this.hideNudge());
+  },
+  openSheet(id) {
+    const d = $(id);
+    if (!d.open) d.showModal();
+  },
+  openPrivacy(full) {
+    $('priv-more').open = !!full;
+    this.openSheet('dlg-privacy');
+  },
+
+  /* 2026-10-01: feedback nudge after the 3rd and the 10th finished session ever.
+   * Each milestone shows once (seen = remembered, "לא עכשיו" only hides), at most once in 3 days,
+   * never in a session, not when feedback was sent in the last 3 days. Key quickflow_fb_nudge. */
+  nudgeKey: 'quickflow_fb_nudge',
+  nudgeT: null,
+  maybeNudge() {
+    let st = {};
+    try { st = JSON.parse(Online.get(this.nudgeKey)) || {}; } catch (e) { st = {}; }
+    const done = Array.isArray(st.done) ? st.done.filter(n => typeof n === 'number') : [];
+    const n = Storage.store.sessions.length;
+    const m = [10, 3].find(x => n >= x && done.indexOf(x) < 0);
+    const gap = 3 * 24 * 3600 * 1000;
+    if (!m) return;
+    if (typeof st.at === 'number' && Date.now() - st.at < gap) return;
+    if (Date.now() - Telemetry.feedbackAt() < gap) return;
+    clearTimeout(this.nudgeT);
+    this.nudgeT = setTimeout(() => {
+      if (this.s || this.view !== 'summary' || document.querySelector('dialog[open]')) return;
+      Online.set(this.nudgeKey, JSON.stringify({ done: [3, 10].filter(x => x <= m || done.indexOf(x) >= 0), at: Date.now() }));
+      $('fb-nudge').hidden = false;
+    }, Fx.reduced() ? 600 : 2600);
+  },
+  hideNudge() {
+    clearTimeout(this.nudgeT);
+    const el = $('fb-nudge');
+    if (el) el.hidden = true;
   },
 
   /* ---------- data tools ---------- */
@@ -5540,6 +6094,8 @@ const Admin = {
     $('adm-logout').addEventListener('click', () => this.logout());
     $('adm-body').addEventListener('click', e => this.onBodyClick(e));
     $('adm-body').addEventListener('pointerover', e => this.onChart(e));
+    // 2026-10-01: delete-on-request form (rendered inside adm-body)
+    $('adm-body').addEventListener('submit', e => { if (e.target.id === 'adm-del') { e.preventDefault(); this.deleteOnRequest(); } });
   },
 
   isOpen() {
@@ -5721,9 +6277,13 @@ const Admin = {
         '<span class="adm-seg"><button type="button" data-sort="seen" aria-pressed="' + (this.sortBy === 'seen') + '">נראו לאחרונה</button><button type="button" data-sort="stars" aria-pressed="' + (this.sortBy === 'stars') + '">כוכבים</button></span>') +
       sec('סשנים אחרונים', this.sessionsHtml(d.recent_sessions || [])) +
       sec('מכשירים', this.devicesHtml(d.devices || [])) +
-      sec('משובים (' + nFb + ' פתוחים)', this.feedbackHtml(d.feedback || []));
+      sec('משובים (' + nFb + ' פתוחים)', this.feedbackHtml(d.feedback || [])) +
+      // 2026-10-01: client errors (loaded by its own call) and delete on request
+      sec('שגיאות', '<div id="adm-errors"><p class="adm-empty">טוען...</p></div>') +
+      sec('מחיקה לפי בקשה', this.deleteHtml());
     this.renderChart();
     this.renderPlayers();
+    this.loadErrors();
     this.setStatus('עודכן ב-' + this.time(d.generated_at || new Date().toISOString()) + ' (שעון ישראל)');
   },
 
@@ -5870,6 +6430,75 @@ const Admin = {
     }).join('');
   },
 
+  /* ---------- 2026-10-01: client errors ---------- */
+  async loadErrors() {
+    const box = $('adm-errors');
+    if (!box || !this.pass) return;
+    const my = this.seq;
+    try {
+      const r = await Online.rpc('qf_admin_errors', { p_pass: this.pass }, { timeoutMs: CONFIG.admin.timeoutMs });
+      if (my !== this.seq || !$('adm-errors')) return;
+      if (r && r.error) throw new Error(String(r.error));
+      $('adm-errors').innerHTML = this.errorsHtml(r || {});
+    } catch (e) {
+      if (my !== this.seq || !$('adm-errors')) return;
+      const code = this.code(e);
+      if (code === 'unauthorized' || code === 'locked') { this.kick(code); return; }
+      $('adm-errors').innerHTML = '<p class="adm-empty">' + esc(this.errText(code)) + '</p>';
+    }
+  },
+  errorsHtml(r) {
+    const items = Array.isArray(r.items) ? r.items : [];
+    const head = '<p class="adm-note">ב-24 השעות האחרונות: <b class="num">' + this.num(Number(r.last_24h)) + '</b></p>';
+    if (!items.length) return head + '<p class="adm-empty">אין שגיאות.</p>';
+    return head + '<ul class="adm-list">' + items.map(it => {
+      const same = Number(it.same);
+      const src = it.source ? this.v(it.source) + (it.line !== null && it.line !== undefined ? ':' + this.num(Number(it.line)) : '') : '';
+      return '<li class="adm-err"><p class="adm-err-msg">' + this.v(it.message) + '</p><div class="adm-err-meta">' +
+        '<span>' + this.time(it.at) + '</span>' +
+        (src ? '<span dir="ltr">' + src + '</span>' : '') +
+        (it.app_version ? '<span dir="ltr">v' + esc(it.app_version) + '</span>' : '') +
+        (isFinite(same) && same > 1 ? '<span>x<b class="num">' + this.num(same) + '</b></span>' : '') +
+        '</div></li>';
+    }).join('') + '</ul>';
+  },
+
+  /* ---------- 2026-10-01: delete on request (player by name / device by install id) ---------- */
+  deleteHtml() {
+    return '<form id="adm-del" class="adm-del" autocomplete="off">' +
+      '<select id="adm-del-kind" aria-label="סוג מחיקה"><option value="player">שחקן לפי שם</option><option value="install">מכשיר לפי מזהה</option></select>' +
+      '<input id="adm-del-value" type="text" maxlength="64" dir="auto" spellcheck="false" aria-label="שם או מזהה">' +
+      '<button class="btn btn-sm btn-red" type="submit" data-adm-del>מחיקה</button></form>' +
+      '<p id="adm-del-msg" class="adm-del-msg" aria-live="polite"></p>';
+  },
+  async deleteOnRequest() {
+    const btn = document.querySelector('[data-adm-del]');
+    const msg = $('adm-del-msg');
+    const kind = $('adm-del-kind').value === 'install' ? 'install' : 'player';
+    const value = $('adm-del-value').value.trim();
+    const setMsg = (t, bad) => { msg.textContent = t; msg.className = 'adm-del-msg' + (bad ? ' bad' : ''); };
+    if (!this.pass || !btn || btn.disabled) return;
+    if (!value) { setMsg('הקלידו שם או מזהה.', true); return; }
+    const what = kind === 'player' ? 'השחקן "' + value + '"' : 'המכשיר ' + value;
+    if (!confirm('למחוק את ' + what + ' וכל הנתונים שלו בשרת? הפעולה לא הפיכה.')) return;
+    btn.disabled = true;
+    setMsg('מוחק...');
+    try {
+      const r = await Online.rpc('qf_admin_delete', { p_pass: this.pass, p_kind: kind, p_value: value }, { timeoutMs: CONFIG.admin.timeoutMs });
+      if (r && r.error) throw new Error(String(r.error));
+      if (!r || r.ok !== true) throw new Error('not_found');
+      const n = Number(r.deleted);
+      setMsg('נמחק. רשומות שנמחקו: ' + (isFinite(n) ? n : 0) + '.');
+      $('adm-del-value').value = '';
+    } catch (e) {
+      const code = this.code(e);
+      if (code === 'unauthorized' || code === 'locked') { this.kick(code); return; }
+      setMsg(code === 'not_found' ? 'לא נמצא.' : this.errText(code), true);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  },
+
   onBodyClick(e) {
     const d = e.target.closest('[data-days]');
     if (d) {
@@ -5932,15 +6561,77 @@ const Move = {
     for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return JSON.parse(new TextDecoder().decode(bytes));
   },
+  // 2026-10-01: keys never sent or taken. quickflow_player / _draft hold the player secret
+  // (was sent in the URL fragment). After the move the player picks a name again or plays unnamed.
+  secretKeys: ['quickflow_player', 'quickflow_player_draft', 'quickflow_player_pending'],
+  // 2026-10-01: last day of the move. After it the old host shows a short link only (no data),
+  // and the new host refuses #qf-import links.
+  endsAt: '2026-12-31',
+  // 2026-10-01: an import is taken only with no referrer or one from the old host.
+  refOk: 'https://danielmazh.github.io/',
+  over() { return Date.now() > new Date(this.endsAt + 'T23:59:59').getTime(); },
   collect() {
     const data = {};
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && k.indexOf('quickflow_') === 0) data[k] = localStorage.getItem(k);
+        if (!k || k.indexOf('quickflow_') !== 0 || this.secretKeys.includes(k)) continue; // 2026-10-01: + secretKeys
+        if (!this.check[k]) continue; // 2026-10-01: only keys the new host accepts
+        data[k] = localStorage.getItem(k);
       }
     } catch (e) { /* no storage: move without data */ }
     return data;
+  },
+  // 2026-10-01: allow-list of importable keys. Each check gets the raw string and returns the
+  // clean string to store, or null to skip. Was: any quickflow_* key, stored as is.
+  check: {
+    quickflow_store: v => Move.cleanStore(v),
+    quickflow_v1_store: v => Move.cleanStore(v),
+    quickflow_progress: v => {
+      const d = Move.json(v);
+      if (!d || d.version !== 1 || !d.stars || typeof d.stars !== 'object') return null;
+      const stars = {};
+      STAGES.forEach(st => { const n = d.stars[st.id]; if (Number.isInteger(n) && n >= 0 && n <= 3) stars[st.id] = n; });
+      return JSON.stringify({ version: 1, stars });
+    },
+    quickflow_recent_prompts: v => {
+      const d = Move.json(v);
+      if (!d || typeof d !== 'object' || Array.isArray(d)) return null;
+      const out = {};
+      Object.keys(CONFIG.modes).forEach(m => {
+        if (Array.isArray(d[m])) out[m] = d[m].filter(x => typeof x === 'string' && x.length <= 300).slice(-500);
+      });
+      return JSON.stringify(out);
+    },
+    quickflow_music: v => (v === 'on' || v === 'off' ? v : null),
+    quickflow_sfx: v => (v === 'on' || v === 'off' ? v : null),
+    quickflow_tts: v => (v === 'on' || v === 'off' ? v : null),
+    quickflow_player_skip: v => (v === '1' ? v : null),
+    quickflow_seen_modes: v => {
+      const d = Move.json(v);
+      return Array.isArray(d) ? JSON.stringify(d.filter(m => typeof m === 'string' && Object.prototype.hasOwnProperty.call(CONFIG.modes, m))) : null;
+    },
+    quickflow_install_id: v => (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) ? v : null),
+    quickflow_feedback_at: v => (/^\d{1,15}$/.test(v) ? v : null),
+    quickflow_social_names: v => {
+      const d = Move.json(v);
+      return Array.isArray(d) ? JSON.stringify(d.filter(x => typeof x === 'string').map(x => Social.cleanName(x)).filter(Boolean).slice(0, CONFIG.social.maxPlayers)) : null;
+    },
+    quickflow_social_scene_level: v => (/^[1-9]$/.test(v) ? v : null),
+    quickflow_social_scene_recent: v => {
+      const d = Move.json(v);
+      return Array.isArray(d) ? JSON.stringify(d.filter(x => typeof x === 'string' && /^[a-z0-9-]{1,40}$/.test(x)).slice(-50)) : null;
+    }
+  },
+  json(v) { try { return JSON.parse(v); } catch (e) { return null; } },
+  // History goes through the same checks as a local load (Storage.migrate: every field typed).
+  cleanStore(v) {
+    try {
+      const msg = Storage.message;
+      const d = Storage.migrate(this.json(v));
+      Storage.message = msg;
+      return JSON.stringify(d);
+    } catch (e) { return null; }
   },
   // Old address: send the player to the new one. Returns true when leaving.
   // 2026-09-30: was briefly false. The dead link was the operator's work VPN
@@ -5948,6 +6639,8 @@ const Move = {
   enabled: true,
   leave() {
     if (!this.enabled || location.hostname !== this.fromHost) return false;
+    // 2026-10-01: after endsAt: a short link to the new address, no data in the URL.
+    if (this.over()) { this.showLink(); return true; }
     const data = this.collect();
     let url = this.to;
     if (Object.keys(data).length) {
@@ -5966,24 +6659,53 @@ const Move = {
     location.replace(url);
     return true;
   },
+  // 2026-10-01: the old host after the move window. Static text, no data.
+  showLink() {
+    const paint = () => {
+      document.body.innerHTML = '';
+      const box = document.createElement('div');
+      box.style.cssText = 'max-width:420px;margin:60px auto;padding:20px;text-align:center;font:18px/1.5 Rubik,system-ui,sans-serif';
+      const p = document.createElement('p');
+      p.textContent = 'QuickFlow עבר לכתובת חדשה:';
+      const a = document.createElement('a');
+      a.href = this.to;
+      a.textContent = this.to.replace(/^https:\/\//, '').replace(/\/$/, '');
+      a.style.cssText = 'font-weight:700;font-size:20px';
+      box.append(p, a);
+      document.body.appendChild(box);
+    };
+    if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', paint); else paint();
+  },
   // New address: take the data once, never overwrite what is already here.
+  // 2026-10-01: + referrer check, end date, allow-list with per-key checks, secret keys never taken.
   arrive() {
     const h = location.hash || '';
     const pre = '#' + this.param + '=';
     if (h.indexOf(pre) !== 0) return;
-    try {
-      const data = this.dec(h.slice(pre.length));
-      Object.keys(data).forEach(k => {
-        if (k.indexOf('quickflow_') !== 0 || typeof data[k] !== 'string') return;
-        if (localStorage.getItem(k) === null) localStorage.setItem(k, data[k]);
-      });
-    } catch (e) { /* bad or partial link: start fresh */ }
+    const ref = String(document.referrer || '');
+    const refOk = ref === '' || ref.indexOf(this.refOk) === 0;
+    if (refOk && !this.over()) {
+      try {
+        const data = this.dec(h.slice(pre.length));
+        if (data && typeof data === 'object' && !Array.isArray(data)) {
+          Object.keys(data).forEach(k => {
+            if (this.secretKeys.includes(k) || typeof data[k] !== 'string' || data[k].length > this.maxChars * 2) return;
+            const fn = Object.prototype.hasOwnProperty.call(this.check, k) ? this.check[k] : null;
+            if (!fn) return;
+            const clean = fn(data[k]);
+            if (clean === null || clean === undefined) return;
+            if (localStorage.getItem(k) === null) localStorage.setItem(k, clean);
+          });
+        }
+      } catch (e) { /* bad or partial link: start fresh */ }
+    }
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { location.hash = ''; }
   }
 };
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   if (!Move.leave()) {
+    ErrorReport.init(); // 2026-10-01: before anything else can throw
     Move.arrive();
     window.addEventListener('DOMContentLoaded', () => App.init());
   }
