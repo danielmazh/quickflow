@@ -885,6 +885,7 @@
     50% { box-shadow: 0 4px 0 var(--brown), inset 0 2px 0 rgba(255,255,255,.5), 0 0 14px 5px rgba(255,214,90,.75); }
   }
   .ibtn[data-icon="gear"] svg { width: 24px; height: 24px; }
+  .ibtn[data-icon="menu"] svg { width: 24px; height: 24px; } /* 2026-10-01 */
 
   /* welcome */
   .welcome { justify-content: space-between; }
@@ -965,6 +966,39 @@
   .set-grid .btn { font-size: .85rem; }
   .topbar .topbar-title { min-width: 0; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+  /* 2026-10-01: menu dialog (was settings): labeled sections, compact */
+  dialog.dlg.menu .dlg-scroll { padding-bottom: 14px; }
+  .m-items { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 2px 0 4px; }
+  .m-item { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 8px; border-radius: 14px;
+    border: 2.5px solid var(--brown); background: var(--cream-2); color: var(--ink); font-family: var(--font-display); font-weight: 700; font-size: .95rem;
+    box-shadow: inset 0 -3px 0 var(--cream-3); white-space: nowrap; }
+  .m-item svg { width: 18px; height: 18px; flex: none; }
+  .m-item:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .m-h { margin: 10px 2px 3px; font-family: var(--font-display); font-weight: 700; font-size: .9rem; color: var(--ink-2); }
+  .m-box { background: rgba(255,255,255,.35); border-radius: 12px; padding: 0 6px; }
+  dialog.dlg.menu .set-grid { margin: 0 0 4px; }
+  dialog.dlg.menu .set-note.drive { margin: 0 0 6px; }
+  dialog.dlg.menu .dlg-status { margin-top: 8px; }
+  dialog.dlg.menu .set-row b { font-size: 1.05rem; }
+  dialog.dlg.menu .tgl { height: 34px; min-width: 88px; font-size: .9rem; box-shadow: 0 3px 0 var(--brown), inset 0 2px 0 rgba(255,255,255,.3); }
+  dialog.dlg.menu .tgl i { width: 22px; height: 22px; }
+  dialog.dlg.menu .set-row { padding: 3px 2px; }
+  dialog.dlg.menu .set-install > span { white-space: nowrap; }
+  dialog.dlg.menu .set-install b { display: inline; font-size: .95rem; } /* was a flex block (.set-row b): the id wrapped */
+  dialog.dlg.menu .set-note.drive { font-size: .74rem; padding: 4px 8px; }
+  dialog.dlg.menu .set-grid .btn { padding: 6px 8px; }
+  dialog.dlg.menu .pv-card { padding: 8px 10px; }
+  dialog.dlg.menu .pv-list { gap: 4px; font-size: .8rem; line-height: 1.3; }
+  /* 2026-10-01: welcome secondary button + how-to-play list */
+  .w-how { flex: none; margin: 8px 3px 0; width: calc(100% - 6px); padding: 9px 12px; font-size: 1.05rem; }
+  .how-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: .9rem; line-height: 1.4; }
+  .how-list li { display: flex; gap: 8px; align-items: flex-start; }
+  .how-list li > span:first-child { flex: none; width: 1.4em; text-align: center; }
+  .how-list li.drive-note { margin: 4px 0 0; }
+  /* 2026-10-01: feedback chips keep their natural width and wrap as whole chips. Counter never breaks. */
+  .fb-cat { flex: 1 0 28%; padding: 6px 10px; } /* 3 + 2 chips per row at 360-375 px */
+  .fb-count > span { white-space: nowrap; }
+
   /* privacy card + sheets */
   .pv-card { background: var(--green-bg); border: 2.5px solid var(--green-l); border-radius: 16px; padding: 10px 12px; color: var(--green-d); }
   .pv-title { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; color: var(--green-d); }
@@ -1040,7 +1074,8 @@
 <div class="corner">
   <!-- 2026-10-01: header = 3 round buttons. Trophy (the only champions entry, gold glow), settings (cog), music. Was order music, settings, trophy. -->
   <button id="btn-champs" class="ibtn gold" type="button" aria-label="טבלת האלופים" aria-haspopup="dialog" data-icon="trophy"></button>
-  <button id="btn-settings" class="ibtn" type="button" aria-label="הגדרות" aria-haspopup="dialog" data-icon="gear"></button>
+  <!-- 2026-10-01: menu icon (3 lines), label "תפריט". Was the cog, "הגדרות". Same id. -->
+  <button id="btn-settings" class="ibtn" type="button" aria-label="תפריט" aria-haspopup="dialog" data-icon="menu"></button>
   <button id="btn-music" class="ibtn" type="button" aria-pressed="true" aria-label="מוזיקת רקע" data-sound-toggle></button>
 </div>
 <div class="app">
@@ -1066,9 +1101,10 @@
       </ul>
     </div>
     <button id="btn-welcome-go" class="btn btn-green btn-big btn-block w-go" type="button"><span data-icon="play"></span>מתחילים לשחק</button>
+    <!-- 2026-10-01: "איך משחקים?" is a full width secondary button (was a link "איך זה עובד?"). Privacy link: "פרטיות". -->
+    <button id="w-how" class="btn btn-cream btn-block w-how" type="button" aria-haspopup="dialog"><span data-icon="question"></span>איך משחקים?</button>
     <div class="w-links">
-      <button id="w-how" class="link-btn on-bg-link" type="button" aria-haspopup="dialog">איך זה עובד?</button>
-      <button id="w-privacy" class="link-btn on-bg-link" type="button" aria-haspopup="dialog">פרטיות בקצרה</button>
+      <button id="w-privacy" class="link-btn on-bg-link" type="button" aria-haspopup="dialog">פרטיות</button>
     </div>
   </section>
 
@@ -1103,7 +1139,7 @@
         <div class="scroll">
           <p class="tab-intro">בלי יעדים ובלי כוכבים. בוחרים מצב ומתאמנים.</p>
           <div id="home-modes" class="rows"></div>
-          <!-- 2026-10-01: the driving line shows on every intro screen (stage and practice), in settings and in the how sheet -->
+          <!-- 2026-10-01: the driving line shows only in the read-aloud setting and in the how-to-play sheet -->
           <details class="how more">
             <summary>עוד פרטים: השבוע שלי</summary>
             <p id="week-title" class="week-title"></p>
@@ -1135,13 +1171,13 @@
     <div class="panel has-ribbon fill">
       <span class="ribbon"><span data-icon="trophy"></span>בחירת שם</span>
       <div class="scroll">
-        <p class="w-p">השם יופיע בטבלת האלופים, מול שחקנים אחרים. אי אפשר לשנות אותו אחר כך.</p>
+        <p class="w-p">בוחרים שם לטבלה. אי אפשר לשנות אותו אחר כך.</p><!-- 2026-10-01: the board line moved below -->
         <label for="name-input" class="name-lbl">השם בטבלה</label>
         <input id="name-input" class="name-input" type="text" maxlength="16" dir="auto" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-describedby="name-msg name-rule">
         <p id="name-msg" class="name-msg" aria-live="polite"></p>
         <p id="name-rule" class="name-rule muted">2 עד 16 תווים: אותיות, ספרות, רווח, מקף או קו תחתון.</p>
-        <!-- 2026-10-01: was a long privacy line (server fields). Now the key point + the privacy card. -->
-        <div class="privacy-line"><span data-icon="shield"></span><span><b>השם מקושר לנתוני המשחק.</b> מומלץ לא להשתמש בשם מלא. <button class="link-btn inline" type="button" data-open-privacy>פרטיות בקצרה</button></span></div>
+        <!-- 2026-10-01: one line only. Was: "השם מקושר לנתוני המשחק..." + a link to the privacy card. -->
+        <div class="privacy-line"><span data-icon="shield"></span><span>השם יופיע בטבלת האלופים. עדיף לא שם מלא.</span></div>
       </div>
     </div>
     <button id="name-save" class="btn btn-green btn-big foot-btn" type="button" disabled><span data-icon="check"></span>שמירה</button>
@@ -1192,7 +1228,7 @@
       </div>
       <div class="safety">
         <p><span aria-hidden="true">🎙️</span><span><b>הקול לא מוקלט ולא נשלח.</b> רק עוצמה, בזמן אמת.</span></p>
-        <p><span aria-hidden="true">🚗</span><span><b>בנהיגה:</b> לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</span></p>
+        <!-- 2026-10-01: the driving line was removed here. It stays in the read-aloud setting and the how-to-play sheet. -->
       </div>
       <details class="how more">
         <summary>עוד פרטים: טיפ</summary>
@@ -1226,7 +1262,7 @@
       </div>
     </div>
     <div id="soc-cast" class="panel has-ribbon fill" hidden>
-      <span class="ribbon">דף הליהוק</span>
+      <span id="soc-cast-rib" class="ribbon">דף הליהוק</span><!-- 2026-10-01: id, the story sheet says "הסיפור שלנו" -->
       <div class="scroll">
         <div class="soc-sit">
           <span id="soc-sit-l" class="soc-sit-l">הסיטואציה</span>
@@ -1241,6 +1277,8 @@
     <div id="soc-cast-row" class="btn-row soc-cast-row" hidden>
       <!-- 2026-10-01: "הגרל מחדש" (soc-roll-all) removed: players do not re-roll in scene v2 -->
       <button id="soc-cast-back" class="btn btn-cream" type="button"></button>
+      <!-- 2026-10-01: another scene of the same level / another story opening -->
+      <button id="soc-shuffle" class="btn btn-cream" type="button">🔀 סצנה אחרת</button>
     </div>
   </section>
 
@@ -1336,28 +1374,38 @@
 
 </div>
 
-<!-- ================= SETTINGS DIALOG =================
-     2026-10-01: compact. Buttons in a 2x2 grid, "פרטיות בקצרה" card instead of the long privacy text. -->
-<dialog id="dlg-settings" class="panel dlg" aria-labelledby="dlg-title">
-  <span id="dlg-title" class="ribbon">הגדרות</span>
+<!-- ================= MENU DIALOG (id dlg-settings kept) =================
+     2026-10-01: "תפריט". Short labeled sections in this order: איך משחקים, שליחת משוב, צלילים והקראה,
+     החשבון שלי, הנתונים שלי, פרטיות. Same ids and functions. Was "הגדרות" with a 2x2 button grid and a privacy card. -->
+<dialog id="dlg-settings" class="panel dlg menu" aria-labelledby="dlg-title">
+  <span id="dlg-title" class="ribbon">תפריט</span>
   <button id="dlg-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
   <div class="dlg-scroll">
-    <div class="set-row"><b><span data-icon="bell"></span>צלילים</b><button id="tgl-sfx" class="tgl" type="button" role="switch" aria-checked="true" aria-label="צלילים" data-sound-toggle><span></span><i></i></button></div>
-    <div class="set-row"><b><span data-icon="music"></span>מוזיקה</b><button id="tgl-music" class="tgl" type="button" role="switch" aria-checked="true" aria-label="מוזיקה" data-sound-toggle><span></span><i></i></button></div>
-    <div class="set-row"><b><span data-icon="speaker"></span>הקראה בקול</b><button id="tgl-tts" class="tgl" type="button" role="switch" aria-checked="true" aria-label="הקראה בקול" aria-describedby="tts-note tts-drive"><span></span><i></i></button></div>
-    <p id="tts-note" class="set-note" hidden>אין בדפדפן הזה קול בעברית, לכן אי אפשר להפעיל הקראה.</p>
-    <p id="tts-drive" class="set-note drive">🚗 בנהיגה: לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</p>
-    <!-- 2026-09-30: online name. Shown only, no rename. -->
-    <div class="set-row"><b><span data-icon="trophy"></span>שם בטבלה</b><span id="set-player" class="set-player"></span></div>
-    <!-- 2026-10-01: device id for deletion requests. Shows 8 chars, copies the full id. -->
-    <div class="set-row set-install"><span>מזהה מכשיר: <b id="set-install" class="num" dir="ltr"></b></span><button id="set-install-copy" class="btn btn-cream btn-sm" type="button">העתקה</button></div>
+    <div class="m-items">
+      <button id="set-help" class="m-item" type="button"><span data-icon="question"></span>איך משחקים</button>
+      <button id="set-feedback" class="m-item" type="button"><span data-icon="chat"></span>שליחת משוב</button>
+    </div>
+    <h3 class="m-h">צלילים והקראה</h3>
+    <div class="m-box">
+      <div class="set-row"><b><span data-icon="music"></span>מוזיקה</b><button id="tgl-music" class="tgl" type="button" role="switch" aria-checked="true" aria-label="מוזיקה" data-sound-toggle><span></span><i></i></button></div>
+      <div class="set-row"><b><span data-icon="bell"></span>אפקטים</b><button id="tgl-sfx" class="tgl" type="button" role="switch" aria-checked="true" aria-label="אפקטים" data-sound-toggle><span></span><i></i></button></div>
+      <div class="set-row"><b><span data-icon="speaker"></span>הקראה בקול</b><button id="tgl-tts" class="tgl" type="button" role="switch" aria-checked="true" aria-label="הקראה בקול" aria-describedby="tts-note tts-drive"><span></span><i></i></button></div>
+      <p id="tts-note" class="set-note" hidden>אין בדפדפן הזה קול בעברית, לכן אי אפשר להפעיל הקראה.</p>
+      <p id="tts-drive" class="set-note drive">🚗 בנהיגה: לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</p>
+    </div>
+    <h3 class="m-h">החשבון שלי</h3>
+    <div class="m-box">
+      <!-- 2026-09-30: online name. Shown only, no rename. -->
+      <div class="set-row"><b><span data-icon="trophy"></span>שם בטבלה</b><span id="set-player" class="set-player"></span></div>
+      <!-- 2026-10-01: device id for deletion requests. Shows 8 chars, copies the full id. -->
+      <div class="set-row set-install"><span>מזהה מכשיר: <b id="set-install" class="num" dir="ltr"></b></span><button id="set-install-copy" class="btn btn-cream btn-sm" type="button">העתקה</button></div>
+    </div>
+    <h3 class="m-h">הנתונים שלי</h3>
     <div class="set-grid">
-      <button id="set-help" class="btn btn-cream btn-sm" type="button"><span data-icon="question"></span>איך משחקים</button>
-      <button id="set-feedback" class="btn btn-cream btn-sm" type="button"><span data-icon="chat"></span>שליחת משוב</button><!-- 2026-09-30 -->
       <button id="set-export" class="btn btn-cream btn-sm" type="button"><span data-icon="download"></span>ייצוא היסטוריה</button>
       <button id="set-reset" class="btn btn-red btn-sm" type="button"><span data-icon="trash"></span>מחיקת היסטוריה</button>
     </div>
-    <!-- 2026-10-01: was a long privacy paragraph. Linked data is no longer called anonymous. -->
+    <h3 class="m-h">פרטיות</h3>
     <div class="pv-card" data-pv-card></div>
     <div class="dlg-status" aria-live="polite">
       <span id="storage-status"></span>
@@ -1378,8 +1426,8 @@
       <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="idea">רעיון</button>
       <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="praise">מחמאה</button>
       <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="other">אחר</button>
-      <!-- 2026-10-01: privacy / deletion requests (server category 'privacy') -->
-      <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="privacy">פרטיות / בקשת מחיקה</button>
+      <!-- 2026-10-01: privacy / deletion requests (server category 'privacy'). Was "פרטיות / בקשת מחיקה": a lone "/" wrapped on mobile. -->
+      <button class="fb-cat" type="button" role="radio" aria-checked="false" data-cat="privacy">פרטיות</button>
     </div>
     <span id="fb-rate-lbl" class="fb-lbl">כמה נהנים מהמשחק? <small>לא חובה</small></span>
     <div id="fb-rate" class="fb-rate" role="group" aria-labelledby="fb-rate-lbl"></div>
@@ -1390,7 +1438,8 @@
     <input id="fb-hp" class="fb-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p id="fb-msg" class="fb-msg" aria-live="polite"></p>
     <button id="fb-send" class="btn btn-green btn-block" type="button" disabled><span data-icon="send"></span>שליחה</button>
-    <div class="privacy-line fb-privacy"><span data-icon="shield"></span><span>נשלחים הטקסט, הסוג, הדירוג, המסך הנוכחי, סוג המכשיר ומזהה המכשיר. בלי פרטים אישיים, בבקשה.</span></div>
+    <!-- 2026-10-01: shorter. Was the full field list. -->
+    <div class="privacy-line fb-privacy"><span data-icon="shield"></span><span>נשלחים עם ההודעה סוג המכשיר ומזהה המכשיר. בלי פרטים אישיים, בבקשה.</span></div>
   </div>
 </dialog>
 <!-- ================= CHAMPIONS DIALOG (2026-10-01: was the #panel-champs home tab) =================
@@ -1405,73 +1454,34 @@
   <button id="champs-feedback" class="link-btn champs-fb" type="button">משוב</button><!-- 2026-10-01 -->
 </dialog>
 
-<!-- ================= HOW IT WORKS (2026-10-01) =================
-     The long welcome text and the "איך המדידה עובדת" notes, now in one sheet. -->
+<!-- ================= HOW TO PLAY (2026-10-01) =================
+     2026-10-01: 8 short lines. Was a long sheet (goal, 4 measures, 5 benefits, measurement notes, privacy button). -->
 <dialog id="dlg-how" class="panel dlg" aria-labelledby="how-title">
-  <span id="how-title" class="ribbon">איך זה עובד?</span>
+  <span id="how-title" class="ribbon">איך משחקים?</span>
   <button id="how-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
   <div class="dlg-scroll how-sheet">
-    <h3 class="h2"><span data-icon="target"></span>המטרה</h3>
-    <p>לאמן דיבור ספונטני: לענות מהר, בלי לסנן ובלי להיתקע. מקבלים מילה, משפט או נושא, ועונים בקול.</p>
-    <h3 class="h2"><span data-icon="clock"></span>מה נמדד</h3>
-    <div class="w-grid">
-      <div class="w-item"><b>זמן תגובה</b><span>כמה מהר מתחילים לדבר</span></div>
-      <div class="w-item"><b>אחוז מענה</b><span>בכמה סבבים הייתה תשובה</span></div>
-      <div class="w-item"><b>היסוסים</b><span>הפסקות ארוכות באמצע</span></div>
-      <div class="w-item"><b>רצף דיבור</b><span>כמה מהזמן היה דיבור</span></div>
-    </div>
-    <h3 class="h2"><span data-icon="bolt"></span>מה משתפר</h3>
-    <ul class="w-list">
-      <li>תגובה מהירה יותר</li><li>דיבור שוטף</li><li>פחות היסוסים</li><li>ביטחון באלתור</li><li>פגישות ושיחות</li>
+    <ul class="how-list">
+      <li><span aria-hidden="true">⏱️</span><span><b>מה נמדד:</b> כמה מהר מתחילים לדבר, וכמה היסוסים יש באמצע.</span></li>
+      <li><span aria-hidden="true">🗣️</span><span>קוראים בשקט, ומדברים רק כשמופיע <b>"דברו עכשיו!"</b></span></li>
+      <li><span aria-hidden="true">⭐</span><span><b>כוכבים:</b> עד 3 בכל שלב. כוכב אחד פותח את השלב הבא.</span></li>
+      <li><span aria-hidden="true">🗺️</span><span><b>מפה:</b> שלבים קצרים עם יעדים.</span></li>
+      <li><span aria-hidden="true">💪</span><span><b>תרגול:</b> כל מצב, בלי יעדים ובלי כוכבים.</span></li>
+      <li><span aria-hidden="true">👥</span><span><b>עם חברים:</b> טלפון אחד, 2 עד 4 משתתפים, בתורות.</span></li>
+      <li><span aria-hidden="true">🔊</span><span>הקראה בקול אפשר להפעיל או לכבות בתפריט.</span></li>
+      <li class="drive-note"><span aria-hidden="true">🚗</span><span><b>בנהיגה:</b> לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</span></li>
     </ul>
-    <h3 class="h2"><span data-icon="wave"></span>איך המדידה עובדת</h3>
-    <p>כל סשן מתחיל ב-1.5 שניות של שקט, לכיול רעש הרקע. סף הדיבור מחושב מהרעש שנמדד.</p>
-    <p>בכל סבב מופיע קודם "קרא" עם ספירה לאחור. כשמופיע "דברו עכשיו!" מתחילים לדבר. זמן התגובה נמדד מהרגע הזה ועד שהקול מזוהה.</p>
-    <p>סבב בלי תגובה נספר כהחמצה. היסוס הוא הפסקה של 1.2 שניות ומעלה באמצע דיבור. שקט בסוף תשובה לא נספר.</p>
-    <p>הרזולוציה היא כ-16ms. הסשן נעצר אם הלשונית מוסתרת. המוזיקה נעצרת לפני הכיול ולא מתנגנת בזמן שהמיקרופון מקשיב.</p>
-    <p>הקראה בקול (בהגדרות): בזמן ההקראה המיקרופון לא נמדד, וזמן התגובה נספר רק אחרי שההקראה נגמרה.</p>
-    <p class="drive-note"><span aria-hidden="true">🚗</span><span><b>בנהיגה:</b> לא לגעת בטלפון ולא להסתכל במסך. מתאים לנוסעים, או כשהטלפון מקובע וההקראה פועלת.</span></p>
-    <button class="btn btn-cream btn-block btn-sm" type="button" data-open-privacy><span data-icon="shield"></span>פרטיות בקצרה</button>
   </div>
 </dialog>
 
 <!-- ================= PRIVACY (2026-10-01) =================
-     Short card (4 points, same text as in settings) + the full sheet behind "עוד פרטים". -->
+     2026-10-01: one short notice (4 lines, same as in the menu). Was a card + a long sheet behind "עוד פרטים"
+     (processors, retention, IP, age). -->
 <dialog id="dlg-privacy" class="panel dlg" aria-labelledby="priv-title">
   <span id="priv-title" class="ribbon">פרטיות</span>
   <button id="priv-close" class="ibtn red dlg-close" type="button" aria-label="סגירה" data-icon="close"></button>
   <div class="dlg-scroll">
-    <div class="pv-card" data-pv-card data-pv-nomore></div>
-    <details id="priv-more" class="how more pv-full">
-      <summary>עוד פרטים</summary>
-      <h3 class="pv-h">מה נשמר בדפדפן</h3>
-      <p>היסטוריית הסשנים, כוכבים והתקדמות, הגדרות, מזהה המכשיר והשם שנבחר. אפשר למחוק את ההיסטוריה וההתקדמות בהגדרות.</p>
-      <h3 class="pv-h">מה נשלח לשרת</h3>
-      <ul>
-        <li>מזהה מכשיר אקראי (לא קשור לטלפון עצמו).</li>
-        <li>סוג מכשיר, מערכת הפעלה, דפדפן, גודל מסך ושפה.</li>
-        <li>תוצאות סשנים, מספרים בלבד: מהירות, היסוסים, כוכבים, שלב.</li>
-        <li>השם שבוחרים, וסיכום הניקוד לטבלת האלופים.</li>
-        <li>משוב, רק אם כותבים אותו. דיווח טכני על תקלות בדף.</li>
-        <li>כתובת ה-IP מגיעה לשרת עם כל בקשה.</li>
-      </ul>
-      <h3 class="pv-h">מה לא נשלח</h3>
-      <p>קול, הקלטות, מיקום ואנשי קשר. המיקרופון מודד רק עוצמה, בזמן אמת, בתוך הדפדפן.</p>
-      <h3 class="pv-h">מי מעבד את המידע</h3>
-      <ul>
-        <li><b>Supabase</b>: השרת ומסד הנתונים, באיחוד האירופי (פרנקפורט).</li>
-        <li><b>Cloudflare Pages</b>: אחסון האתר.</li>
-        <li><b>GitHub Pages</b>: הכתובת הקודמת של האתר, מעבירה לכתובת החדשה.</li>
-        <li><b>Google Fonts</b>: הגופנים. Google מקבלת את כתובת ה-IP כשהגופנים נטענים.</li>
-      </ul>
-      <h3 class="pv-h">כמה זמן נשמר</h3>
-      <p>נשמר עד שתבקשו מחיקה; מדיניות שמירה קצובה בדרך.</p>
-      <h3 class="pv-h">גיל</h3>
-      <p>מיועד לגיל 13 ומעלה.</p>
-      <h3 class="pv-h">מחיקה ויצירת קשר</h3>
-      <p>דרך המשוב, בקטגוריה "פרטיות", עם מזהה המכשיר מההגדרות.</p>
-      <button id="priv-fb" class="btn btn-cream btn-block btn-sm" type="button"><span data-icon="chat"></span>משוב בנושא פרטיות</button>
-    </details>
+    <div class="pv-card" data-pv-card></div>
+    <button id="priv-fb" class="link-btn pv-more-btn" type="button">שליחת משוב</button>
   </div>
 </dialog>
 
@@ -1588,7 +1598,7 @@ const CONFIG = {
   // 2026-09-30: build tag sent with usage data and feedback. Bump on every release.
   // 2026-10-01: was '2026-09-30.1'. Social track (ערב אימפרו).
   // 2026-10-01: was '2026-10-01.1'. Security fixes, error reports, speech detection safety.
-  appVersion: '2026-10-01.3', // 2026-10-01: UX pass + neutral cue
+  appVersion: '2026-10-01.4', // 2026-10-01: menu, short privacy, social_story, open scene levels
   // 2026-09-30: anonymous usage data + feedback form. Same server as `online`.
   // Fire-and-forget: every call may fail and the game never waits for it.
   telemetry: {
@@ -1760,6 +1770,25 @@ const CONFIG = {
       speakMs: 15000,         // 2026-10-01: default only. The level sets it (CONFIG.social.scene.levels)
       endOnSilenceMs: null,   // fixed time, like the rant: silence counts as hesitation
       trackHesitations: true
+    },
+    // 2026-10-01: third social game. One story, one or two sentences per turn.
+    // Turn 0 continues the opening, every 3rd turn brings a twist, the last turn closes the story.
+    social_story: {
+      label: "סיפור משותף",
+      social: true,
+      desc: "בונים יחד סיפור אחד. האפליקציה נותנת פתיחה, ובכל תור ממשיכים במשפט או שניים. כל תור שלישי מגיע טוויסט.",
+      short: "פתיחה, טוויסטים, משפט בכל תור",
+      readLabel: "הסיפור",
+      lead: "הסיפור",
+      liveSub: "להמשיך את הסיפור, משפט או שניים",
+      speakSub: "אפשר לשתוק כשמסיימים",
+      roundWords: ["תור", "תורות"],
+      rounds: 3,              // per player, selector CONFIG.social.roundOptions
+      readMs: 'auto',         // 45 ms per char, 1.2-3.5 s (plus readExtraMs)
+      responseWindowMs: 6000,
+      speakMs: 10000,
+      endOnSilenceMs: 2500,
+      trackHesitations: true
     }
   },
   // 2026-10-01: social track settings.
@@ -1779,6 +1808,7 @@ const CONFIG = {
       levelKey: 'quickflow_social_scene_level',      // max unlocked level, "1".."3"
       recentKey: 'quickflow_social_scene_recent',    // JSON array of recent scene ids
       recentMax: 8,
+      // 2026-10-01: all 3 levels open from the start. levelKey is no longer read or written.
       levels: [
         { id: 1, name: 'חימום', sub: 'מצבים מוכרים', speakMs: 10000 },
         { id: 2, name: 'עלילה', sub: 'טוויסט באמצע', speakMs: 15000 },
@@ -1793,7 +1823,9 @@ const CONFIG = {
     //   - min(hesCap, hesitations * perHes)   -> 0..30, scene only (assoc has no hesitations)
     // speedMax (50) + hesCap (30) < perAnswer (100), so answering always weighs most,
     // and speedMax > hesCap, so speed weighs more than fewer hesitations. Equal score = shared place.
-    score: { perAnswer: 100, speedMax: 50, perHes: 3, hesCap: 30 }
+    score: { perAnswer: 100, speedMax: 50, perHes: 3, hesCap: 30 },
+    // 2026-10-01: social_story. Recent openings are kept in memory only (no storage key).
+    story: { twistEvery: 3, recentMax: 10 }
   }
 };
 
@@ -2347,7 +2379,68 @@ const PROMPTS = {
       { role: "הבובה", hook: "לדאוג רק לתסרוקת", lines: ["להצטרף ולבקש לא להתקרב לשיער", "להציע שכולם יתחבאו מתחת למיטה", "לסדר לכולם תסרוקת לקראת הבוקר"] },
       { role: "החייל הקטן", hook: "להתייחס לכל דבר כמו למשימה", lines: ["להגיע בזחילה ולדווח על המצב בחדר", "להוביל את כולם במבצע הסתתרות", "להודיע שהילד מתעורר ולבקש מכולם לקפוא"] }
     ] }
-  ]
+  ],
+  // 2026-10-01: social_story. Openings (turn 1 continues one), twists (every 3rd turn), and
+  // short connectors for the other turns. Family friendly.
+  social_story_openings: [
+    "פעם, במכולת הכי מוזרה בעיר...",
+    "בבוקר אחד, המקרר בבית התחיל לדבר...",
+    "באמצע שיעור מתמטיקה, נפתחה דלת סודית בלוח...",
+    "סבתא החליטה שהשנה היא משתתפת במרוץ חלל...",
+    "בגן החיות, הפינגווינים הודיעו על שביתה...",
+    "המעלית בבניין עצרה בקומה שלא הייתה קיימת...",
+    "ביום הולדת שמונים, סבא קיבל במתנה דרקון קטן...",
+    "בחתונה של השכנים, העוגה פתאום קמה והלכה...",
+    "החתול של המשפחה התחיל לשלוח הודעות בווטסאפ...",
+    "בטיסה לאילת, הטייס הודיע שהוא שכח את הדרך...",
+    "ביום ראשון בבוקר, כל הנעליים בעיר נעלמו...",
+    "בסופר, עגלת קניות אחת סירבה לזוז ימינה...",
+    "בתחרות האפייה הגדולה, התנור התחיל לשיר...",
+    "בחוף הים, דג אחד ביקש לשכור כיסא נוח...",
+    "בבית הספר הודיעו שמהיום המורה הוא רובוט...",
+    "בלילה שקט אחד, הירח נפל לתוך הבריכה של השכנים...",
+    "השכן מלמטה בנה בסלון מכונת זמן קטנה...",
+    "במסיבת הכיתה, הבלונים התחילו לרחף החוצה עם כולם...",
+    "באוטובוס מספר 5, הנהג התברר כקוסם מתחיל...",
+    "בגינה הציבורית, עץ הלימון התחיל לתת עצות...",
+    "בפיקניק המשפחתי, הנמלים הגיעו עם הזמנה רשמית...",
+    "בספרייה העירונית, ספר אחד ברח מהמדף...",
+    "ביום הכי חם בשנה, השלג התחיל לרדת רק על הבית שלנו...",
+    "בתור לרופא, מישהו הביא איתו פיל קטן...",
+    "בטיול השנתי, המפה התחילה להצביע לבד על מקום אחר...",
+    "בחנות הצעצועים, הבובות פתחו ועד עובדים...",
+    "בבוקר של המבחן, העט הודיע שהוא יודע את כל התשובות...",
+    "בכפר קטן בגליל, התרנגולת הטילה ביצה מזהב בצבע ורוד...",
+    "בתחנת הדלק, רכב אחד ביקש מיץ תפוזים במקום דלק...",
+    "במשחק הכדורגל השכונתי, הכדור התחיל לברוח מכולם..."
+  ],
+  social_story_twists: [
+    "פתאום נכנס חתול עם עניבה",
+    "ואז כולם התחילו לשיר",
+    "פתאום כבה החשמל בכל העיר",
+    "ואז התברר שהכל קרה על הירח",
+    "פתאום הגיעה סבתא עם סיר מרק ענק",
+    "ואז התחיל לרדת גשם של סוכריות",
+    "פתאום כולם הבינו שהם בתוך תוכנית טלוויזיה",
+    "ואז נשמעה דפיקה בדלת, ואף אחד לא היה שם",
+    "פתאום כל החיות התחילו לדבר בעברית",
+    "ואז מישהו מצא מפת אוצר בכיס",
+    "פתאום הזמן התחיל ללכת אחורה",
+    "ואז הופיע קוסם וביקש עזרה",
+    "פתאום כולם התחילו לרקוד ולא יכלו להפסיק",
+    "ואז הגיע מכתב מחייזרים",
+    "פתאום הרצפה הפכה לטרמפולינה",
+    "ואז התברר שהכלב הוא בעצם המנהל",
+    "פתאום כל הטלפונים בעיר צלצלו יחד",
+    "ואז נחת מסוק מלא בעוגות",
+    "פתאום הבית התחיל לזוז כמו ספינה",
+    "ואז כולם התעוררו ומצאו את עצמם במקום אחר",
+    "פתאום הגיע ראש העיר על אופניים",
+    "ואז התגלה שיש לכולם תאום סודי",
+    "פתאום הכל נהיה בשחור לבן",
+    "ואז נפתחה דלת קטנה בתוך הקיר"
+  ],
+  social_story_links: ["ואז...", "אבל אז...", "ובגלל זה...", "בינתיים...", "למזלם...", "רק שאף אחד לא ידע ש...", "באותו רגע...", "והכי מוזר היה ש..."]
 };
 
 /* ============================================================
@@ -2778,6 +2871,8 @@ const Icons = {
   musicOff: svgI('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M3 3l18 18"/>'),
   bell: svgI('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>'),
   // 2026-10-01: a real cog (ring + 8 thick teeth). Was a sun-like circle with thin rays.
+  // 2026-10-01: header menu (3 lines). The cog is kept for reference, no longer used in the header.
+  menu: svgI('<path d="M4 7h16M4 12h16M4 17h16"/>', ' stroke-width="3"'),
   gear: svgI('<circle cx="12" cy="12" r="6.2"/><circle cx="12" cy="12" r="2.3"/><path d="M12 1.6v4.2M12 18.2v4.2M1.6 12h4.2M18.2 12h4.2M4.6 4.6l3 3M16.4 16.4l3 3M4.6 19.4l3-3M16.4 7.6l3-3" stroke-width="3.6" stroke-linecap="butt"/>'),
   close: svgI('<path d="M6 6l12 12M18 6L6 18"/>', ' stroke-width="3.2"'),
   lock: svgI('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
@@ -2820,6 +2915,9 @@ const Icons = {
     // 2026-10-01: social modes. Colors from :root (--red-d, --ink-2).
     social_assoc: { bg: '#8C221E',
       svg: svgI('<circle cx="7" cy="12" r="3.2"/><circle cx="17" cy="12" r="3.2"/><path d="M10.2 12h3.6"/>') },
+    // 2026-10-01: social_story, color --green (open book with a speech line)
+    social_story: { bg: '#3E7B35',
+      svg: svgI('<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/>') },
     social_scene: { bg: '#74431F',
       svg: svgI('<path d="M4 5h16l-2 9a6 6 0 0 1-12 0z"/><path d="M9 10h.01M15 10h.01M9.5 14c1.5 1.3 3.5 1.3 5 0"/>') }
   }
@@ -3964,19 +4062,11 @@ const Social = {
   // random sceneCues (they built random casts from PROMPTS.social). Now: written scenes by level.
   sceneLevels() { return CONFIG.social.scene.levels; },
   levelInfo(id) { return this.sceneLevels().find(l => l.id === id) || this.sceneLevels()[0]; },
-  // Highest unlocked level (1 when nothing is stored or storage is blocked).
-  maxLevel() {
-    let v = 1;
-    try { v = parseInt(localStorage.getItem(CONFIG.social.scene.levelKey), 10) || 1; } catch (e) { /* default */ }
-    return Math.max(1, Math.min(this.sceneLevels().length, v));
-  },
-  // After a finished scene. Returns the new level object if this scene opened one, else null.
-  unlockAfter(level) {
-    const max = this.maxLevel();
-    if (level !== max || max >= this.sceneLevels().length) return null;
-    try { localStorage.setItem(CONFIG.social.scene.levelKey, String(max + 1)); } catch (e) { return null; }
-    return this.levelInfo(max + 1);
-  },
+  // 2026-10-01: all levels open from the start. The stored levelKey is ignored (harmless if present).
+  // Was: read quickflow_social_scene_level, 1 when missing.
+  maxLevel() { return this.sceneLevels().length; },
+  // 2026-10-01: no unlock any more, never writes. Was: stored max + 1 and returned the new level.
+  unlockAfter() { return null; },
   loadRecent() {
     try {
       const a = JSON.parse(localStorage.getItem(CONFIG.social.scene.recentKey));
@@ -3986,13 +4076,46 @@ const Social = {
   },
   // Random scene of this level, not one of the recent ones while the level has others.
   // Returns a copy with only the roles in play (roles 0..n-1).
-  pickScene(level, n) {
-    const pool = PROMPTS.social_scenes.filter(sc => sc.level === level);
+  // 2026-10-01: + exclude (current scene id, for "סצנה אחרת"): never picked while the level has others.
+  pickScene(level, n, exclude) {
+    const all = PROMPTS.social_scenes.filter(sc => sc.level === level);
+    const pool = all.length > 1 && exclude ? all.filter(sc => sc.id !== exclude) : all;
     const recent = this.loadRecent();
     const sc = this.pick(pool, pool.filter(x => recent.includes(x.id)));
     const next = recent.filter(id => id !== sc.id).concat(sc.id).slice(-CONFIG.social.scene.recentMax);
     try { localStorage.setItem(CONFIG.social.scene.recentKey, JSON.stringify(next)); } catch (e) { /* memory only */ }
     return { id: sc.id, level: sc.level, title: sc.title, situation: sc.situation, roles: sc.roles.slice(0, n) };
+  },
+  // 2026-10-01: social_story. Opening: not the current one, not a recent one while others exist (memory only).
+  storyRecent: [],
+  pickOpening(exclude) {
+    const all = PROMPTS.social_story_openings;
+    const pool = exclude ? all.filter(x => x !== exclude) : all;
+    const o = this.pick(pool, this.storyRecent);
+    this.storyRecent = this.storyRecent.filter(x => x !== o).concat(o).slice(-CONFIG.social.story.recentMax);
+    return o;
+  },
+  // 2026-10-01: social_story turns. Returns { prompts, kinds } (same length, kind = lead line).
+  // Turn 0: the opening. Every twistEvery-th turn: a twist. Last turn: close the story. Else a connector.
+  storyCues(opening, total) {
+    const every = CONFIG.social.story.twistEvery;
+    const twists = PROMPTS.social_story_twists.slice().sort(() => Math.random() - 0.5);
+    const links = PROMPTS.social_story_links;
+    const prompts = [];
+    const kinds = [];
+    let tw = 0;
+    let last = '';
+    for (let t = 0; t < total; t++) {
+      if (t === total - 1) { prompts.push('לסיים את הסיפור במשפט אחד'); kinds.push('סיום'); }
+      else if (t === 0) { prompts.push(opening); kinds.push('פתיחה: להמשיך מכאן'); }
+      else if ((t + 1) % every === 0) { prompts.push(twists[tw++ % twists.length]); kinds.push('טוויסט! להכניס לסיפור'); }
+      else {
+        last = this.pick(links, [last]);
+        prompts.push(last);
+        kinds.push('ממשיכים, משפט או שניים');
+      }
+    }
+    return { prompts, kinds };
   },
   // Turn t: player t % n, round floor(t / n). One directive per turn.
   sceneCues(cast, n) {
@@ -4038,7 +4161,9 @@ const App = {
   sumActions: {},
   // 2026-10-01: social track state (setup screen, cast sheet). Names are free text: always esc().
   // 2026-10-01: + level (chosen scene level, null = highest unlocked).
-  soc: { mode: 'social_assoc', names: null, rounds: {}, step: 'setup', players: null, cast: null, level: null },
+  // 2026-10-01: + story ({ opening } for social_story, else null).
+  soc: { mode: 'social_assoc', names: null, rounds: {}, step: 'setup', players: null, cast: null, level: null, story: null },
+  SOC_MODES: ['social_assoc', 'social_scene', 'social_story'], // 2026-10-01: order of the "עם חברים" cards
 
   init() {
     Storage.load();
@@ -4395,7 +4520,7 @@ const App = {
 
   // 2026-10-01: "עם חברים" tab: one compact card per social game. A tap opens its setup.
   renderFriends() {
-    $('friends-modes').innerHTML = ['social_assoc', 'social_scene'].map(k =>
+    $('friends-modes').innerHTML = this.SOC_MODES.map(k => // 2026-10-01: + social_story
       '<div class="row" role="button" tabindex="0" data-soc-open="' + k + '" aria-label="' + CONFIG.modes[k].label + ', ' + CONFIG.modes[k].short + '">' +
       Draw.modeIcon(k) + '<span class="row-main"><span class="row-title">' + CONFIG.modes[k].label + '</span><span class="row-sub">' + CONFIG.modes[k].short + '</span></span>' +
       '<span class="ibtn play" aria-hidden="true">' + Icons.play + '</span></div>').join('');
@@ -4500,12 +4625,11 @@ const App = {
       const b = e.target.closest('[data-soc-mode]');
       if (b) { this.soc.mode = b.dataset.socMode; this.renderSocialSetup(); }
     });
-    // 2026-10-01: scene level chips. A locked chip only explains, it is never chosen.
+    // 2026-10-01: scene level chips. All 3 open (was: a locked chip only explained, with a toast).
     $('soc-levels').addEventListener('click', e => {
       const b = e.target.closest('[data-level]');
       if (!b) return;
       const lv = Number(b.dataset.level);
-      if (lv > Social.maxLevel()) { this.toast('נפתח אחרי סצנה אחת ברמה הקודמת'); return; }
       this.soc.level = lv;
       this.renderSocialSetup();
     });
@@ -4540,6 +4664,7 @@ const App = {
       else { this.homeTab = 'friends'; this.go('home'); } // 2026-10-01: was 'free'
     });
     $('soc-cast-back').addEventListener('click', () => this.socialStep('setup'));
+    $('soc-shuffle').addEventListener('click', () => this.socialShuffle()); // 2026-10-01
     $('soc-go').addEventListener('click', () => this.socialGo());
   },
 
@@ -4557,32 +4682,45 @@ const App = {
 
   socialStep(step) {
     const soc = this.soc;
-    if (step === 'cast' && !soc.cast) step = 'setup';
+    if (step === 'cast' && !(soc.mode === 'social_story' ? soc.story : soc.cast)) step = 'setup'; // 2026-10-01: + story
     soc.step = step;
     $('soc-setup').hidden = step !== 'setup';
     $('soc-cast').hidden = step !== 'cast';
     $('soc-cast-row').hidden = step !== 'cast';
     // 2026-10-01: scene v2: cast sheet button is "מתחילים". Was: 'יאללה, לבמה!'.
-    $('soc-go').innerHTML = Icons.play + (step === 'setup' && soc.mode === 'social_scene' ? 'לחלוקת התפקידים' : 'מתחילים');
+    $('soc-go').innerHTML = Icons.play + (step === 'setup' ? this.socSetupGo(soc.mode) : 'מתחילים');
     if (step === 'cast') this.renderCast(); else this.renderSocialSetup();
   },
 
+  // 2026-10-01: setup button text: scene and story show a pre-start sheet first.
+  socSetupGo(mode) {
+    return mode === 'social_scene' ? 'לחלוקת התפקידים' : mode === 'social_story' ? 'לפתיחת הסיפור' : 'מתחילים';
+  },
+  // 2026-10-01: "סצנה אחרת" / "פתיחה אחרת" on the pre-start sheet. Same level, not the current one.
+  socialShuffle() {
+    const soc = this.soc;
+    if (soc.step !== 'cast') return;
+    if (soc.mode === 'social_story' && soc.story) soc.story = { opening: Social.pickOpening(soc.story.opening) };
+    else if (soc.cast) soc.cast = Social.pickScene(soc.cast.level, soc.players.length, soc.cast.id);
+    else return;
+    this.renderCast();
+  },
   // 2026-10-01: scene turns per player are fixed (CONFIG.social.scene.perPlayer).
   socRounds(mode) {
     if (mode === 'social_scene') return CONFIG.social.scene.perPlayer;
     return this.soc.rounds[mode] || CONFIG.modes[mode].rounds;
   },
-  // 2026-10-01: chosen scene level, never above the highest unlocked.
+  // 2026-10-01: chosen scene level. Default 1 (all open). Was: default = highest unlocked.
   socLevel() {
     const max = Social.maxLevel();
-    if (!this.soc.level || this.soc.level > max) this.soc.level = max;
+    if (!this.soc.level || this.soc.level > max) this.soc.level = 1;
     return this.soc.level;
   },
 
   renderSocialSetup() {
     const c = CONFIG.social;
     const soc = this.soc;
-    $('soc-modes').innerHTML = ['social_assoc', 'social_scene'].map(k =>
+    $('soc-modes').innerHTML = this.SOC_MODES.map(k => // 2026-10-01: + social_story
       '<button type="button" class="soc-mode" role="radio" aria-checked="' + (k === soc.mode) + '" data-soc-mode="' + k + '">' +
       Draw.modeIcon(k) + CONFIG.modes[k].label + '<small>' + CONFIG.modes[k].short + '</small></button>').join('');
     $('soc-desc').textContent = CONFIG.modes[soc.mode].desc;
@@ -4596,20 +4734,15 @@ const App = {
     $('soc-add').hidden = soc.names.length >= c.maxPlayers;
     // 2026-10-01: scene: level chips instead of the turns selector.
     const scene = soc.mode === 'social_scene';
-    $('soc-go').innerHTML = Icons.play + (scene ? 'לחלוקת התפקידים' : 'מתחילים');
+    $('soc-go').innerHTML = Icons.play + this.socSetupGo(soc.mode);
     $('soc-levels').hidden = !scene;
     $('soc-rounds-line').hidden = scene;
     if (scene) {
-      const max = Social.maxLevel();
+      // 2026-10-01: all 3 levels selectable, no lock icon or unlock text. Was: locked chips above maxLevel.
       const cur = this.socLevel();
-      $('soc-levels').innerHTML = Social.sceneLevels().map(l => {
-        const locked = l.id > max;
-        return '<button type="button" class="soc-lvl' + (locked ? ' locked' : '') + '" role="radio" aria-checked="' + (l.id === cur) + '"' +
-          (locked ? ' aria-disabled="true"' : '') + ' data-level="' + l.id + '" aria-label="רמה ' + l.id + ', ' + l.name +
-          (locked ? ', נעולה. נפתח אחרי סצנה אחת ברמה הקודמת' : ', ' + l.sub) + '">' +
-          '<span>' + (locked ? '<span class="lvl-lock">' + Icons.lock + '</span> ' : '') + l.name + '</span>' +
-          '<small>' + (locked ? 'נפתח אחרי סצנה אחת ברמה הקודמת' : 'רמה ' + l.id + ' | ' + l.sub) + '</small></button>';
-      }).join('');
+      $('soc-levels').innerHTML = Social.sceneLevels().map(l =>
+        '<button type="button" class="soc-lvl" role="radio" aria-checked="' + (l.id === cur) + '" data-level="' + l.id + '"' +
+        ' aria-label="רמה ' + l.id + ', ' + l.name + ', ' + l.sub + '"><span>' + l.name + '</span><small>' + l.sub + '</small></button>').join('');
     }
     const r = this.socRounds(soc.mode);
     $('soc-rounds').innerHTML = c.roundOptions.map(n =>
@@ -4632,6 +4765,18 @@ const App = {
   renderCast() {
     const soc = this.soc;
     const c = CONFIG.social;
+    // 2026-10-01: social_story pre-start sheet: the opening, the turn order, "פתיחה אחרת".
+    const story = soc.mode === 'social_story' && soc.story;
+    $('soc-cast-rib').textContent = story ? 'הסיפור שלנו' : 'דף הליהוק';
+    $('soc-shuffle').textContent = story ? '🔀 פתיחה אחרת' : '🔀 סצנה אחרת';
+    if (story) {
+      $('soc-sit-l').textContent = 'פתיחה';
+      $('soc-sit-text').textContent = soc.story.opening;
+      $('soc-sit-line').textContent = 'בכל תור: משפט או שניים. כל תור שלישי: טוויסט. בתור האחרון: סיום.';
+      $('soc-chars').innerHTML = soc.players.map((name, i) =>
+        '<div class="soc-crow" style="--pc:' + c.colors[i] + '"><b>' + (i + 1) + '. ' + esc(name) + '</b></div>').join('');
+      return;
+    }
     const lv = Social.levelInfo(soc.cast.level);
     $('soc-sit-l').textContent = 'רמה ' + lv.id + ': ' + lv.name;
     $('soc-sit-text').textContent = soc.cast.title;
@@ -4659,6 +4804,12 @@ const App = {
       this.socialStep('cast');
       return;
     }
+    if (soc.mode === 'social_story') { // 2026-10-01: pre-start sheet with the opening
+      soc.cast = null;
+      soc.story = { opening: Social.pickOpening(soc.story && soc.story.opening) };
+      this.socialStep('cast');
+      return;
+    }
     this.socialBegin();
   },
 
@@ -4669,7 +4820,8 @@ const App = {
       players: soc.players.slice(),
       perPlayer: this.socRounds(soc.mode),
       // 2026-10-01: scene v2 cast { id, level, title, situation, roles }. Was { situation, chars }.
-      cast: soc.mode === 'social_scene' && soc.cast ? Object.assign({}, soc.cast, { roles: soc.cast.roles.slice() }) : null
+      cast: soc.mode === 'social_scene' && soc.cast ? Object.assign({}, soc.cast, { roles: soc.cast.roles.slice() }) : null,
+      story: soc.mode === 'social_story' && soc.story ? { opening: soc.story.opening } : null // 2026-10-01
     } });
   },
 
@@ -4682,6 +4834,13 @@ const App = {
       // 2026-10-01: same level, a new scene. Was: Social.rollCast.
       soc.level = s.social.cast.level;
       soc.cast = Social.pickScene(soc.level, soc.players.length);
+      soc.step = 'cast';
+      this.go('social');
+      return;
+    }
+    if (s.mode === 'social_story') { // 2026-10-01: a new opening, shown first
+      soc.cast = null;
+      soc.story = { opening: Social.pickOpening(s.social.story && s.social.story.opening) };
       soc.step = 'cast';
       this.go('social');
       return;
@@ -4908,6 +5067,11 @@ const App = {
     let socPrompts = null;
     if (soc) socPrompts = soc.cast ? Social.sceneCues(soc.cast, soc.players.length) // 2026-10-01: written directives
       : Recent.pick('word_association', Pools.get('word_association', 'easy'), cfg.rounds);
+    if (soc && soc.story) { // 2026-10-01: social_story turns; kinds = the lead line per turn
+      const sc = Social.storyCues(soc.story.opening, cfg.rounds);
+      socPrompts = sc.prompts;
+      soc.story.kinds = sc.kinds;
+    }
     this.s = {
       mode, cfg, stage: st,
       prompts: socPrompts || (cfg.beats ? cfg.beats.slice(0, cfg.rounds) : Recent.pick(mode, Pools.get(mode, st ? st.tier : 'mix'), cfg.rounds)),
@@ -5046,6 +5210,7 @@ const App = {
       const p = s.roundIdx % s.social.players.length;
       // 2026-10-01: scene v2: the role name only (small), the directive is the big text.
       s.lead = s.social.cast ? s.social.cast.roles[p].role : null;
+      if (s.social.story) s.lead = s.social.story.kinds[s.roundIdx]; // 2026-10-01: פתיחה / ממשיכים / טוויסט / סיום
       this.renderTurn(s.roundIdx);
     }
     this.setChips(this.baseChips());
@@ -5066,6 +5231,7 @@ const App = {
     let text = s.seed && s.roundIdx === 0 ? s.cfg.lead + ' ' + s.seed + '. ' + prompt : prompt;
     if (s.social) text = this.socName(s.roundIdx) + '. ' + prompt; // 2026-10-01: name first, then word or cue
     if (s.social && s.social.cast) text = this.socName(s.roundIdx) + ', ' + s.lead + ': ' + prompt; // 2026-10-01: "<name>, <role>: <directive>"
+    if (s.social && s.social.story) text = this.socName(s.roundIdx) + ', ' + s.lead + '. ' + prompt; // 2026-10-01: story
     s.phase = 'announcing';
     s.phaseStart = t;
     this.setCard('read', Icons.speaker + 'הקראה', prompt, null,
@@ -5358,8 +5524,9 @@ const App = {
         rec.situation = s.social.cast.title;
         rec.sceneId = s.social.cast.id;
         rec.sceneLevel = s.social.cast.level;
-        unlocked = Social.unlockAfter(s.social.cast.level);
+        // 2026-10-01: levels no longer unlock (all open). Was: unlocked = Social.unlockAfter(level).
       }
+      if (s.social.story) rec.situation = s.social.story.opening; // 2026-10-01: social_story opening (<= 300 chars)
       Storage.appendSession(rec);
       Telemetry.logSession(this.sessionLog(s, true, rec, null));
       this.askName = false; // 2026-10-01: the name screen follows solo sessions only
@@ -5752,8 +5919,9 @@ const App = {
         '<span class="soc-rank-pts num">' + r.score + '<small>נקודות</small></span></div>';
     }).join('');
     // 2026-10-01: scene title, and a new level message when this scene opened one.
-    $('sum-banner').innerHTML = (unlocked ? '<div class="banner">🔓 נפתחה רמה חדשה: ' + esc(unlocked.name) + '</div>' : '') +
-      (soc.cast ? '<div class="banner neutral">' + esc(soc.cast.title) + '</div>' : '');
+    // 2026-10-01: the "new level" banner was removed (all levels open). + the story opening.
+    $('sum-banner').innerHTML = (soc.cast ? '<div class="banner neutral">' + esc(soc.cast.title) + '</div>' : '') +
+      (soc.story ? '<div class="banner neutral">' + esc(soc.story.opening) + '</div>' : '');
     $('btn-next').innerHTML = Icons.play + 'עוד סיבוב';
     this.sumActions.next = () => this.socialAgain(s);
     $('btn-again').hidden = false;
@@ -5898,7 +6066,7 @@ const App = {
     const p = Online.player();
     $('set-player').innerHTML = p
       ? '<span class="nm" dir="auto">' + esc(p.username) + '</span>'
-      : '<span class="muted">עוד אין</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחירת שם</button>'; // 2026-10-01: was 'לא רשום' / 'בחר שם'
+      : '<span class="muted">עדיין לא נבחר</span><button class="btn btn-green btn-sm" type="button" data-pick-name>בחירת שם</button>'; // 2026-10-01: was 'לא רשום' / 'בחר שם'
   },
 
   lbValue(kind, raw) {
@@ -5961,17 +6129,18 @@ const App = {
   },
 
   /* ---------- 2026-10-01: how-it-works + privacy sheets, feedback entry points ---------- */
+  // 2026-10-01: the only privacy text: 4 short lines, in the menu and in #dlg-privacy.
+  // Was 4 longer points + "עוד פרטים" to a full sheet (processors, retention, IP, age).
   PV_POINTS: [
-    ['🎙️', 'הקול לא מוקלט ולא נשלח', ' - רק עוצמה לזיהוי דיבור, בזמן אמת.'],
-    ['📊', 'נשלחים נתוני משחק:', ' מזהה מכשיר אקראי, סוג מכשיר ודפדפן, ותוצאות (מהירות, היסוסים, כוכבים). כתובת ה-IP מגיעה לשרת.'],
-    ['🏆', 'שם שבוחרים מופיע בטבלת האלופים,', ' ומקושר לנתוני המשחק. מומלץ לא להשתמש בשם מלא.'],
-    ['🗑️', 'אפשר לבקש מחיקה', ' דרך המשוב (קטגוריה: פרטיות), עם מזהה המכשיר מההגדרות.']
+    ['🎙️', 'הקול לא מוקלט ולא נשלח. המיקרופון מודד רק עוצמה, בזמן אמת.'],
+    ['📊', 'לשיפור המשחק נשמרים נתוני משחק (תוצאות, סוג מכשיר) עם מזהה מכשיר אקראי.'],
+    ['🏆', 'שם שבוחרים מופיע בטבלת האלופים.'],
+    ['🗑️', "למחיקה: משוב בקטגוריה 'פרטיות'."]
   ],
   initSheets() {
-    const card = el => '<h2 class="pv-title">' + Icons.shield + 'פרטיות בקצרה</h2><ul class="pv-list">' +
-      this.PV_POINTS.map(p => '<li><span class="pv-i" aria-hidden="true">' + p[0] + '</span><span><b>' + p[1] + '</b>' + p[2] + '</span></li>').join('') + '</ul>' +
-      (el.hasAttribute('data-pv-nomore') ? '' : '<button class="link-btn pv-more-btn" type="button" data-open-privacy-full>עוד פרטים</button>');
-    document.querySelectorAll('[data-pv-card]').forEach(el => { el.innerHTML = card(el); });
+    const card = '<ul class="pv-list">' +
+      this.PV_POINTS.map(p => '<li><span class="pv-i" aria-hidden="true">' + p[0] + '</span><span>' + p[1] + '</span></li>').join('') + '</ul>';
+    document.querySelectorAll('[data-pv-card]').forEach(el => { el.innerHTML = card; });
     ['dlg-how', 'dlg-privacy'].forEach(id => {
       const d = $(id);
       d.addEventListener('click', e => { if (e.target === d) d.close(); }); // backdrop
@@ -5979,12 +6148,11 @@ const App = {
     $('how-close').addEventListener('click', () => $('dlg-how').close());
     $('priv-close').addEventListener('click', () => $('dlg-privacy').close());
     $('w-how').addEventListener('click', () => this.openSheet('dlg-how'));
-    $('w-privacy').addEventListener('click', () => this.openPrivacy(false));
-    // One listener for every "איך זה עובד?" / "פרטיות" link, wherever it is.
+    $('w-privacy').addEventListener('click', () => this.openPrivacy());
+    // One listener for every "איך זה עובד?" / "פרטיות" link, wherever it is. 2026-10-01: no full sheet any more.
     document.addEventListener('click', e => {
       if (e.target.closest('[data-open-how]')) this.openSheet('dlg-how');
-      else if (e.target.closest('[data-open-privacy-full]')) this.openPrivacy(true);
-      else if (e.target.closest('[data-open-privacy]')) this.openPrivacy(false);
+      else if (e.target.closest('[data-open-privacy]')) this.openPrivacy();
     });
     $('priv-fb').addEventListener('click', () => { $('dlg-privacy').close(); this.openFeedback('privacy', { cat: 'privacy' }); });
     $('champs-feedback').addEventListener('click', () => { $('dlg-champs').close(); this.openFeedback('champs'); });
@@ -6001,8 +6169,7 @@ const App = {
     const d = $(id);
     if (!d.open) d.showModal();
   },
-  openPrivacy(full) {
-    $('priv-more').open = !!full;
+  openPrivacy() { // 2026-10-01: was openPrivacy(full), opened the "עוד פרטים" part
     this.openSheet('dlg-privacy');
   },
 
