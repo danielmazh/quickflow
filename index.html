@@ -1598,7 +1598,7 @@ const CONFIG = {
   // 2026-09-30: build tag sent with usage data and feedback. Bump on every release.
   // 2026-10-01: was '2026-09-30.1'. Social track (ערב אימפרו).
   // 2026-10-01: was '2026-10-01.1'. Security fixes, error reports, speech detection safety.
-  appVersion: '2026-10-01.4', // 2026-10-01: menu, short privacy, social_story, open scene levels
+  appVersion: '2026-10-01.5', // 2026-10-01: menu, short privacy, social_story, open scene levels
   // 2026-09-30: anonymous usage data + feedback form. Same server as `online`.
   // Fire-and-forget: every call may fail and the game never waits for it.
   telemetry: {
@@ -4184,10 +4184,12 @@ const App = {
 
     // 2026-10-01: first run goes straight to the stage 1 intro. The name screen comes after the
     // first finished session (App.nameGate). Was: name screen first, then home.
+    // 2026-10-01: operator asked that "start playing" always opens the map, never the stage 1 intro.
     $('btn-welcome-go').addEventListener('click', () => {
       Sound.play('pop');
-      if (!Storage.store.sessions.length && !Progress.total()) this.openIntro({ stage: STAGES[0] });
-      else this.go('home');
+      this.homeTab = 'map';
+      this.go('home');
+      this.setTab('map');
     });
     $('tab-map').addEventListener('click', () => this.setTab('map'));
     $('tab-free').addEventListener('click', () => this.setTab('free'));
